@@ -1,1 +1,15 @@
-@import './styles.css';
+/* Base styles */
+@import './styles/base.css';
+@import './styles/utilities.css';
+
+/* Component styles */
+@import './components/Navbar/Navbar.css';
+@import './components/ThemeToggle/ThemeToggle.css';
+@import './components/SocialIcons/SocialIcons.css';
+@import './components/DecorativeElements/DecorativeElements.css';
+
+/* Page styles */
+@import './pages/Home/Home.css';
+@import './pages/About/About.css';
+@import './pages/Works/Works.css';
+@import './pages/Chat/Chat.css';
