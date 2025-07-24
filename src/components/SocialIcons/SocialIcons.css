@@ -1,0 +1,101 @@
+/* Social Icons Styles */
+.social-icons-container {
+    display: flex;
+    gap: 1rem;
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+}
+
+.social-icon-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.dark-theme .social-icon-link {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.light-theme .social-icon-link {
+    background-color: rgba(65, 105, 225, 0.1);
+    color: var(--accent-color);
+    border: 1px solid rgba(65, 105, 225, 0.2);
+}
+
+.neon-theme .social-icon-link {
+    background-color: rgba(26, 26, 46, 0.4);
+    color: var(--neon-text-secondary);
+    border: 1px solid var(--neon-border);
+    box-shadow: 0 0 10px rgba(76, 201, 240, 0.2);
+    transition: all 0.3s ease;
+}
+
+.social-icon-link:hover {
+    transform: translateY(-5px);
+}
+
+.dark-theme .social-icon-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.light-theme .social-icon-link:hover {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    box-shadow: 0 5px 15px rgba(65, 105, 225, 0.3);
+}
+
+.neon-theme .social-icon-link:hover {
+    color: #ffffff;
+    background-color: var(--neon-text-primary);
+    box-shadow: 0 0 20px var(--neon-text-primary);
+    border-color: var(--neon-text-primary);
+    transform: translateY(-5px) scale(1.1);
+}
+
+.social-icon-link svg {
+    width: 20px;
+    height: 20px;
+}
+
+@media (min-width: 768px) {
+    .social-icons-container {
+        bottom: 2rem;
+        right: 2rem;
+    }
+    
+    .social-icon-link {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .social-icon-link svg {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .social-icons-container {
+        bottom: 2.5rem;
+        right: 2.5rem;
+    }
+    
+    .social-icon-link {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .social-icon-link svg {
+        width: 24px;
+        height: 24px;
+    }
+}
