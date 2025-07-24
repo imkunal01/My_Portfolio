@@ -11,14 +11,9 @@ import About from './pages/About';
 import Works from './pages/Works';
 import Chat from './pages/Chat';
 
-// Main App component
 const App = () => {
-    // State for theme (dark/light/neon)
     const [theme, setTheme] = useState('dark');
-    // State for active tab
     const [activeTab, setActiveTab] = useState('home');
-
-    // Toggle theme function
     const toggleTheme = () => {
         setTheme(prevTheme => {
             if (prevTheme === 'dark') return 'light';
@@ -26,13 +21,9 @@ const App = () => {
             return 'dark';
         });
     };
-
-    // Handle tab click
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
-
-    // Apply theme class to body
     useEffect(() => {
         document.body.className = `${theme}-theme`;
     }, [theme]);
@@ -51,12 +42,9 @@ const App = () => {
     );
 };
 
-// This component handles route changes and updates the active tab
 const AppContent = ({ theme, toggleTheme, activeTab, handleTabClick }) => {
     const location = useLocation();
-    
-    // Update active tab based on current route
-    useEffect(() => {
+        useEffect(() => {
         const path = location.pathname;
         if (path === '/') {
             handleTabClick('home');
