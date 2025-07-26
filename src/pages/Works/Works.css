@@ -134,7 +134,23 @@
     box-shadow: 0 0 10px rgba(247, 37, 133, 0.4);
     transform: translateY(-2px);
 }
-
+/* add glass effect to the button */
+.project-link {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: rgba(65, 105, 225, 0.15);
+    color: var(--accent-color);
+    text-decoration: none;
+    border-radius: 9999px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+.project-link:hover {
+    background-color:#333333;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
 /* Media Queries for Works Page */
 @media (min-width: 768px) {
     .projects-grid {
