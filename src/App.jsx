@@ -5,13 +5,14 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from
 import Navbar from './components/Navbar';
 import Particles from './components/Particles/Particles.jsx'
 import ScrollToTop from './components/ScrollToTop';
-import PageTransition from './components/PageTransition';
+import TypingAnimation from './components/TypingAnimation/index.jsx'
+// import PageTransition from './components/PageTransition';
 import CustomCursor from './components/CustomCursor';
 // Pages
 import Home from './pages/Home';
 import About from './pages/About';
 import Works from './pages/Works';
-import Chat from './pages/Chat';
+// import Chat from './pages/Chat';
 
 const App = () => {
     const [theme, setTheme] = useState('dark');
@@ -135,9 +136,10 @@ const AppContent = ({ theme, toggleTheme, activeTab, setActiveTab }) => {
             <ScrollToTop />
             
                 
-            <PageTransition location={location.pathname}>
+            
                 <main className="page-content">
                     <section id="home" className="page-section">
+                        
                         <Home />
                     </section>
                     
@@ -149,11 +151,9 @@ const AppContent = ({ theme, toggleTheme, activeTab, setActiveTab }) => {
                         <Works />
                     </section>
                     
-                    <section id="chat" className="page-section">
-                        <Chat />
-                    </section>
+                    
                 </main>
-            </PageTransition>
+          
         </>
     );
 };

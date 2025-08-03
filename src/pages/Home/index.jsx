@@ -2,6 +2,7 @@ import React from 'react';
 import SocialIcons from '../../components/SocialIcons';
 import DecorativeElements from '../../components/DecorativeElements';
 import kunnucut from '../../assets/kunnucut.png';
+import TypingAnimation from '../../components/TypingAnimation/index.jsx';
 const Home = () => {
     return (
         <main className="main-content">
@@ -16,7 +17,7 @@ const Home = () => {
             <div className="text-content-container">
                 <p>Know me</p>
                 <h1>
-                    I'm <span className="text-white-span">Kunal D,</span><br />
+                    <span className="text-white-span"><TypingAnimation text="I'm Kunal D." /></span><br />
                     a <span className="highlight-text">Creative</span> engineer
                 </h1>
                 <p className="description-text">
