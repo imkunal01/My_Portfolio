@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 // Components
 import Navbar from './components/Navbar';
-
+import Particles from './components/Particles/Particles.jsx'
+import ScrollToTop from './components/ScrollToTop';
+import PageTransition from './components/PageTransition';
+import CustomCursor from './components/CustomCursor';
 // Pages
 import Home from './pages/Home';
 import About from './pages/About';
@@ -13,6 +16,7 @@ import Chat from './pages/Chat';
 const App = () => {
     const [theme, setTheme] = useState('dark');
     const [activeTab, setActiveTab] = useState('home');
+
     const toggleTheme = () => {
         setTheme(prevTheme => {
             if (prevTheme === 'dark') return 'light';
@@ -20,9 +24,7 @@ const App = () => {
             return 'dark';
         });
     };
-    const handleTabClick = (tab) => {
-        setActiveTab(tab);
-    };
+
     useEffect(() => {
         document.body.className = `${theme}-theme`;
     }, [theme]);
@@ -30,49 +32,131 @@ const App = () => {
     return (
         <Router>
             <div className={`app-container ${theme}-theme`}>
-                <AppContent 
-                    theme={theme} 
-                    toggleTheme={toggleTheme} 
-                    activeTab={activeTab} 
-                    handleTabClick={handleTabClick} 
-                />
+                <Routes>
+                    <Route path="/*" element={
+                        <AppContent
+                            theme={theme}
+                            toggleTheme={toggleTheme}
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
+                        />
+                    } />
+                </Routes>
             </div>
         </Router>
     );
 };
 
-const AppContent = ({ theme, toggleTheme, activeTab, handleTabClick }) => {
+const AppContent = ({ theme, toggleTheme, activeTab, setActiveTab }) => {
+    const navigate = useNavigate();
     const location = useLocation();
-        useEffect(() => {
-        const path = location.pathname;
-        if (path === '/') {
-            handleTabClick('home');
-        } else if (path === '/about') {
-            handleTabClick('about');
-        } else if (path === '/works') {
-            handleTabClick('works');
-        } else if (path === '/chat') {
-            handleTabClick('chat');
-        }
-    }, [location, handleTabClick]);
+
+    const sections = ['home', 'about', 'works', 'chat'];
     
+    // Handle initial route on component mount
+    useEffect(() => {
+        const path = location.pathname.substring(1) || 'home';
+        if (sections.includes(path)) {
+            setActiveTab(path);
+            const el = document.getElementById(path);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.id;
+                        setActiveTab(id);
+
+                        const newPath = id === 'home' ? '/' : `/${id}`;
+                        if (location.pathname !== newPath) {
+                            navigate(newPath, { replace: true });
+                        }
+                    }
+                });
+            },
+            { threshold: 0.6 }
+        );
+
+        sections.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) observer.observe(el);
+        });
+
+        return () => observer.disconnect();
+    }, [navigate, location.pathname, setActiveTab, sections]);
+
     return (
         <>
-            <Navbar 
-                theme={theme} 
-                toggleTheme={toggleTheme} 
-                activeTab={activeTab} 
-                handleTabClick={handleTabClick} 
+            {/* Custom cursor */}
+            <CustomCursor theme={theme} />
+            
+            {/* Full screen background Particles */}
+            <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100vw',
+                height: '100vh',
+                zIndex: -1,
+            }}>
+                <Particles
+                    particleColors={['#0089e4ff', '#ffffff','#ff0000ff']}
+                    particleCount={300}
+                    particleSpread={10}
+                    speed={0.2}
+                    particleBaseSize={100}
+                    moveParticlesOnHover={false}
+                    alphaParticles={false}
+                    disableRotation={true}
+                />
+            </div>
+
+            <Navbar
+                theme={theme}
+                toggleTheme={toggleTheme}
+                activeTab={activeTab}
+                handleTabClick={(tabId) => {
+                    const el = document.getElementById(tabId);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    setActiveTab(tabId);
+                    const newPath = tabId === 'home' ? '/' : `/${tabId}`;
+                    navigate(newPath, { replace: true });
+                }}
             />
             
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/works" element={<Works />} />
-                <Route path="/chat" element={<Chat />} />
-            </Routes>
+            <ScrollToTop />
+            
+                
+            <PageTransition location={location.pathname}>
+                <main className="page-content">
+                    <section id="home" className="page-section">
+                        <Home />
+                    </section>
+                    
+                    <section id="about" className="page-section">
+                        <About />
+                    </section>
+                    
+                    <section id="works" className="page-section">
+                        <Works />
+                    </section>
+                    
+                    <section id="chat" className="page-section">
+                        <Chat />
+                    </section>
+                </main>
+            </PageTransition>
         </>
     );
 };
+
 
 export default App;

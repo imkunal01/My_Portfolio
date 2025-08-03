@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SocialIcons from '../../components/SocialIcons';
 import DecorativeElements from '../../components/DecorativeElements';
+import ChatInput from '../../components/ChatInput';
 
 const Chat = () => {
     const [formData, setFormData] = useState({
@@ -48,55 +49,16 @@ const Chat = () => {
                         </button>
                     </div>
                 ) : (
-                    <form className="contact-form" onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label htmlFor="name">Name</label>
-                            <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        
-                        <div className="form-group">
-                            <label htmlFor="email">Email</label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        
-                        <div className="form-group">
-                            <label htmlFor="message">Message</label>
-                            <textarea
-                                id="message"
-                                name="message"
-                                value={formData.message}
-                                onChange={handleChange}
-                                rows="5"
-                                required
-                            ></textarea>
-                        </div>
-                        
-                        <button type="submit" className="submit-button">
-                            Send Message
-                        </button>
-                    </form>
+                    <div className="chat-form-container">
+                        <ChatInput />
+                    </div>
                 )}
             </div>
             
             {/* Decorative Elements */}
             <DecorativeElements />
             
-            {/* Social Icons */}
-            <SocialIcons />
+           
         </main>
     );
 };

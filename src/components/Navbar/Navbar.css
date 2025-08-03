@@ -11,6 +11,7 @@
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid transparent;
     transition: all 0.4s ease; /* Transition for all properties */
+    animation: slideInDown 0.5s ease-out forwards;
 }
 
 .dark-theme .navbar {
@@ -68,6 +69,8 @@
     font-size: 0.85rem;
     font-weight: 500;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .dark-theme .navbar-link {
@@ -85,6 +88,25 @@
 
 .navbar-link:hover {
     transform: translateY(-2px);
+}
+
+.navbar-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: currentColor;
+    transition: width 0.3s ease, left 0.3s ease;
+    opacity: 0;
+}
+
+.navbar-link:hover::after,
+.navbar-link.active::after {
+    width: 80%;
+    left: 10%;
+    opacity: 1;
 }
 
 .dark-theme .navbar-link:hover {

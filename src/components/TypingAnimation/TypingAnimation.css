@@ -1,0 +1,34 @@
+/* TypingAnimation Component Styles */
+.typing-animation {
+    display: inline-block;
+    position: relative;
+}
+
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background-color: currentColor;
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Theme-specific styles */
+.dark-theme .typing-cursor {
+    background-color: var(--text-light);
+}
+
+.light-theme .typing-cursor {
+    background-color: var(--text-dark);
+}
+
+.neon-theme .typing-cursor {
+    background-color: var(--neon-text-primary);
+    box-shadow: 0 0 5px var(--neon-text-primary);
+}

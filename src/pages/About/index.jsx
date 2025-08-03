@@ -55,11 +55,7 @@ const About = () => {
                 </p>
             </div>
             
-            {/* Decorative Elements */}
-            <DecorativeElements />
-            
-            {/* Social Icons */}
-            <SocialIcons />
+           
         </main>
     );
 };

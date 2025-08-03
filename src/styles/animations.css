@@ -1,0 +1,151 @@
+/* Animations CSS */
+
+/* Keyframes for various animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(65, 105, 225, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(65, 105, 225, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(65, 105, 225, 0.5); }
+}
+
+/* Neon glow animation */
+@keyframes neonGlow {
+    0% { text-shadow: 0 0 5px var(--neon-text-primary), 0 0 10px var(--neon-text-primary); }
+    50% { text-shadow: 0 0 20px var(--neon-text-primary), 0 0 30px var(--neon-text-primary); }
+    100% { text-shadow: 0 0 5px var(--neon-text-primary), 0 0 10px var(--neon-text-primary); }
+}
+
+/* Animation utility classes */
+.animate-fadeIn {
+    animation: fadeIn 1s ease forwards;
+}
+
+.animate-slideInUp {
+    animation: slideInUp 0.8s ease forwards;
+}
+
+.animate-slideInLeft {
+    animation: slideInLeft 0.8s ease forwards;
+}
+
+.animate-slideInRight {
+    animation: slideInRight 0.8s ease forwards;
+}
+
+.animate-pulse {
+    animation: pulse 2s ease infinite;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+    animation: glow 3s ease-in-out infinite;
+}
+
+.neon-theme .animate-neonGlow {
+    animation: neonGlow 2s ease-in-out infinite;
+}
+
+/* Animation delays */
+.delay-100 {
+    animation-delay: 100ms;
+}
+
+.delay-200 {
+    animation-delay: 200ms;
+}
+
+.delay-300 {
+    animation-delay: 300ms;
+}
+
+.delay-400 {
+    animation-delay: 400ms;
+}
+
+.delay-500 {
+    animation-delay: 500ms;
+}
+
+/* Hover animations */
+.hover-lift {
+    transition: transform 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+}
+
+.hover-scale {
+    transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.hover-bright {
+    transition: filter 0.3s ease;
+}
+
+.hover-bright:hover {
+    filter: brightness(1.2);
+}
+
+/* Neon theme specific hover effects */
+.neon-theme .hover-neon:hover {
+    color: var(--neon-text-primary);
+    text-shadow: 0 0 10px var(--neon-text-primary), 0 0 20px var(--neon-text-primary);
+    transition: all 0.3s ease;
+}

@@ -1,0 +1,99 @@
+/* ScrollToTop Component Styles */
+.scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 99;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+    transform: translateY(20px);
+}
+
+.scroll-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.scroll-button {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.scroll-button:hover {
+    transform: translateY(-5px);
+}
+
+/* Theme-specific styles */
+.dark-theme .scroll-button {
+    background-color: rgba(30, 30, 30, 0.5);
+    color: #ffffff;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-theme .scroll-button:hover {
+    background-color: rgba(40, 40, 40, 0.6);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.light-theme .scroll-button {
+    background-color: rgba(255, 255, 255, 0.7);
+    color: var(--accent-color);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.neon-theme .scroll-button {
+    background-color: rgba(15, 15, 26, 0.6);
+    color: var(--neon-text-primary);
+    box-shadow: 0 8px 32px rgba(76, 201, 240, 0.3);
+    border: 2px solid var(--neon-border);
+}
+
+.neon-theme .scroll-button:hover {
+    background-color: rgba(20, 20, 35, 0.7);
+    box-shadow: 0 8px 32px rgba(76, 201, 240, 0.5);
+    border-color: var(--neon-text-primary);
+}
+
+.light-theme .scroll-button:hover {
+    background-color: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+.neon-theme .scroll-button {
+    background-color: rgba(247, 37, 133, 0.15);
+    color: var(--neon-text-primary);
+    box-shadow: 0 0 15px rgba(247, 37, 133, 0.3);
+}
+
+.neon-theme .scroll-button:hover {
+    background-color: rgba(247, 37, 133, 0.25);
+    box-shadow: 0 0 20px rgba(247, 37, 133, 0.5);
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .scroll-to-top {
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .scroll-button {
+        width: 40px;
+        height: 40px;
+    }
+}

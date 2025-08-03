@@ -1,42 +1,51 @@
 /* About Page Styles */
 .skills-container {
     display: grid;
-    grid-template-columns: 1fr; /* Single column for mobile */
-    gap: 1rem; /* Tighter gap for mobile */
-    margin: 1.5rem 0; /* Reduced margin */
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
     width: 100%;
     max-width: 1000px;
-    padding: 0 0.75rem; /* Horizontal padding for grid on mobile */
+    padding: 0 0.75rem;
 }
 
 .skill-category {
-    background-color: rgba(255, 255, 255, 0.03);
+    background-color: rgba(255, 255, 255, 0.05); /* Semi-transparent for glass effect */
+    backdrop-filter: blur(12px); /* Frosted glass */
+    -webkit-backdrop-filter: blur(12px); /* Safari support */
     border-radius: 1rem;
-    padding: 1.25rem; /* Reduced padding */
+    padding: 1.25rem;
     transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-}
-
-.dark-theme .skill-category {
-    background-color: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
 }
 
+/* Theme: Dark */
+.dark-theme .skill-category {
+    background-color: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Theme: Light */
 .light-theme .skill-category {
-    background-color: rgba(65, 105, 225, 0.05);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+/* Theme: Neon */
 .neon-theme .skill-category {
-    background-color: rgba(26, 26, 46, 0.4);
-    box-shadow: 0 0 15px rgba(76, 201, 240, 0.15);
+    background-color: rgba(26, 26, 46, 0.3);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 20px rgba(76, 201, 240, 0.15);
     border: 1px solid var(--neon-border);
-    transition: all 0.3s ease;
 }
 
 .neon-theme .skill-category:hover {
-    box-shadow: 0 0 20px var(--neon-text-secondary);
+    box-shadow: 0 0 25px var(--neon-text-secondary);
     transform: translateY(-5px);
     border-color: var(--neon-text-primary);
 }
@@ -44,7 +53,7 @@
 .skill-category h3 {
     margin-top: 0;
     margin-bottom: 0.75rem;
-    font-size: 1.15rem; /* Smaller heading */
+    font-size: 1.15rem;
     font-weight: 600;
     color: var(--accent-color);
     transition: color 0.4s ease, text-shadow 0.4s ease;
@@ -62,8 +71,8 @@
 }
 
 .skill-category li {
-    padding: 0.4rem 0; /* Reduced padding */
-    font-size: 0.85rem; /* Smaller text */
+    padding: 0.4rem 0;
+    font-size: 0.85rem;
     border-bottom: 1px solid;
     transition: all 0.3s ease;
 }
@@ -79,7 +88,6 @@
 .neon-theme .skill-category li {
     border-bottom-color: rgba(76, 201, 240, 0.2);
     color: var(--neon-text-secondary);
-    transition: all 0.3s ease;
 }
 
 .neon-theme .skill-category li:hover {
@@ -96,20 +104,20 @@
 /* Media Queries for About Page */
 @media (min-width: 768px) {
     .skills-container {
-        grid-template-columns: repeat(2, 1fr); /* Two columns */
+        grid-template-columns: repeat(2, 1fr);
         gap: 1.5rem;
         margin: 2rem 0;
         padding: 0 1rem;
     }
-    
+
     .skill-category {
         padding: 1.5rem;
     }
-    
+
     .skill-category h3 {
         font-size: 1.25rem;
     }
-    
+
     .skill-category li {
         padding: 0.5rem 0;
         font-size: 0.95rem;
@@ -118,12 +126,12 @@
 
 @media (min-width: 1024px) {
     .skills-container {
-        grid-template-columns: repeat(3, 1fr); /* Three columns for skills */
+        grid-template-columns: repeat(3, 1fr);
         gap: 2rem;
     }
-    
+
     .main-content.about-page .skills-container {
-        text-align: left; /* Ensure grid content aligns correctly */
-        padding: 0 2rem; /* Add more horizontal padding */
+        text-align: left;
+        padding: 0 2rem;
     }
 }

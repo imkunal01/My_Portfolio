@@ -3,34 +3,39 @@ import { Link } from "react-router-dom";
 import ThemeToggle from "../ThemeToggle";
 
 const Navbar = ({ theme, toggleTheme, activeTab, handleTabClick }) => {
+  const preventDefaultAndNavigate = (e, tabId) => {
+    e.preventDefault();
+    handleTabClick(tabId);
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-content">
         <Link
           to="/"
           className={`navbar-link ${activeTab === "home" ? "active" : ""}`}
-          onClick={() => handleTabClick("home")}
+          onClick={(e) => preventDefaultAndNavigate(e, "home")}
         >
           Home
         </Link>
         <Link
           to="/about"
           className={`navbar-link ${activeTab === "about" ? "active" : ""}`}
-          onClick={() => handleTabClick("about")}
+          onClick={(e) => preventDefaultAndNavigate(e, "about")}
         >
           About
         </Link>
         <Link
           to="/works"
           className={`navbar-link ${activeTab === "works" ? "active" : ""}`}
-          onClick={() => handleTabClick("works")}
+          onClick={(e) => preventDefaultAndNavigate(e, "works")}
         >
           Works
         </Link>
         <Link
           to="/chat"
           className={`navbar-link ${activeTab === "chat" ? "active" : ""}`}
-          onClick={() => handleTabClick("chat")}
+          onClick={(e) => preventDefaultAndNavigate(e, "chat")}
         >
           Chat With me
         </Link>
