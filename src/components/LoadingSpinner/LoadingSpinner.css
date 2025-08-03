@@ -1,0 +1,124 @@
+/* LoadingSpinner Component Styles */
+.loading-spinner-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Size variations */
+.spinner-small {
+    width: 30px;
+    height: 30px;
+}
+
+.spinner-medium {
+    width: 50px;
+    height: 50px;
+}
+
+.spinner-large {
+    width: 70px;
+    height: 70px;
+}
+
+/* Spinner elements */
+.spinner-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    animation: spin 1.5s linear infinite;
+}
+
+.spinner-ring-inner {
+    position: absolute;
+    width: 70%;
+    height: 70%;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    animation: spin-reverse 1s ease-in-out infinite;
+}
+
+.spinner-pulse {
+    position: absolute;
+    width: 40%;
+    height: 40%;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Theme-specific styles */
+.dark-theme .spinner-ring,
+.spinner-dark .spinner-ring {
+    border-top-color: rgba(255, 255, 255, 0.8);
+    border-right-color: rgba(255, 255, 255, 0.6);
+    border-bottom-color: rgba(255, 255, 255, 0.4);
+}
+
+.dark-theme .spinner-ring-inner,
+.spinner-dark .spinner-ring-inner {
+    border-top-color: rgba(255, 255, 255, 0.6);
+    border-left-color: rgba(255, 255, 255, 0.4);
+}
+
+.dark-theme .spinner-pulse,
+.spinner-dark .spinner-pulse {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.light-theme .spinner-ring,
+.spinner-light .spinner-ring {
+    border-top-color: rgba(65, 105, 225, 0.8);
+    border-right-color: rgba(65, 105, 225, 0.6);
+    border-bottom-color: rgba(65, 105, 225, 0.4);
+}
+
+.light-theme .spinner-ring-inner,
+.spinner-light .spinner-ring-inner {
+    border-top-color: rgba(65, 105, 225, 0.6);
+    border-left-color: rgba(65, 105, 225, 0.4);
+}
+
+.light-theme .spinner-pulse,
+.spinner-light .spinner-pulse {
+    background-color: rgba(65, 105, 225, 0.2);
+}
+
+.neon-theme .spinner-ring,
+.spinner-neon .spinner-ring {
+    border-top-color: rgba(247, 37, 133, 0.8);
+    border-right-color: rgba(76, 201, 240, 0.6);
+    border-bottom-color: rgba(114, 9, 183, 0.4);
+    box-shadow: 0 0 10px rgba(247, 37, 133, 0.5);
+}
+
+.neon-theme .spinner-ring-inner,
+.spinner-neon .spinner-ring-inner {
+    border-top-color: rgba(76, 201, 240, 0.6);
+    border-left-color: rgba(247, 37, 133, 0.4);
+    box-shadow: 0 0 8px rgba(76, 201, 240, 0.5);
+}
+
+.neon-theme .spinner-pulse,
+.spinner-neon .spinner-pulse {
+    background-color: rgba(247, 37, 133, 0.2);
+    box-shadow: 0 0 15px rgba(247, 37, 133, 0.5);
+}
+
+/* Animations */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(0.8); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}

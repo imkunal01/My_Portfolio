@@ -1,0 +1,122 @@
+/* Button Styles */
+
+/* Base button styles */
+button {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    outline: none;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Primary button */
+.primary-button {
+    background-color: var(--accent-color);
+    color: white;
+    box-shadow: 0 4px 6px rgba(65, 105, 225, 0.2);
+}
+
+.primary-button:hover {
+    background-color: #3a5fd9;
+    box-shadow: 0 6px 12px rgba(65, 105, 225, 0.3);
+}
+
+.primary-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 4px rgba(65, 105, 225, 0.2);
+}
+
+/* Secondary button */
+.secondary-button {
+    background-color: transparent;
+    color: var(--text-light);
+    border: 1px solid var(--border-dark);
+}
+
+.light-theme .secondary-button {
+    color: var(--text-dark);
+    border: 1px solid var(--border-light);
+}
+
+.secondary-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.light-theme .secondary-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Neon theme buttons */
+.neon-theme .primary-button {
+    background-color: var(--neon-accent-primary);
+    color: white;
+    box-shadow: 0 0 15px var(--neon-accent-primary);
+    border: 1px solid var(--neon-border);
+}
+
+.neon-theme .primary-button:hover {
+    background-color: var(--neon-text-primary);
+    box-shadow: 0 0 20px var(--neon-text-primary);
+}
+
+.neon-theme .secondary-button {
+    background-color: transparent;
+    color: var(--neon-text-secondary);
+    border: 1px solid var(--neon-text-secondary);
+    box-shadow: 0 0 10px rgba(76, 201, 240, 0.3);
+}
+
+.neon-theme .secondary-button:hover {
+    background-color: rgba(76, 201, 240, 0.1);
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.5);
+    text-shadow: 0 0 8px var(--neon-text-secondary);
+}
+
+/* Button container */
+.cta-container {
+    display: flex;
+    gap: 16px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+}
+
+/* Button sizes */
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+}
+
+.btn-lg {
+    padding: 14px 28px;
+    font-size: 1.125rem;
+}
+
+/* Button with icon */
+.btn-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-with-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .cta-container {
+        justify-content: center;
+    }
+}

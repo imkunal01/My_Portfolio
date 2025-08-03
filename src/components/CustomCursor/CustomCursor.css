@@ -1,0 +1,118 @@
+/* CustomCursor Component Styles */
+.cursor-dot,
+.cursor-ring {
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    z-index: 9999;
+    transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+    will-change: transform;
+}
+
+.cursor-dot {
+    width: 8px;
+    height: 8px;
+    transition: width 0.2s, height 0.2s, background-color 0.2s;
+}
+
+.cursor-ring {
+    width: 40px;
+    height: 40px;
+    border: 2px solid transparent;
+    transition: width 0.3s, height 0.3s, border-color 0.3s, transform 0.3s;
+}
+
+/* Theme-specific styles */
+.cursor-dot.dark-theme {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.cursor-ring.dark-theme {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.cursor-dot.light-theme {
+    background-color: rgba(65, 105, 225, 0.8);
+}
+
+.cursor-ring.light-theme {
+    border-color: rgba(65, 105, 225, 0.3);
+}
+
+.cursor-dot.neon-theme {
+    background-color: rgba(247, 37, 133, 0.8);
+    box-shadow: 0 0 10px rgba(247, 37, 133, 0.5);
+}
+
+.cursor-ring.neon-theme {
+    border-color: rgba(76, 201, 240, 0.5);
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.3);
+}
+
+/* Interaction states */
+.cursor-dot.cursor-clicked {
+    transform: translate(-50%, -50%) scale(0.7);
+}
+
+.cursor-ring.cursor-clicked {
+    transform: translate(-50%, -50%) scale(0.8);
+}
+
+.cursor-dot.cursor-link-hovered {
+    transform: translate(-50%, -50%) scale(1.5);
+}
+
+.cursor-ring.cursor-link-hovered {
+    width: 30px;
+    height: 30px;
+    transform: translate(-50%, -50%) scale(1.4);
+}
+
+.cursor-dot.dark-theme.cursor-link-hovered {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.cursor-ring.dark-theme.cursor-link-hovered {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.cursor-dot.light-theme.cursor-link-hovered {
+    background-color: rgba(65, 105, 225, 1);
+}
+
+.cursor-ring.light-theme.cursor-link-hovered {
+    border-color: rgba(65, 105, 225, 0.5);
+}
+
+.cursor-dot.neon-theme.cursor-link-hovered {
+    background-color: rgba(247, 37, 133, 1);
+    box-shadow: 0 0 15px rgba(247, 37, 133, 0.7);
+}
+
+.cursor-ring.neon-theme.cursor-link-hovered {
+    border-color: rgba(76, 201, 240, 0.7);
+    box-shadow: 0 0 20px rgba(76, 201, 240, 0.5);
+}
+
+/* Hide default cursor when custom cursor is active */
+html:has(.cursor-dot:not([style*="display: none"])) {
+    cursor: none;
+}
+
+html:has(.cursor-dot:not([style*="display: none"])) a,
+html:has(.cursor-dot:not([style*="display: none"])) button,
+html:has(.cursor-dot:not([style*="display: none"])) .navbar-link,
+html:has(.cursor-dot:not([style*="display: none"])) .social-icon-link {
+    cursor: none;
+}
+
+/* Media query to disable custom cursor on touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .cursor-dot,
+    .cursor-ring {
+        display: none;
+    }
+}

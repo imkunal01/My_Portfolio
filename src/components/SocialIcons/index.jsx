@@ -2,7 +2,7 @@ import React from 'react';
 
 const SocialIcons = () => {
     return (
-        <div className="social-icons-container flex gap-4">
+        <div className="social-icons-container">
             <a
                 href="https://instagram.com"
                 className="social-icon-link"

@@ -1,0 +1,87 @@
+/* PageTransition Component Styles */
+.page-transition {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.page-transition.fadeIn {
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+.page-transition.fadeOut {
+    animation: fadeOut 0.3s ease-in-out forwards;
+}
+
+/* Custom animations for page transitions */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+/* Theme-specific transition effects */
+.dark-theme .page-transition.fadeIn {
+    animation-name: fadeInDark;
+}
+
+.light-theme .page-transition.fadeIn {
+    animation-name: fadeInLight;
+}
+
+.neon-theme .page-transition.fadeIn {
+    animation-name: fadeInNeon;
+}
+
+@keyframes fadeInDark {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+        filter: blur(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes fadeInLight {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fadeInNeon {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+        filter: brightness(1.5) contrast(1.2);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: brightness(1) contrast(1);
+    }
+}
