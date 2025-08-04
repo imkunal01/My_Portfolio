@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from
 import Navbar from './components/Navbar';
 import Particles from './components/Particles/Particles.jsx'
 import ScrollToTop from './components/ScrollToTop';
-import TypingAnimation from './components/TypingAnimation/index.jsx'
+// import TypingAnimation from './components/TypingAnimation/index.jsx'
 // import PageTransition from './components/PageTransition';
 import CustomCursor from './components/CustomCursor';
 // Pages

@@ -6,7 +6,7 @@ const Works = () => {
   const projects = [
     {
       id: 1,
-      title: "Portfolio Website",
+      title: "Scenoxis A Agency Portfolio Website",
       description:
       "A responsive portfolio website built with React and modern CSS techniques.",
       technologies: ["React", "CSS", "Responsive Design"],
@@ -16,13 +16,13 @@ const Works = () => {
     },
     {
       id: 2,
-      title: "Agriglance Crop Estimation App",
+      title: "McDonald's India Clone",
       description:
-        "A full-stack e-commerce application with user authentication and payment integration.",
+        "A full stack Application replicating McD india's outlet website",
       technologies: ["React", "Node.js", "Express", "MongoDB"],
-      link: "agriglance.rf.gd",
+      link: "https://petv-88-g8qr.vercel.app/",
       image:
-        "https://images.unsplash.com/photo-1557821552-17105176677c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80",
+        "",
     },
     {
       id: 3,
