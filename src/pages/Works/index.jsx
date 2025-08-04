@@ -10,7 +10,7 @@ const Works = () => {
       description:
       "A responsive portfolio website built with React and modern CSS techniques.",
       technologies: ["React", "CSS", "Responsive Design"],
-      link: " ",
+      link: " https://scenoxis-collective.vercel.app/",
       image:
         "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
     },
@@ -27,6 +27,23 @@ const Works = () => {
     {
       id: 3,
       title: "Kaagaj AI",
+      description:
+        "An application that Tracks your mood by analysing your text patterns and suggests you a better soln for your problems ",
+      technologies: [
+        "html",
+        "JavaScript",
+        "API Integration",
+        "CSS",
+        "Responsive Design",
+        "php",
+      ],
+      link: "https://agriglance.ct.ws/",
+      image:
+        "",
+    },
+    {
+      id: 4,
+      title: "AgriGlance",
       description:
         "An application that predicts the expected yield by doing some precalculations and considering different factors.",
       technologies: [
