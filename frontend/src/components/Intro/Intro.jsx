@@ -10,7 +10,7 @@ const Intro = ({ onFinish }) => {
     const bgTimer = setTimeout(() => setStage("hide-bg"), 3200);
 
     // trigger onFinish AFTER background fade finishes (4s total here)
-    const finishTimer = setTimeout(() => onFinish(), 7200);
+    const finishTimer = setTimeout(() => onFinish, 7200);
 
     return () => {
       clearTimeout(textTimer);
