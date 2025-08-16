@@ -8,7 +8,8 @@ import ScrollToTop from './components/ScrollToTop';
 // import TypingAnimation from './components/TypingAnimation/index.jsx'
 // import PageTransition from './components/PageTransition';
 import CustomCursor from './components/CustomCursor';
-import Loading from './components/LoadingSpinner/index.jsx'
+// import Loading from './components/LoadingSpinner/index.jsx'
+import Intro from './components/Intro/Intro.jsx'
 // Pages
 import Home from './pages/Home';
 import About from './pages/About';
@@ -32,18 +33,19 @@ const App = () => {
         document.body.className = `${theme}-theme`;
     }, [theme]);
 
-    useEffect(() => {
-        // Simulate loading (replace with real loading logic if needed)
-        const timer = setTimeout(() => setLoading(false), 1500);
-        return () => clearTimeout(timer);
-    }, []);
+    // useEffect(() => {
+    //     // Simulate loading (replace with real loading logic if needed)
+    //     const timer = setTimeout(() => setLoading(false), 1500);
+    //     return () => clearTimeout(timer);
+    // }, []);
 
-    if (loading) {
-        return <Loading />;
-    }
+    // if (loading) {
+    //     return <Loading />;
+    // }
 
     return (
         <Router>
+            <Intro/>
             <div className={`app-container ${theme}-theme`}>
                 <Routes>
                     <Route path="/*" element={

@@ -1,29 +1,33 @@
 // src/components/Intro.js
-import React, { useEffect, useState } from 'react';
-import './Intro.css'; // Import the styles
+import React, { useEffect, useState } from "react";
+import "./Intro.css";
 
 const Intro = ({ onFinish }) => {
-  const [fadeOut, setFadeOut] = useState(false);
+  const [stage, setStage] = useState("show-text"); // "show-text" → "hide-text" → "hide-bg"
 
   useEffect(() => {
-    const showTime = setTimeout(() => {
-      setFadeOut(true); // Start fading out after 2.5s
-    }, 2500);
+    const textTimer = setTimeout(() => setStage("hide-text"), 2200);
+    const bgTimer = setTimeout(() => setStage("hide-bg"), 3200);
 
-    const removeTime = setTimeout(() => {
-      onFinish(); // Remove intro after 3.5s
-    }, 3500);
+    // trigger onFinish AFTER background fade finishes (4s total here)
+    const finishTimer = setTimeout(() => onFinish(), 7200);
 
     return () => {
-      clearTimeout(showTime);
-      clearTimeout(removeTime);
+      clearTimeout(textTimer);
+      clearTimeout(bgTimer);
+      clearTimeout(finishTimer);
     };
   }, [onFinish]);
 
   return (
-    <div className={`intro-overlay ${fadeOut ? 'fade-out' : ''}`}>
-      <h1 className="intro-name">Kunal D</h1>
-    </div>
+    <div className={`intro-overlay ${stage === "hide-bg" ? "fade-out" : ""}`}>
+  {stage !== "hide-bg" && (
+    <h1 className={`intro-name ${stage === "hide-text" ? "fade-out-text" : ""}`}>
+      Ohh Hii
+    </h1>
+  )}
+</div>
+
   );
 };
 
