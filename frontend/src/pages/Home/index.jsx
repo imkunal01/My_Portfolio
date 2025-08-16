@@ -1,4 +1,3 @@
-import React from 'react';
 import SocialIcons from '../../components/SocialIcons';
 import DecorativeElements from '../../components/DecorativeElements';
 import kunnucut from '../../assets/kunnucut.png';
@@ -9,7 +8,7 @@ const Home = () => {
             {/* Left Section - Image Card */}
             <div className="image-card-container">
                 <div className="image-card-wrapper">
-                    <img src= {kunnucut} alt="kunnucut" />
+                    <img src= {kunnucut} alt="Profile_Image" />
                 </div>
             </div>
 

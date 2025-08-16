@@ -16,35 +16,30 @@ router.post("/", async (req, res) => {
 
     // Gemini API call (updated)
     const response = await axios.post(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent",
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         contents: [
           {
             parts: [
               {
-                text: `Respond like Kunal. Message: "${message}". Project Type: ${projectType}. Quote: ${quote}`
-              }
-            ]
-          }
-        ]
+                text: `Respond like Kunal. Message: "${message}". Project Type: ${projectType}. Quote: ${quote}`,
+              },
+            ],
+          },
+        ],
       },
-      {
-        headers: {
-          "Authorization": `Bearer ${process.env.GEMINI_API_KEY}`,
-          "Content-Type": "application/json"
-        }
-      }
+      { headers: { "Content-Type": "application/json" } }
     );
 
     const botReply =
-      response.data.candidates?.[0]?.content?.parts?.[0]?.text || "No reply from Gemini";
+      response.data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "No reply from Gemini";
 
     // Save quote in lead
     lead.quote = quote;
     await lead.save();
 
     res.json({ reply: botReply, quote });
-
   } catch (err) {
     console.error("🚨 Gemini API Error:", err.response?.data || err.message);
     res.status(500).json({ error: "Something went wrong" });

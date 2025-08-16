@@ -17,10 +17,10 @@ mongoose.connect(process.env.MONGO_URI, {
   .catch(err => console.error("MongoDB connection error:", err));
 
 
-//check backend workings
-app.use('/',(req,res)=>{
-  res.send("Hello main chintu");
-})
+// //check backend workings
+// app.use('/',(req,res)=>{
+//   res.send("Apki baat Chintu se ho rhi hai...");
+// })
 // Routes
 app.use("/chat", chatRoute);
 
