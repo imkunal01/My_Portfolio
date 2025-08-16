@@ -16,6 +16,11 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log("MongoDB connected"))
   .catch(err => console.error("MongoDB connection error:", err));
 
+
+//check backend workings
+app.use('/',(req,res)=>{
+  res.send("Hello main chintu");
+})
 // Routes
 app.use("/chat", chatRoute);
 
