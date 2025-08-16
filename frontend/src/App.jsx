@@ -14,8 +14,9 @@ import Intro from './components/Intro/Intro.jsx'
 import Home from './pages/Home';
 import About from './pages/About';
 import Works from './pages/Works';
-import ChintuAi from './pages/ChintuAi/Chintu.jsx'
+import ChintuAi from '../src/pages/ChintuAi/Chintu.jsx'
 // import Chat from './pages/Chat';
+
 
 const App = () => {
     const [theme, setTheme] = useState('dark');
@@ -161,8 +162,11 @@ const AppContent = ({ theme, toggleTheme, activeTab, setActiveTab }) => {
                     <Works />
                 </section>
                 <section id="works" className="page-section">
-                    <ChintuAi/>
+                    <ChintuAi />
                 </section>
+                
+                
+                
             </main>
         </>
     );
