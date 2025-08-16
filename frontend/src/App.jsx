@@ -161,7 +161,7 @@ const AppContent = ({ theme, toggleTheme, activeTab, setActiveTab }) => {
                 <section id="works" className="page-section">
                     <Works />
                 </section>
-                <section id="works" className="page-section">
+                <section id="chat" className="page-section">
                     <ChintuAi />
                 </section>
                 

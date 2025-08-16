@@ -11,16 +11,22 @@ router.post("/", async (req, res) => {
     const lead = new Lead({ name, email, projectType, message });
     await lead.save();
 
-    // Placeholder for dynamic quote calculation (basic example)
-    let quote = "₹10,000"; // You can calculate based on projectType or other factors
+    // Basic quote calculation
+    let quote = "₹10,000";
 
-    // Gemini API call
+    // Gemini API call (updated)
     const response = await axios.post(
-      "https://api.generativeai.google/v1beta2/models/text-bison-001:generateMessage",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent",
       {
-        prompt: { text: `Respond like Kunal. Message: "${message}". Project Type: ${projectType}. Quote: ${quote}` },
-        temperature: 0.7,
-        maxOutputTokens: 200
+        contents: [
+          {
+            parts: [
+              {
+                text: `Respond like Kunal. Message: "${message}". Project Type: ${projectType}. Quote: ${quote}`
+              }
+            ]
+          }
+        ]
       },
       {
         headers: {
@@ -30,16 +36,17 @@ router.post("/", async (req, res) => {
       }
     );
 
-    const botReply = response.data.candidates[0].content;
+    const botReply =
+      response.data.candidates?.[0]?.content?.parts?.[0]?.text || "No reply from Gemini";
 
-    // Update lead with bot reply as quote info
+    // Save quote in lead
     lead.quote = quote;
     await lead.save();
 
     res.json({ reply: botReply, quote });
 
   } catch (err) {
-    console.error(err);
+    console.error("🚨 Gemini API Error:", err.response?.data || err.message);
     res.status(500).json({ error: "Something went wrong" });
   }
 });
