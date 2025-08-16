@@ -23,7 +23,7 @@ const Intro = ({ onFinish }) => {
     <div className={`intro-overlay ${stage === "hide-bg" ? "fade-out" : ""}`}>
   {stage !== "hide-bg" && (
     <h1 className={`intro-name ${stage === "hide-text" ? "fade-out-text" : ""}`}>
-      Ohh Hii
+      Being eager Being me
     </h1>
   )}
 </div>
