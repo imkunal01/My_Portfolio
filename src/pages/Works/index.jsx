@@ -1,7 +1,9 @@
 import React from "react";
 import SocialIcons from "../../components/SocialIcons";
 import DecorativeElements from "../../components/DecorativeElements";
-import kaagaj_ai from '../../assets/images/kaagaz_ai.png';
+import kaagaj_ai from '../../assets/images/kagaj.png';
+import agriglance from '../../assets/images/farmers.png';
+import McD from '../../assets/images/mcd.png';
 const Works = () => {
   const projects = [
     {
@@ -22,7 +24,7 @@ const Works = () => {
       technologies: ["React", "Node.js", "Express", "MongoDB"],
       link: "https://petv-88-g8qr.vercel.app/",
       image:
-        "",
+        McD,
     },
     {
       id: 3,
@@ -38,8 +40,7 @@ const Works = () => {
         "php",
       ],
       link: "https://agriglance.ct.ws/",
-      image:
-        "",
+      image:kaagaj_ai ,
     },
     {
       id: 4,
@@ -56,7 +57,7 @@ const Works = () => {
       ],
       link: "https://agriglance.ct.ws/",
       image:
-        kaagaj_ai,
+        agriglance,
     },
   ];
 
