@@ -4,6 +4,9 @@ import DecorativeElements from "../../components/DecorativeElements";
 import kaagaj_ai from '../../assets/images/kagaj.png';
 import agriglance from '../../assets/images/farmers.png';
 import McD from '../../assets/images/mcd.png';
+import Algopic from '../../assets/images/algo.png'
+import FloodImg from '../../assets/images/flood.jpg'
+import Scenoxis from '../../assets/images/sceno.png'
 const Works = () => {
   const projects = [
     {
@@ -14,7 +17,7 @@ const Works = () => {
       technologies: ["React", "CSS", "Responsive Design"],
       link: " https://scenoxis-collective.vercel.app/",
       image:
-        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+        Scenoxis,
     },
     {
       id: 2,
@@ -58,7 +61,38 @@ const Works = () => {
       link: "https://agriglance.ct.ws/",
       image:
         agriglance,
-    },
+    }
+    ,{
+      id: 5,
+      title: "AlgoVisualiser",
+      description:
+        "An application that Shows visual represation of Data Non linear Data Structures .",
+      technologies: [
+        "html",
+        "JavaScript",
+        "API Integration",
+        "CSS",
+        "Responsive Design",
+        
+      ],
+      link: "https://imkunal01.github.io/AlgoGlimpse/",
+      image: Algopic,
+    }
+    ,{
+      id: 6,
+      title: "Flood Mangment Static Website",
+      description:
+        "A website providing information about how to prepare when flood like natural disaster occurs some.{The very first website that i have created in my first sem of collage}",
+      technologies: [
+        "html",
+        "JavaScript",
+        "CSS",
+        "Responsive Design",
+        
+      ],
+      link: "https://imkunal01.github.io/FloodManagment/",
+      image: FloodImg,
+    }
   ];
 
   return (
