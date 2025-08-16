@@ -8,6 +8,7 @@ import ScrollToTop from './components/ScrollToTop';
 // import TypingAnimation from './components/TypingAnimation/index.jsx'
 // import PageTransition from './components/PageTransition';
 import CustomCursor from './components/CustomCursor';
+import Loading from './components/LoadingSpinner/index.jsx'
 // Pages
 import Home from './pages/Home';
 import About from './pages/About';
@@ -17,6 +18,7 @@ import Works from './pages/Works';
 const App = () => {
     const [theme, setTheme] = useState('dark');
     const [activeTab, setActiveTab] = useState('home');
+    const [loading, setLoading] = useState(true);
 
     const toggleTheme = () => {
         setTheme(prevTheme => {
@@ -29,6 +31,16 @@ const App = () => {
     useEffect(() => {
         document.body.className = `${theme}-theme`;
     }, [theme]);
+
+    useEffect(() => {
+        // Simulate loading (replace with real loading logic if needed)
+        const timer = setTimeout(() => setLoading(false), 1500);
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <Router>
@@ -135,28 +147,19 @@ const AppContent = ({ theme, toggleTheme, activeTab, setActiveTab }) => {
             
             <ScrollToTop />
             
-                
-            
-                <main className="page-content">
-                    <section id="home" className="page-section">
-                        
-                        <Home />
-                    </section>
-                    
-                    <section id="about" className="page-section">
-                        <About />
-                    </section>
-                    
-                    <section id="works" className="page-section">
-                        <Works />
-                    </section>
-                    
-                    
-                </main>
-          
+            <main className="page-content">
+                <section id="home" className="page-section">
+                    <Home />
+                </section>
+                <section id="about" className="page-section">
+                    <About />
+                </section>
+                <section id="works" className="page-section">
+                    <Works />
+                </section>
+            </main>
         </>
     );
 };
-
 
 export default App;

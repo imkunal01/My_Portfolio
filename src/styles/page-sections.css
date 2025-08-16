@@ -55,15 +55,20 @@
         padding: 100px 40px 60px;
     }
 }
+@media (min-width: 768px) {
+    .page-content {
+        width: 90%;
+    }
+}
 
 @media (min-width: 1024px) {
     .page-section {
-        padding: 120px 60px 80px;
+        padding: 0px 0px 0px;
     }
 }
 
 @media (min-width: 1280px) {
     .page-section {
-        padding: 140px 80px 100px;
+        padding: 0px 0px 0px;
     }
 }
