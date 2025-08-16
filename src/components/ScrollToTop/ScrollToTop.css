@@ -5,35 +5,38 @@
     right: 30px;
     z-index: 99;
     opacity: 0;
-    visibility: hidden;
+    
     transition: all 0.4s ease;
-    transform: translateY(20px);
+    transform: translateY(5px);
 }
 
 .scroll-to-top.visible {
     opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+   
 }
 
 .scroll-button {
-    width: 45px;
-    height: 45px;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    padding: 10px;
     border-radius: 50%;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    border: none;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    transition: background 0.3s ease;
 }
 
 .scroll-button:hover {
-    transform: translateY(-5px);
+    background: rgba(0, 0, 0, 0.8);
 }
-
+.scroll-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    filter: brightness(0) invert(1); /* makes black PNG look white */
+    transition: transform 0.3s ease;
+}
 /* Theme-specific styles */
 .dark-theme .scroll-button {
     background-color: rgba(30, 30, 30, 0.5);
@@ -49,10 +52,9 @@
 }
 
 .light-theme .scroll-button {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgb(0, 0, 0);
     color: var(--accent-color);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px rgba(253, 253, 253, 0.1);
 }
 
 .neon-theme .scroll-button {
@@ -69,9 +71,9 @@
 }
 
 .light-theme .scroll-button:hover {
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(109, 107, 107, 0.85);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    border-color: rgba(255, 255, 255, 0.8);
+
 }
 
 .neon-theme .scroll-button {

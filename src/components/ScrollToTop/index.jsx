@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ScrollToTop.css';
+import upward from '../../assets/images/upward.png';
 
 const ScrollToTop = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -13,7 +14,7 @@ const ScrollToTop = () => {
         }
     };
 
-    // Set the top scroll to 0
+    // Scroll to top smoothly
     const scrollToTop = () => {
         window.scrollTo({
             top: 0,
@@ -28,24 +29,16 @@ const ScrollToTop = () => {
 
     return (
         <div className={`scroll-to-top ${isVisible ? 'visible' : ''}`}>
-            <button 
-                onClick={scrollToTop} 
+            <button
+                onClick={scrollToTop}
                 aria-label="Scroll to top"
                 className="scroll-button animate-pulse"
             >
-                <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    width="24" 
-                    height="24" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                >
-                    <polyline points="18 15 12 9 6 15"></polyline>
-                </svg>
+                <img
+                    src={upward}
+                    alt="Scroll to top"
+                    className="scroll-icon"
+                />
             </button>
         </div>
     );

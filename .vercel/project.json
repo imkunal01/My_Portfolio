@@ -1,1 +1,9 @@
-{"projectName":"trae_figdesign_wf3k"}
+
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
