@@ -4,7 +4,7 @@ const SocialIcons = () => {
     return (
         <div className="social-icons-container">
             <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/im.kunal01/"
                 className="social-icon-link"
                 title="Instagram"
                 target="_blank"
@@ -19,7 +19,7 @@ const SocialIcons = () => {
             </a>
 
             <a
-                href="https://reddit.com"
+                href="https://www.reddit.com/user/RemarkableJury4999/"
                 className="social-icon-link"
                 title="Reddit"
                 target="_blank"
@@ -35,7 +35,7 @@ const SocialIcons = () => {
             </a>
 
             <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/kunal-dhangar-kd01/"
                 className="social-icon-link"
                 title="LinkedIn"
                 target="_blank"
