@@ -1,108 +1,141 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./Chintu.css";
 
 const Chintu = () => {
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     projectType: "",
-    message: ""
   });
 
-  const [botReply, setBotReply] = useState("");
-  const [quote, setQuote] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Handle input changes
+  // ✅ use your Render deployment URL
+  const API_BASE =import.meta.env.VITE_BACKEND_URL;
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
-  // Submit form
-  const handleSubmit = async (e) => {
+  const handleInfoSubmit = (e) => {
     e.preventDefault();
+    setStep(2);
+
+    setMessages([
+      {
+        sender: "bot",
+        text: `👋 Hi ${formData.name}! Thanks for sharing your info. Let's talk about your project (${formData.projectType}).`,
+      },
+    ]);
+  };
+
+  const handleChatSubmit = async (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const newMessage = { sender: "user", text: input };
+    setMessages((prev) => [...prev, newMessage]);
+    setInput("");
     setLoading(true);
-    setBotReply("");
-    setQuote("");
 
     try {
-      const res = await axios.post("http://localhost:5000/chat", formData);
-      setBotReply(res.data.reply);
-      setQuote(res.data.quote);
+      const res = await axios.post(`${API_BASE}/chat`, {
+        ...formData,
+        message: input,
+      });
+
+      const botMessage = {
+        sender: "bot",
+        text: res.data.reply || "⚠️ No reply from server.",
+      };
+      setMessages((prev) => [...prev, botMessage]);
+
+      if (res.data.quote) {
+        setMessages((prev) => [
+          ...prev,
+          { sender: "bot", text: `💰 Estimated Quote: ${res.data.quote}` },
+        ]);
+      }
     } catch (err) {
       console.error(err);
-      setBotReply("⚠️ Server se reply nahi aaya, check backend console.");
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: "⚠️ Server error, check backend." },
+      ]);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: "500px", margin: "auto", padding: "20px" }}>
-      <h2>💬 Talk to Chintu Bot</h2>
+    <div className="chintu-chat">
+      <h2 className="chintu-header">Talk to Chintu</h2>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Your Name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          style={{ width: "100%", marginBottom: "10px", padding: "10px" }}
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Your Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          style={{ width: "100%", marginBottom: "10px", padding: "10px" }}
-        />
-        <input
-          type="text"
-          name="projectType"
-          placeholder="Project Type (e.g. Website, App)"
-          value={formData.projectType}
-          onChange={handleChange}
-          required
-          style={{ width: "100%", marginBottom: "10px", padding: "10px" }}
-        />
-        <textarea
-          name="message"
-          placeholder="Your Message"
-          value={formData.message}
-          onChange={handleChange}
-          required
-          style={{ width: "100%", marginBottom: "10px", padding: "10px" }}
-        />
+      {step === 1 ? (
+        <form onSubmit={handleInfoSubmit} className="chintu-form">
+          <input
+            type="text"
+            name="name"
+            placeholder="Your Name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Your Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="projectType"
+            placeholder="Project Type (e.g. Website, App)"
+            value={formData.projectType}
+            onChange={handleChange}
+            required
+          />
+          <button type="submit">Start Chat</button>
+        </form>
+      ) : (
+        <>
+          <div className="chintu-messages">
+            {messages.map((msg, i) => (
+              <div
+                key={i}
+                className={`chintu-message ${
+                  msg.sender === "user" ? "chintu-user" : "chintu-bot"
+                }`}
+              >
+                {msg.text}
+              </div>
+            ))}
+            {loading && (
+              <div className="chintu-message chintu-bot">⏳ Typing...</div>
+            )}
+          </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: "100%",
-            padding: "10px",
-            background: "#007bff",
-            color: "white",
-            border: "none",
-            cursor: "pointer"
-          }}
-        >
-          {loading ? "Sending..." : "Send to Chintu"}
-        </button>
-      </form>
-
-      {botReply && (
-        <div style={{ marginTop: "20px", padding: "15px", background: "#f4f4f4" }}>
-          <h3>🤖 Bot Reply</h3>
-          <p>{botReply}</p>
-          <h4>💰 Estimated Quote: {quote}</h4>
-        </div>
+          <form onSubmit={handleChatSubmit} className="chintu-input-area">
+            <input
+              type="text"
+              placeholder="Type your message..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              disabled={loading}
+            />
+            <button type="submit" disabled={loading}>
+              Send
+            </button>
+          </form>
+        </>
       )}
     </div>
   );
