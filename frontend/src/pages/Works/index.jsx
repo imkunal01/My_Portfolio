@@ -14,8 +14,8 @@ const Works = () => {
       title: "Scenoxis A Agency Portfolio Website",
       description:
       "A responsive portfolio website built with React and modern CSS techniques.",
-      technologies: ["React", "CSS", "Responsive Design"],
-      link: " https://scenoxis-collective.vercel.app/",
+      technologies: ["HTML%", "CSS","JS", "Responsive Design"],
+      link: "https://imkunal01.github.io/Scenoxis/",
       image:
         Scenoxis,
     },
@@ -47,18 +47,11 @@ const Works = () => {
     },
     {
       id: 4,
-      title: "AgriGlance",
+      title: "Inovxis- A Free and Easy Invoice Generator Tool",
       description:
-        "An application that predicts the expected yield by doing some precalculations and considering different factors.",
-      technologies: [
-        "html",
-        "JavaScript",
-        "API Integration",
-        "CSS",
-        "Responsive Design",
-        "php",
-      ],
-      link: "https://agriglance.ct.ws/",
+        "This Tool generates invoice for you within very easy steps just fill out the necessary details and just download it.",
+      technologies: ["React", "Node.js", "Express", "MongoDB"],
+      link: "https://invoxis-invoice-generator.vercel.app/",
       image:
         agriglance,
     }
