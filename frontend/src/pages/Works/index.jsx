@@ -17,7 +17,7 @@ const Works = () => {
       technologies: ["HTML%", "CSS","JS", "Responsive Design"],
       link: "https://imkunal01.github.io/Scenoxis/",
       image:
-        Scenoxis,
+        Scenoxis, 
     },
     {
       id: 2,
@@ -51,7 +51,7 @@ const Works = () => {
       description:
         "This Tool generates invoice for you within very easy steps just fill out the necessary details and just download it.",
       technologies: ["React", "Node.js", "Express", "MongoDB"],
-      link: "https://invoxis-invoice-generator.vercel.app/",
+      link: "https://invoxis.vercel.app/",
       image:
         agriglance,
     }
