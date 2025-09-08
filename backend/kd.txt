@@ -1,1 +1,252 @@
 AIzaSyCS0C-qnKdYAz1AfGUFo30H69yORTd7ZYw
+
+
+lead.js- 
+const mongoose = require("mongoose");
+
+const leadSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  projectType: String,
+  message: String,
+  quote: String,
+  timestamp: { type: Date, default: Date.now }
+});
+
+module.exports = mongoose.model("Lead", leadSchema);
+
+
+
+index.js
+
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
+
+const chatRoute = require("./routes/chat");
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch(err => console.error("❌ MongoDB connection error:", err));
+
+// Health check route
+app.get("/checkbackend", (req, res) => {
+  res.send("Backend is working fine 🚀");
+});
+
+// Chat route
+app.use("/chat", chatRoute);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`⚡ Server running on port ${PORT}`));
+
+
+chats.js
+const express = require("express");
+const router = express.Router();
+const axios = require("axios");
+const Lead = require("../models/Lead");
+
+router.post("/", async (req, res) => {
+  const { name, email, message, projectType } = req.body;
+
+  try {
+    // Save lead to MongoDB
+    const lead = new Lead({ name, email, projectType, message });
+
+    // Basic quote calculation
+    let quote = "₹10,000";
+
+    // Gemini API call
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        contents: [
+          {
+            parts: [
+              {
+                text: `Respond like Kunal. Message: "${message}". Project Type: ${projectType}. Quote: ${quote}`,
+              },
+            ],
+          },
+        ],
+      },
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    const botReply =
+      response.data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "No reply from Gemini 🤖";
+
+    // Save quote in lead
+    lead.quote = quote;
+    await lead.save();
+
+    res.json({ reply: botReply, quote });
+  } catch (err) {
+    console.error("🚨 Gemini API Error:", err.response?.data || err.message);
+    res.status(500).json({ error: "Something went wrong with Gemini or Mongo" });
+  }
+});
+
+module.exports = router;
+
+
+
+
+frontend: -- 
+
+
+import React, { useState } from "react";
+import axios from "axios";
+import "./Chintu.css";
+
+const Chintu = () => {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    projectType: "",
+  });
+
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // ✅ use your Render deployment URL
+  const API_BASE =import.meta.env.VITE_BACKEND_URL;
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleInfoSubmit = (e) => {
+    e.preventDefault();
+    setStep(2);
+
+    setMessages([
+      {
+        sender: "bot",
+        text: `👋 Hi ${formData.name}! Thanks for sharing your info. Let's talk about your project (${formData.projectType}).`,
+      },
+    ]);
+  };
+
+  const handleChatSubmit = async (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const newMessage = { sender: "user", text: input };
+    setMessages((prev) => [...prev, newMessage]);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const res = await axios.post(`${API_BASE}/chat`, {
+        ...formData,
+        message: input,
+      });
+
+      const botMessage = {
+        sender: "bot",
+        text: res.data.reply || "⚠️ No reply from server.",
+      };
+      setMessages((prev) => [...prev, botMessage]);
+
+      if (res.data.quote) {
+        setMessages((prev) => [
+          ...prev,
+          { sender: "bot", text: `💰 Estimated Quote: ${res.data.quote}` },
+        ]);
+      }
+    } catch (err) {
+      console.error(err);
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: "⚠️ Server error, check backend." },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="chintu-chat">
+      <h2 className="chintu-header">Talk to Me</h2>
+
+      {step === 1 ? (
+        <form onSubmit={handleInfoSubmit} className="chintu-form">
+          <input
+            type="text"
+            name="name"
+            placeholder="Your Name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Your Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="projectType"
+            placeholder="Project Type (e.g. Website, App)"
+            value={formData.projectType}
+            onChange={handleChange}
+            required
+          />
+          <button type="submit">Start Chat</button>
+        </form>
+      ) : (
+        <>
+          <div className="chintu-messages">
+            {messages.map((msg, i) => (
+              <div
+                key={i}
+                className={`chintu-message ${
+                  msg.sender === "user" ? "chintu-user" : "chintu-bot"
+                }`}
+              >
+                {msg.text}
+              </div>
+            ))}
+            {loading && (
+              <div className="chintu-message chintu-bot">⏳ Typing...</div>
+            )}
+          </div>
+
+          <form onSubmit={handleChatSubmit} className="chintu-input-area">
+            <input
+              type="text"
+              placeholder="Type your message..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              disabled={loading}
+            />
+            <button type="submit" disabled={loading}>
+              Send
+            </button>
+          </form>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default Chintu;
