@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./Chintu.css";
 
@@ -13,9 +13,14 @@ const Chintu = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [feedback, setFeedback] = useState(null);
 
-  // ✅ use your Render deployment URL
-  const API_BASE =import.meta.env.VITE_BACKEND_URL;
+  const chatEndRef = useRef(null);
+
+  // ✅ your Render deployment URL
+  const API_BASE = import.meta.env.VITE_BACKEND_URL;
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -54,12 +59,16 @@ const Chintu = () => {
         sender: "bot",
         text: res.data.reply || "⚠️ No reply from server.",
       };
+
       setMessages((prev) => [...prev, botMessage]);
 
       if (res.data.quote) {
         setMessages((prev) => [
           ...prev,
-          { sender: "bot", text: `💰 Estimated Quote: ${res.data.quote}` },
+          {
+            sender: "bot",
+            text: `💰 Estimated Quote: ${res.data.quote}\n📌 Includes design, development & basic support.`,
+          },
         ]);
       }
     } catch (err) {
@@ -73,9 +82,22 @@ const Chintu = () => {
     }
   };
 
+  // Auto-scroll chat
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
+
   return (
-    <div className="chintu-chat">
-      <h2 className="chintu-header">Talk to Me</h2>
+    <div className={`chintu-chat ${darkMode ? "dark" : ""}`}>
+      <div className="chintu-header">
+        <h2>Talk to Me</h2>
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="dark-toggle"
+        >
+          {darkMode ? "☀️" : "🌙"}
+        </button>
+      </div>
 
       {step === 1 ? (
         <form onSubmit={handleInfoSubmit} className="chintu-form">
@@ -95,6 +117,22 @@ const Chintu = () => {
             onChange={handleChange}
             required
           />
+          <div className="quick-replies">
+            {["Website", "App", "Ecommerce", "AI"].map((type) => (
+              <button
+                type="button"
+                key={type}
+                onClick={() =>
+                  setFormData((prev) => ({ ...prev, projectType: type }))
+                }
+                className={`quick-btn ${
+                  formData.projectType === type ? "active" : ""
+                }`}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
           <input
             type="text"
             name="projectType"
@@ -119,22 +157,47 @@ const Chintu = () => {
               </div>
             ))}
             {loading && (
-              <div className="chintu-message chintu-bot">⏳ Typing...</div>
+              <div className="chintu-message chintu-bot typing">
+                ⏳ Typing...
+              </div>
             )}
+            <div ref={chatEndRef} />
           </div>
 
-          <form onSubmit={handleChatSubmit} className="chintu-input-area">
-            <input
-              type="text"
-              placeholder="Type your message..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              disabled={loading}
-            />
-            <button type="submit" disabled={loading}>
-              Send
-            </button>
-          </form>
+          {feedback === null ? (
+            <form onSubmit={handleChatSubmit} className="chintu-input-area">
+              <input
+                type="text"
+                placeholder="Type your message..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                disabled={loading}
+              />
+              <button type="submit" disabled={loading}>
+                Send
+              </button>
+            </form>
+          ) : (
+            <div className="feedback-msg">
+              Thanks for your feedback: {feedback} ⭐
+            </div>
+          )}
+
+          {/* Feedback stars */}
+          {messages.length > 4 && feedback === null && (
+            <div className="feedback-stars">
+              <p>Was this helpful?</p>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  onClick={() => setFeedback(star)}
+                  className="star"
+                >
+                  ⭐
+                </span>
+              ))}
+            </div>
+          )}
         </>
       )}
     </div>
