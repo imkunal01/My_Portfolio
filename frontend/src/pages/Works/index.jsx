@@ -2,7 +2,7 @@ import React from "react";
 import SocialIcons from "../../components/SocialIcons";
 import DecorativeElements from "../../components/DecorativeElements";
 import kaagaj_ai from '../../assets/images/kagaj.png';
-import agriglance from '../../assets/images/farmers.png';
+import Invo from '../../assets/images/invoxis.png';
 import McD from '../../assets/images/mcd.png';
 import Algopic from '../../assets/images/algo.png'
 import FloodImg from '../../assets/images/flood.jpg'
@@ -53,7 +53,7 @@ const Works = () => {
       technologies: ["React", "Node.js", "Express", "MongoDB"],
       link: "https://invoxis.vercel.app/",
       image:
-        agriglance,
+        Invo,
     }
     ,{
       id: 5,
