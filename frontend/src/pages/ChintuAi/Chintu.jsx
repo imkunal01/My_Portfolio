@@ -75,7 +75,7 @@ const Chintu = () => {
 
   return (
     <div className="chintu-chat">
-      <h2 className="chintu-header">Talk to Chintu</h2>
+      <h2 className="chintu-header">Talk to Me</h2>
 
       {step === 1 ? (
         <form onSubmit={handleInfoSubmit} className="chintu-form">

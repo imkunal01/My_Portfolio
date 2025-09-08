@@ -12,21 +12,18 @@ app.use(express.json());
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log("MongoDB connected"))
-  .catch(err => console.error("MongoDB connection error:", err));
+  useUnifiedTopology: true,
+})
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch(err => console.error("❌ MongoDB connection error:", err));
 
+// Health check route
+app.get("/checkbackend", (req, res) => {
+  res.send("Backend is working fine 🚀");
+});
 
-// //check backend workings
-// app.use('/',(req,res)=>{
-//   res.send("Apki baat Chintu se ho rhi hai...");
-// })
-// Routes
+// Chat route
 app.use("/chat", chatRoute);
 
-app.usr('/checkbackend',(req,res)=>{
-  res.send("Backend is working nigga")
-})
-
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`⚡ Server running on port ${PORT}`));
