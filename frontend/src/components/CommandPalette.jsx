@@ -208,7 +208,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.97 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed inset-0 z-[101] flex items-start justify-center pt-[15vh] px-4"
+            className="fixed inset-0 z-[101] flex items-start justify-center pt-[10vh] sm:pt-[15vh] px-4"
           >
             <div className="w-full max-w-[560px] rounded-2xl bg-[#111] border border-white/[0.08] shadow-2xl shadow-black/60 overflow-hidden">
               {/* Search input */}
@@ -236,7 +236,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
               </div>
 
               {/* Results */}
-              <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+              <div className="max-h-[50vh] sm:max-h-[400px] overflow-y-auto custom-scrollbar">
                 {Object.keys(grouped).length === 0 && (
                   <div className="px-5 py-10 text-center text-sm text-white/20">
                     No results found for "{query}"

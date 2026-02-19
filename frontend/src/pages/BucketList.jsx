@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
@@ -13,8 +13,12 @@ import {
   Music,
   Camera,
   Utensils,
+  Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const API = import.meta.env.VITE_BACKEND_URL || "";
 
 const categoryIcons = {
   travel: Plane,
@@ -36,84 +40,25 @@ const categoryColors = {
   food: "text-orange-400 bg-orange-400/10 border-orange-400/20",
 };
 
-// Placeholder bucket list items — will be managed via admin panel later
-const bucketListItems = [
-  {
-    id: 1,
-    title: "Visit Japan during cherry blossom season",
-    category: "travel",
-    completed: false,
-    description: "Experience hanami in Kyoto",
-  },
-  {
-    id: 2,
-    title: "Learn Rust programming language",
-    category: "tech",
-    completed: true,
-    description: "Build something meaningful with systems programming",
-  },
-  {
-    id: 3,
-    title: "Attend a major tech conference",
-    category: "tech",
-    completed: false,
-    description: "Network and learn from industry leaders",
-  },
-  {
-    id: 4,
-    title: "Trek to a Himalayan base camp",
-    category: "adventure",
-    completed: false,
-    description: "Push physical limits with an epic trek",
-  },
-  {
-    id: 5,
-    title: "Contribute to a major open source project",
-    category: "tech",
-    completed: true,
-    description: "Give back to the community that helped me grow",
-  },
-  {
-    id: 6,
-    title: "Learn to play guitar",
-    category: "music",
-    completed: false,
-    description: "Play at least one complete song",
-  },
-  {
-    id: 7,
-    title: "Read 50 books in a year",
-    category: "learning",
-    completed: false,
-    description: "Mix of fiction, non-fiction, and technical books",
-  },
-  {
-    id: 8,
-    title: "Do a solo backpacking trip",
-    category: "travel",
-    completed: false,
-    description: "Explore a country on my own",
-  },
-  {
-    id: 9,
-    title: "Try street photography",
-    category: "photography",
-    completed: true,
-    description: "Capture candid moments in urban settings",
-  },
-  {
-    id: 10,
-    title: "Cook a full-course Italian meal",
-    category: "food",
-    completed: false,
-    description: "From antipasto to dessert, all from scratch",
-  },
-];
-
 const BucketList = () => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState("all"); // all | completed | pending
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [bucketListItems, setBucketListItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const { data } = await axios.get(`${API}/api/bucketlist`);
+        setBucketListItems(data);
+      } catch {
+        setBucketListItems([]);
+      }
+      setLoading(false);
+    };
+    fetchItems();
+  }, []);
 
   const categories = [
     ...new Set(bucketListItems.map((item) => item.category)),
@@ -127,9 +72,9 @@ const BucketList = () => {
   });
 
   const completedCount = bucketListItems.filter((i) => i.completed).length;
-  const progress = Math.round(
-    (completedCount / bucketListItems.length) * 100
-  );
+  const progress = bucketListItems.length
+    ? Math.round((completedCount / bucketListItems.length) * 100)
+    : 0;
 
   return (
     <div className="min-h-screen bg-dark">
@@ -246,13 +191,18 @@ const BucketList = () => {
         </motion.div>
 
         {/* List */}
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="w-8 h-8 text-accent animate-spin" />
+          </div>
+        ) : (
         <div className="space-y-3">
           <AnimatePresence>
             {filtered.map((item, i) => {
               const Icon = categoryIcons[item.category] || Circle;
               return (
                 <motion.div
-                  key={item.id}
+                  key={item._id || item.id}
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -309,24 +259,14 @@ const BucketList = () => {
             })}
           </AnimatePresence>
         </div>
-
-        {filtered.length === 0 && (
-          <div className="text-center py-20 text-white/30">
-            No items match the current filter.
-          </div>
         )}
 
-        {/* Backend note */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-12 text-center"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/5 border border-accent/10 text-xs text-accent">
-            Admin panel for managing items — coming soon
+        {!loading && filtered.length === 0 && (
+          <div className="text-center py-20">
+            <ListChecks className="w-12 h-12 text-white/10 mx-auto mb-4" />
+            <p className="text-white/30">No items match the current filter.</p>
           </div>
-        </motion.div>
+        )}
       </div>
     </div>
   );

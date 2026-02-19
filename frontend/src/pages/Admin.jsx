@@ -23,6 +23,21 @@ import {
   UserCheck,
   Globe,
   Calendar,
+  FileText,
+  ListChecks,
+  MessageSquare,
+  Tag,
+  CheckCircle2,
+  Circle,
+  Plane,
+  Mountain,
+  Code,
+  Music,
+  Camera,
+  Utensils,
+  Dumbbell,
+  ToggleLeft,
+  ToggleRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -37,37 +52,56 @@ const typeLabels = { movie: "Movie", series: "Series", anime: "Anime", book: "Bo
    ───────────────────────────────────────────── */
 const Admin = () => {
   const navigate = useNavigate();
-  const [adminKey, setAdminKey] = useState("");
+  const [token, setToken] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState("recommendations");
   const [keyInput, setKeyInput] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
 
-  // Check sessionStorage for persisted key
+  // Check localStorage for persisted token & verify it
   useEffect(() => {
-    const saved = sessionStorage.getItem("adminKey");
+    const saved = localStorage.getItem("adminToken");
     if (saved) {
-      setAdminKey(saved);
-      setAuthenticated(true);
+      axios
+        .get(`${API}/api/auth/verify`, {
+          headers: { Authorization: `Bearer ${saved}` },
+        })
+        .then(() => {
+          setToken(saved);
+          setAuthenticated(true);
+        })
+        .catch(() => {
+          localStorage.removeItem("adminToken");
+        });
     }
   }, []);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     if (!keyInput.trim()) {
       setLoginError("Please enter the admin key");
       return;
     }
-    setAdminKey(keyInput.trim());
-    sessionStorage.setItem("adminKey", keyInput.trim());
-    setAuthenticated(true);
+    setLoginLoading(true);
     setLoginError("");
+    try {
+      const { data } = await axios.post(`${API}/api/auth/login`, {
+        adminKey: keyInput.trim(),
+      });
+      setToken(data.token);
+      localStorage.setItem("adminToken", data.token);
+      setAuthenticated(true);
+    } catch (err) {
+      setLoginError(err.response?.data?.error || "Login failed");
+    }
+    setLoginLoading(false);
   };
 
   const handleLogout = () => {
-    setAdminKey("");
+    setToken("");
     setAuthenticated(false);
-    sessionStorage.removeItem("adminKey");
+    localStorage.removeItem("adminToken");
   };
 
   if (!authenticated) {
@@ -106,10 +140,15 @@ const Admin = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-3 bg-accent hover:bg-accent-light text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+              disabled={loginLoading}
+              className="w-full py-3 bg-accent hover:bg-accent-light disabled:opacity-50 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
             >
-              <LogIn size={16} />
-              Sign In
+              {loginLoading ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <LogIn size={16} />
+              )}
+              {loginLoading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
@@ -126,7 +165,10 @@ const Admin = () => {
   }
 
   const tabs = [
-    { key: "recommendations", label: "Recommendations", icon: Film },
+    { key: "recommendations", label: "Picks", icon: Film },
+    { key: "blog", label: "Blog", icon: FileText },
+    { key: "bucketlist", label: "Bucket List", icon: ListChecks },
+    { key: "guestbook", label: "Guestbook", icon: MessageSquare },
     { key: "visitors", label: "Visitors", icon: Users },
   ];
 
@@ -156,14 +198,14 @@ const Admin = () => {
 
       <div className="pt-24 pb-20 px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Tabs */}
-        <div className="flex gap-1 p-1 bg-white/[0.04] border border-white/[0.06] rounded-2xl w-fit mb-8">
+        <div className="flex gap-1 p-1 bg-white/[0.04] border border-white/[0.06] rounded-2xl w-full sm:w-fit mb-8 overflow-x-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl transition-all ${
+                className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all shrink-0 ${
                   activeTab === tab.key
                     ? "bg-white/[0.08] text-white"
                     : "text-white/40 hover:text-white/70"
@@ -177,9 +219,12 @@ const Admin = () => {
         </div>
 
         {activeTab === "recommendations" && (
-          <RecommendationsAdmin adminKey={adminKey} />
+          <RecommendationsAdmin token={token} />
         )}
-        {activeTab === "visitors" && <VisitorsAdmin adminKey={adminKey} />}
+        {activeTab === "blog" && <BlogAdmin token={token} />}
+        {activeTab === "bucketlist" && <BucketListAdmin token={token} />}
+        {activeTab === "guestbook" && <GuestbookAdmin token={token} />}
+        {activeTab === "visitors" && <VisitorsAdmin token={token} />}
       </div>
     </div>
   );
@@ -188,7 +233,7 @@ const Admin = () => {
 /* ─────────────────────────────────────────────
    RECOMMENDATIONS ADMIN TAB
    ───────────────────────────────────────────── */
-const RecommendationsAdmin = ({ adminKey }) => {
+const RecommendationsAdmin = ({ token }) => {
   const [recs, setRecs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddPanel, setShowAddPanel] = useState(false);
@@ -211,7 +256,7 @@ const RecommendationsAdmin = ({ adminKey }) => {
     if (!confirm("Delete this recommendation?")) return;
     try {
       await axios.delete(`${API}/api/recommendations/${id}`, {
-        data: { adminKey },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setRecs((prev) => prev.filter((r) => r._id !== id));
     } catch (err) {
@@ -245,12 +290,13 @@ const RecommendationsAdmin = ({ adminKey }) => {
         {showAddPanel && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto", overflow: "visible" }}
+            exit={{ opacity: 0, height: 0, overflow: "hidden" }}
             className="overflow-hidden mb-8"
+            transition={{ duration: 0.3 }}
           >
             <AddRecommendation
-              adminKey={adminKey}
+              token={token}
               onAdded={(newRec) => {
                 setRecs((prev) => [newRec, ...prev]);
                 setShowAddPanel(false);
@@ -335,7 +381,7 @@ const RecommendationsAdmin = ({ adminKey }) => {
                 {/* Actions */}
                 <button
                   onClick={() => handleDelete(rec._id)}
-                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/10 transition-all opacity-0 group-hover:opacity-100"
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/10 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -351,7 +397,7 @@ const RecommendationsAdmin = ({ adminKey }) => {
 /* ─────────────────────────────────────────────
    ADD RECOMMENDATION PANEL
    ───────────────────────────────────────────── */
-const AddRecommendation = ({ adminKey, onAdded }) => {
+const AddRecommendation = ({ token, onAdded }) => {
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
@@ -420,7 +466,6 @@ const AddRecommendation = ({ adminKey, onAdded }) => {
     try {
       const body = manualMode
         ? {
-            adminKey,
             title: manualTitle,
             year: manualYear,
             type: selectedType,
@@ -432,7 +477,6 @@ const AddRecommendation = ({ adminKey, onAdded }) => {
             category,
           }
         : {
-            adminKey,
             title: details?.Title || selected?.Title,
             year: details?.Year || selected?.Year,
             type: selectedType,
@@ -449,7 +493,9 @@ const AddRecommendation = ({ adminKey, onAdded }) => {
             category,
           };
 
-      const { data } = await axios.post(`${API}/api/recommendations`, body);
+      const { data } = await axios.post(`${API}/api/recommendations`, body, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       onAdded(data);
     } catch (err) {
       alert(err.response?.data?.error || "Failed to add");
@@ -460,7 +506,7 @@ const AddRecommendation = ({ adminKey, onAdded }) => {
   return (
     <div className="p-6 rounded-2xl bg-[#111] border border-white/10">
       {/* Type selector */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex flex-wrap items-center gap-3 mb-6">
         <span className="text-xs text-white/40 uppercase tracking-wider font-semibold">
           Type:
         </span>
@@ -740,9 +786,157 @@ const AddRecommendation = ({ adminKey, onAdded }) => {
 };
 
 /* ─────────────────────────────────────────────
+   GUESTBOOK ADMIN TAB
+   ───────────────────────────────────────────── */
+const GuestbookAdmin = ({ token }) => {
+  const [entries, setEntries] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEntries = async () => {
+      try {
+        const { data } = await axios.get(`${API}/api/guestbook/admin`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setEntries(data);
+      } catch {
+        setEntries([]);
+      }
+      setLoading(false);
+    };
+    fetchEntries();
+  }, [token]);
+
+  const handleToggleApproval = async (entry) => {
+    try {
+      const { data } = await axios.patch(
+        `${API}/api/guestbook/${entry._id}/approve`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setEntries((prev) =>
+        prev.map((e) => (e._id === entry._id ? data : e))
+      );
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to update");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm("Delete this guestbook entry?")) return;
+    try {
+      await axios.delete(`${API}/api/guestbook/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setEntries((prev) => prev.filter((e) => e._id !== id));
+    } catch (err) {
+      alert(err.response?.data?.error || "Delete failed");
+    }
+  };
+
+  const approvedCount = entries.filter((e) => e.approved).length;
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-bold text-white font-display">
+            Guestbook Entries
+          </h2>
+          <p className="text-sm text-white/40 mt-1">
+            {entries.length} total · {approvedCount} approved · {entries.length - approvedCount} hidden
+          </p>
+        </div>
+      </div>
+
+      {/* List */}
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 size={24} className="animate-spin text-white/30" />
+        </div>
+      ) : entries.length === 0 ? (
+        <div className="text-center py-20 text-white/30">
+          <MessageSquare size={40} className="mx-auto mb-3 text-white/10" />
+          <p>No guestbook entries yet.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {entries.map((entry) => (
+            <motion.div
+              key={entry._id}
+              layout
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`flex items-start gap-4 p-4 rounded-xl bg-[#111] border transition-all group ${
+                entry.approved
+                  ? "border-white/5 hover:border-white/10"
+                  : "border-red-500/10 opacity-60"
+              }`}
+            >
+              {/* Avatar */}
+              <img
+                src={entry.avatar}
+                alt={entry.name}
+                className="w-9 h-9 rounded-full bg-white/5 shrink-0 mt-0.5"
+              />
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm font-semibold text-white">
+                    {entry.name}
+                  </span>
+                  <span className="text-[11px] text-white/20">
+                    {new Date(entry.createdAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                  {!entry.approved && (
+                    <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-red-500/10 text-red-400 rounded-full">
+                      Hidden
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-white/50 leading-relaxed">
+                  {entry.message}
+                </p>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
+                <button
+                  onClick={() => handleToggleApproval(entry)}
+                  className={`shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all ${
+                    entry.approved
+                      ? "text-emerald-400/50 hover:text-emerald-400 hover:bg-emerald-400/10"
+                      : "text-white/20 hover:text-emerald-400 hover:bg-emerald-400/10"
+                  }`}
+                  title={entry.approved ? "Hide entry" : "Approve entry"}
+                >
+                  {entry.approved ? <Eye size={14} /> : <CheckCircle2 size={14} />}
+                </button>
+                <button
+                  onClick={() => handleDelete(entry._id)}
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────────
    VISITORS ADMIN TAB
    ───────────────────────────────────────────── */
-const VisitorsAdmin = ({ adminKey }) => {
+const VisitorsAdmin = ({ token }) => {
   const [visitors, setVisitors] = useState([]);
   const [stats, setStats] = useState({ total: 0, named: 0, today: 0 });
   const [loading, setLoading] = useState(true);
@@ -754,7 +948,8 @@ const VisitorsAdmin = ({ adminKey }) => {
   const fetchVisitors = async () => {
     try {
       const { data } = await axios.get(
-        `${API}/api/visitors?adminKey=${encodeURIComponent(adminKey)}`
+        `${API}/api/visitors`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setVisitors(data.visitors || []);
       setStats(data.stats || { total: 0, named: 0, today: 0 });
@@ -894,6 +1089,551 @@ const VisitorsAdmin = ({ adminKey }) => {
               </span>
             </motion.div>
           ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────────
+   BLOG ADMIN TAB
+   ───────────────────────────────────────────── */
+const BlogAdmin = ({ token }) => {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState(null);
+
+  // Form state
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [content, setContent] = useState("");
+  const [tagsInput, setTagsInput] = useState("");
+  const [coverImage, setCoverImage] = useState("");
+  const [readTime, setReadTime] = useState("");
+  const [published, setPublished] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    try {
+      const { data } = await axios.get(`${API}/api/blog/admin`, authHeaders);
+      setPosts(data);
+    } catch {
+      setPosts([]);
+    }
+    setLoading(false);
+  };
+
+  const resetForm = () => {
+    setTitle(""); setSlug(""); setExcerpt(""); setContent("");
+    setTagsInput(""); setCoverImage(""); setReadTime(""); setPublished(true);
+    setEditing(null);
+  };
+
+  const openAddForm = () => {
+    resetForm();
+    setShowForm(true);
+  };
+
+  const openEditForm = (post) => {
+    setEditing(post._id);
+    setTitle(post.title);
+    setSlug(post.slug);
+    setExcerpt(post.excerpt);
+    setContent(post.content || "");
+    setTagsInput((post.tags || []).join(", "));
+    setCoverImage(post.coverImage || "");
+    setReadTime(post.readTime || "");
+    setPublished(post.published);
+    setShowForm(true);
+  };
+
+  const handleSubmit = async () => {
+    if (!title.trim() || !excerpt.trim()) return alert("Title and excerpt are required");
+    setSubmitting(true);
+    try {
+      const body = {
+        title: title.trim(),
+        slug: slug.trim() || undefined,
+        excerpt: excerpt.trim(),
+        content,
+        tags: tagsInput.split(",").map((t) => t.trim()).filter(Boolean),
+        coverImage,
+        readTime: readTime.trim(),
+        published,
+      };
+
+      if (editing) {
+        const { data } = await axios.put(`${API}/api/blog/${editing}`, body, authHeaders);
+        setPosts((prev) => prev.map((p) => (p._id === editing ? data : p)));
+      } else {
+        const { data } = await axios.post(`${API}/api/blog`, body, authHeaders);
+        setPosts((prev) => [data, ...prev]);
+      }
+      setShowForm(false);
+      resetForm();
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to save post");
+    }
+    setSubmitting(false);
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm("Delete this blog post?")) return;
+    try {
+      await axios.delete(`${API}/api/blog/${id}`, authHeaders);
+      setPosts((prev) => prev.filter((p) => p._id !== id));
+    } catch (err) {
+      alert(err.response?.data?.error || "Delete failed");
+    }
+  };
+
+  const togglePublish = async (post) => {
+    try {
+      const { data } = await axios.put(
+        `${API}/api/blog/${post._id}`,
+        { published: !post.published },
+        authHeaders
+      );
+      setPosts((prev) => prev.map((p) => (p._id === post._id ? data : p)));
+    } catch {
+      alert("Failed to toggle");
+    }
+  };
+
+  const inputClass =
+    "w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/40 transition-colors";
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-bold text-white font-display">Manage Blog</h2>
+          <p className="text-sm text-white/40 mt-1">{posts.length} posts</p>
+        </div>
+        <button
+          onClick={() => (showForm ? (setShowForm(false), resetForm()) : openAddForm())}
+          className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-light text-white text-sm font-medium rounded-xl transition-colors"
+        >
+          {showForm ? <X size={16} /> : <Plus size={16} />}
+          {showForm ? "Close" : "New Post"}
+        </button>
+      </div>
+
+      {/* Form */}
+      <AnimatePresence>
+        {showForm && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden mb-8"
+          >
+            <div className="p-6 rounded-2xl bg-[#111] border border-white/10 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" placeholder="Title *" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
+                <input type="text" placeholder="Slug (auto-generated if empty)" value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} />
+              </div>
+              <textarea placeholder="Excerpt / Summary *" value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={2} className={`${inputClass} resize-none`} />
+              <textarea placeholder="Full content (Markdown supported)" value={content} onChange={(e) => setContent(e.target.value)} rows={8} className={`${inputClass} resize-none font-mono text-xs`} />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <input type="text" placeholder="Tags (comma-separated)" value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} className={inputClass} />
+                <input type="text" placeholder="Cover Image URL" value={coverImage} onChange={(e) => setCoverImage(e.target.value)} className={inputClass} />
+                <input type="text" placeholder="Read time (e.g. 5 min read)" value={readTime} onChange={(e) => setReadTime(e.target.value)} className={inputClass} />
+              </div>
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  onClick={() => setPublished(!published)}
+                  className={`flex items-center gap-2 text-sm transition-colors ${published ? "text-emerald-400" : "text-white/30"}`}
+                >
+                  {published ? <ToggleRight size={20} /> : <ToggleLeft size={20} />}
+                  {published ? "Published" : "Draft"}
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  disabled={submitting || !title.trim() || !excerpt.trim()}
+                  className="flex items-center gap-2 px-6 py-2.5 bg-accent hover:bg-accent-light disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors"
+                >
+                  {submitting ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
+                  {editing ? "Update Post" : "Publish Post"}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* List */}
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 size={24} className="animate-spin text-white/30" />
+        </div>
+      ) : posts.length === 0 ? (
+        <div className="text-center py-20 text-white/30">
+          <FileText size={40} className="mx-auto mb-3 text-white/10" />
+          <p>No blog posts yet. Write your first one!</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {posts.map((post) => (
+            <motion.div
+              key={post._id}
+              layout
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-4 p-4 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-all group"
+            >
+              {/* Status dot */}
+              <div className={`w-2 h-2 rounded-full shrink-0 ${post.published ? "bg-emerald-400" : "bg-white/20"}`} />
+
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-white truncate">{post.title}</h3>
+                  {!post.published && (
+                    <span className="shrink-0 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-white/5 text-white/30 rounded-full">
+                      Draft
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 mt-1 text-xs text-white/30">
+                  <span className="flex items-center gap-1">
+                    <Calendar size={10} />
+                    {new Date(post.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  </span>
+                  {post.readTime && (
+                    <span className="flex items-center gap-1">
+                      <Clock size={10} />
+                      {post.readTime}
+                    </span>
+                  )}
+                  {post.tags?.length > 0 && (
+                    <span className="flex items-center gap-1 truncate max-w-[200px]">
+                      <Tag size={10} />
+                      {post.tags.join(", ")}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={() => togglePublish(post)}
+                  className={`shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all ${
+                    post.published
+                      ? "text-emerald-400/50 hover:text-emerald-400 hover:bg-emerald-400/10"
+                      : "text-white/20 hover:text-white/50 hover:bg-white/5"
+                  }`}
+                  title={post.published ? "Unpublish" : "Publish"}
+                >
+                  <Eye size={14} />
+                </button>
+                <button
+                  onClick={() => openEditForm(post)}
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-white/20 hover:text-accent hover:bg-accent/10 transition-all"
+                >
+                  <Edit3 size={14} />
+                </button>
+                <button
+                  onClick={() => handleDelete(post._id)}
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────────
+   BUCKET LIST ADMIN TAB
+   ───────────────────────────────────────────── */
+const bucketCategoryIcons = {
+  travel: Plane,
+  learning: BookOpen,
+  adventure: Mountain,
+  tech: Code,
+  music: Music,
+  photography: Camera,
+  food: Utensils,
+  fitness: Dumbbell,
+  other: ListChecks,
+};
+
+const bucketCategories = [
+  "travel", "learning", "adventure", "tech", "music", "photography", "food", "fitness", "other",
+];
+
+const BucketListAdmin = ({ token }) => {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState(null);
+
+  // Form state
+  const [itemTitle, setItemTitle] = useState("");
+  const [itemDesc, setItemDesc] = useState("");
+  const [itemCategory, setItemCategory] = useState("other");
+  const [itemCompleted, setItemCompleted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  const fetchItems = async () => {
+    try {
+      const { data } = await axios.get(`${API}/api/bucketlist`);
+      setItems(data);
+    } catch {
+      setItems([]);
+    }
+    setLoading(false);
+  };
+
+  const resetForm = () => {
+    setItemTitle(""); setItemDesc(""); setItemCategory("other"); setItemCompleted(false); setEditing(null);
+  };
+
+  const openAddForm = () => {
+    resetForm();
+    setShowForm(true);
+  };
+
+  const openEditForm = (item) => {
+    setEditing(item._id);
+    setItemTitle(item.title);
+    setItemDesc(item.description || "");
+    setItemCategory(item.category || "other");
+    setItemCompleted(item.completed);
+    setShowForm(true);
+  };
+
+  const handleSubmit = async () => {
+    if (!itemTitle.trim()) return alert("Title is required");
+    setSubmitting(true);
+    try {
+      const body = {
+        title: itemTitle.trim(),
+        description: itemDesc.trim(),
+        category: itemCategory,
+        completed: itemCompleted,
+      };
+
+      if (editing) {
+        const { data } = await axios.put(`${API}/api/bucketlist/${editing}`, body, authHeaders);
+        setItems((prev) => prev.map((it) => (it._id === editing ? data : it)));
+      } else {
+        const { data } = await axios.post(`${API}/api/bucketlist`, body, authHeaders);
+        setItems((prev) => [...prev, data]);
+      }
+      setShowForm(false);
+      resetForm();
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to save");
+    }
+    setSubmitting(false);
+  };
+
+  const handleToggle = async (item) => {
+    try {
+      const { data } = await axios.patch(`${API}/api/bucketlist/${item._id}/toggle`, {}, authHeaders);
+      setItems((prev) => prev.map((it) => (it._id === item._id ? data : it)));
+    } catch {
+      alert("Failed to toggle");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm("Delete this bucket list item?")) return;
+    try {
+      await axios.delete(`${API}/api/bucketlist/${id}`, authHeaders);
+      setItems((prev) => prev.filter((it) => it._id !== id));
+    } catch (err) {
+      alert(err.response?.data?.error || "Delete failed");
+    }
+  };
+
+  const completedCount = items.filter((i) => i.completed).length;
+  const inputClass =
+    "w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/40 transition-colors";
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-bold text-white font-display">Manage Bucket List</h2>
+          <p className="text-sm text-white/40 mt-1">
+            {completedCount}/{items.length} completed
+          </p>
+        </div>
+        <button
+          onClick={() => (showForm ? (setShowForm(false), resetForm()) : openAddForm())}
+          className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-light text-white text-sm font-medium rounded-xl transition-colors"
+        >
+          {showForm ? <X size={16} /> : <Plus size={16} />}
+          {showForm ? "Close" : "Add Item"}
+        </button>
+      </div>
+
+      {/* Progress */}
+      {items.length > 0 && (
+        <div className="mb-6 rounded-xl bg-[#111] border border-white/5 p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-white/40">Progress</span>
+            <span className="text-xs font-semibold text-accent">
+              {Math.round((completedCount / items.length) * 100)}%
+            </span>
+          </div>
+          <div className="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-accent to-purple-500 transition-all duration-500"
+              style={{ width: `${(completedCount / items.length) * 100}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Form */}
+      <AnimatePresence>
+        {showForm && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden mb-8"
+          >
+            <div className="p-6 rounded-2xl bg-[#111] border border-white/10 space-y-4">
+              <input type="text" placeholder="What do you want to do? *" value={itemTitle} onChange={(e) => setItemTitle(e.target.value)} className={inputClass} />
+              <input type="text" placeholder="Description (optional)" value={itemDesc} onChange={(e) => setItemDesc(e.target.value)} className={inputClass} />
+
+              {/* Category pills */}
+              <div>
+                <label className="text-xs text-white/40 uppercase tracking-wider font-semibold mb-2 block">Category</label>
+                <div className="flex gap-2 flex-wrap">
+                  {bucketCategories.map((cat) => {
+                    const CatIcon = bucketCategoryIcons[cat] || Circle;
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => setItemCategory(cat)}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all ${
+                          itemCategory === cat
+                            ? "bg-accent/10 border-accent/30 text-accent"
+                            : "bg-white/5 border-white/10 text-white/30 hover:text-white/50"
+                        }`}
+                      >
+                        <CatIcon size={10} />
+                        {cat}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  onClick={() => setItemCompleted(!itemCompleted)}
+                  className={`flex items-center gap-2 text-sm transition-colors ${itemCompleted ? "text-emerald-400" : "text-white/30"}`}
+                >
+                  {itemCompleted ? <CheckCircle2 size={18} /> : <Circle size={18} />}
+                  {itemCompleted ? "Completed" : "Pending"}
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  disabled={submitting || !itemTitle.trim()}
+                  className="flex items-center gap-2 px-6 py-2.5 bg-accent hover:bg-accent-light disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors"
+                >
+                  {submitting ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
+                  {editing ? "Update" : "Add Item"}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* List */}
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 size={24} className="animate-spin text-white/30" />
+        </div>
+      ) : items.length === 0 ? (
+        <div className="text-center py-20 text-white/30">
+          <ListChecks size={40} className="mx-auto mb-3 text-white/10" />
+          <p>No bucket list items yet. Add your first goal!</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {items.map((item) => {
+            const CatIcon = bucketCategoryIcons[item.category] || Circle;
+            return (
+              <motion.div
+                key={item._id}
+                layout
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`flex items-center gap-4 p-4 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-all group ${
+                  item.completed ? "opacity-60" : ""
+                }`}
+              >
+                {/* Toggle check */}
+                <button onClick={() => handleToggle(item)} className="shrink-0">
+                  {item.completed ? (
+                    <CheckCircle2 size={20} className="text-accent" />
+                  ) : (
+                    <Circle size={20} className="text-white/15 hover:text-white/30 transition-colors" />
+                  )}
+                </button>
+
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <h3 className={`text-sm font-medium ${item.completed ? "text-white/40 line-through" : "text-white"}`}>
+                    {item.title}
+                  </h3>
+                  {item.description && (
+                    <p className="text-xs text-white/25 mt-0.5 truncate">{item.description}</p>
+                  )}
+                </div>
+
+                {/* Category badge */}
+                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white/25 bg-white/5 rounded-full shrink-0">
+                  <CatIcon size={9} />
+                  {item.category}
+                </span>
+
+                {/* Actions */}
+                <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => openEditForm(item)}
+                    className="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-white/20 hover:text-accent hover:bg-accent/10 transition-all"
+                  >
+                    <Edit3 size={12} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(item._id)}
+                    className="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       )}
     </div>

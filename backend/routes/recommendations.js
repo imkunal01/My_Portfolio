@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 const Recommendation = require("../models/Recommendation");
+const adminAuth = require("../middleware/auth");
+const logger = require("../utils/logger");
 
 // --- Public: Get all recommendations ---
 router.get("/", async (req, res) => {
@@ -63,13 +65,8 @@ router.get("/details/:imdbId", async (req, res) => {
 });
 
 // --- Admin: Add a recommendation ---
-router.post("/", async (req, res) => {
+router.post("/", adminAuth, async (req, res) => {
   try {
-    const { adminKey } = req.body;
-    if (adminKey !== process.env.ADMIN_KEY) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
     const rec = new Recommendation({
       title: req.body.title,
       year: req.body.year,
@@ -88,35 +85,29 @@ router.post("/", async (req, res) => {
     });
 
     await rec.save();
+    logger.info("Recommendation added: %s", rec.title);
     res.status(201).json(rec);
   } catch (err) {
-    res.status(500).json({ error: "Failed to add recommendation" });
+    logger.error("Failed to add recommendation: %s", err.message);
+    res.status(500).json({ error: "Failed to add recommendation", details: err.message });
   }
 });
 
 // --- Admin: Delete a recommendation ---
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", adminAuth, async (req, res) => {
   try {
-    const { adminKey } = req.body;
-    if (adminKey !== process.env.ADMIN_KEY) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
     await Recommendation.findByIdAndDelete(req.params.id);
+    logger.info("Recommendation deleted: %s", req.params.id);
     res.json({ message: "Deleted" });
   } catch (err) {
+    logger.error("Failed to delete recommendation: %s", err.message);
     res.status(500).json({ error: "Failed to delete recommendation" });
   }
 });
 
 // --- Admin: Update a recommendation ---
-router.put("/:id", async (req, res) => {
+router.put("/:id", adminAuth, async (req, res) => {
   try {
-    const { adminKey } = req.body;
-    if (adminKey !== process.env.ADMIN_KEY) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
     const updated = await Recommendation.findByIdAndUpdate(
       req.params.id,
       {

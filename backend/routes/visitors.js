@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Visitor = require("../models/Visitor");
+const adminAuth = require("../middleware/auth");
 
 // --- Public: Log a visit ---
 router.post("/log", async (req, res) => {
@@ -58,12 +59,8 @@ router.put("/name", async (req, res) => {
 });
 
 // --- Admin: Get all visitors ---
-router.get("/", async (req, res) => {
+router.get("/", adminAuth, async (req, res) => {
   try {
-    const { adminKey } = req.query;
-    if (adminKey !== process.env.ADMIN_KEY) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
 
     const visitors = await Visitor.find().sort({ visitedAt: -1 });
     const stats = {

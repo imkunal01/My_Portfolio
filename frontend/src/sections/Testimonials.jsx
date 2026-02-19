@@ -47,7 +47,7 @@ const Testimonials = () => {
           {allTestimonials.map((testimonial, i) => (
             <div
               key={`${testimonial.id}-${i}`}
-              className="group w-[350px] md:w-[420px] shrink-0 rounded-2xl bg-[#111] border border-white/5 hover:border-white/10 p-6 lg:p-8 transition-all duration-300"
+              className="group w-[85vw] sm:w-[350px] md:w-[420px] shrink-0 rounded-2xl bg-[#111] border border-white/5 hover:border-white/10 p-6 lg:p-8 transition-all duration-300"
             >
               <Quote
                 size={24}

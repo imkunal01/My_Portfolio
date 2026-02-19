@@ -3,6 +3,7 @@ const router = express.Router();
 const axios = require("axios");
 const Lead = require("../models/Lead");
 const calculateQuote = require("../utils/quoteCalculator");
+const logger = require("../utils/logger");
 const checkFAQ = require("../utils/faq");
 const nodemailer = require("nodemailer");
 
@@ -82,7 +83,7 @@ router.post("/", async (req, res) => {
 
     res.json({ reply: botReply, quote });
   } catch (err) {
-    console.error("🚨 Chat API Error:", err.response?.data || err.message);
+    logger.error("Chat API Error: %s", err.response?.data || err.message);
     res.status(500).json({ error: "Something went wrong with chat backend" });
   }
 });
