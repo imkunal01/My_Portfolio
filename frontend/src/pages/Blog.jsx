@@ -1,52 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, Clock, Tag } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Tag, Loader2, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-// Placeholder blog posts — connect to backend/CMS later
-const blogPosts = [
-  {
-    id: 1,
-    slug: "getting-started-with-nextjs-15",
-    title: "Getting Started with Next.js 15",
-    excerpt:
-      "A comprehensive guide to building modern web applications with the latest features in Next.js 15, including Server Components and PPR.",
-    date: "2025-12-15",
-    readTime: "8 min read",
-    tags: ["Next.js", "React", "Web Dev"],
-    coverImage: "",
-  },
-  {
-    id: 2,
-    slug: "building-scalable-apis-with-node",
-    title: "Building Scalable APIs with Node.js",
-    excerpt:
-      "Learn best practices for designing and building REST APIs that can handle millions of requests with proper error handling and authentication.",
-    date: "2025-11-20",
-    readTime: "12 min read",
-    tags: ["Node.js", "API", "Backend"],
-    coverImage: "",
-  },
-  {
-    id: 3,
-    slug: "react-native-vs-flutter",
-    title: "React Native vs Flutter in 2025",
-    excerpt:
-      "A detailed comparison of the two most popular cross-platform mobile development frameworks. Which one should you choose?",
-    date: "2025-10-05",
-    readTime: "10 min read",
-    tags: ["Mobile", "React Native", "Flutter"],
-    coverImage: "",
-  },
-];
+const API = import.meta.env.VITE_BACKEND_URL || "";
 
 const Blog = () => {
   const navigate = useNavigate();
   const [selectedTag, setSelectedTag] = useState(null);
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const allTags = [...new Set(blogPosts.flatMap((p) => p.tags))];
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const { data } = await axios.get(`${API}/api/blog`);
+        setBlogPosts(data);
+      } catch {
+        setBlogPosts([]);
+      }
+      setLoading(false);
+    };
+    fetchPosts();
+  }, []);
+
+  const allTags = [...new Set(blogPosts.flatMap((p) => p.tags || []))];
   const filtered = selectedTag
-    ? blogPosts.filter((p) => p.tags.includes(selectedTag))
+    ? blogPosts.filter((p) => (p.tags || []).includes(selectedTag))
     : blogPosts;
 
   return (
@@ -122,10 +103,15 @@ const Blog = () => {
         </motion.div>
 
         {/* Posts */}
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 size={24} className="animate-spin text-white/30" />
+          </div>
+        ) : (
         <div className="space-y-6">
           {filtered.map((post, i) => (
             <motion.article
-              key={post.id}
+              key={post._id || post.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.15 + i * 0.08 }}
@@ -136,16 +122,18 @@ const Blog = () => {
                 <div className="flex items-center gap-4 mb-3">
                   <span className="flex items-center gap-1.5 text-xs text-white/30">
                     <Calendar size={12} />
-                    {new Date(post.date).toLocaleDateString("en-US", {
+                    {new Date(post.createdAt || post.date).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
                     })}
                   </span>
+                  {post.readTime && (
                   <span className="flex items-center gap-1.5 text-xs text-white/30">
                     <Clock size={12} />
                     {post.readTime}
                   </span>
+                  )}
                 </div>
 
                 {/* Title */}
@@ -160,7 +148,7 @@ const Blog = () => {
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2">
-                  {post.tags.map((tag) => (
+                  {(post.tags || []).map((tag) => (
                     <span
                       key={tag}
                       className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/30 bg-white/5 rounded-full"
@@ -174,24 +162,14 @@ const Blog = () => {
             </motion.article>
           ))}
         </div>
-
-        {filtered.length === 0 && (
-          <div className="text-center py-20 text-white/30">
-            No posts found for this tag.
-          </div>
         )}
 
-        {/* Coming soon note */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-16 text-center"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/5 border border-accent/10 text-xs text-accent">
-            More posts coming soon — admin panel in progress
+        {!loading && filtered.length === 0 && (
+          <div className="text-center py-20 text-white/30">
+            <FileText size={40} className="mx-auto mb-3 text-white/10" />
+            <p>{selectedTag ? "No posts found for this tag." : "No blog posts yet. Check back soon!"}</p>
           </div>
-        </motion.div>
+        )}
       </div>
     </div>
   );

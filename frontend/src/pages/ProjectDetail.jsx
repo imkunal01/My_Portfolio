@@ -579,7 +579,7 @@ const ProjectNavigation = ({ currentSlug }) => {
 
   return (
     <div className="border-t border-white/5 pt-12">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         {prevProject ? (
           <button
             onClick={() => {
@@ -596,7 +596,7 @@ const ProjectNavigation = ({ currentSlug }) => {
               <span className="block text-xs text-white/30 uppercase tracking-wider mb-1">
                 Previous
               </span>
-              <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors">
+              <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors max-w-[150px] sm:max-w-[200px] truncate block">
                 {prevProject.title}
               </span>
             </div>
@@ -624,7 +624,7 @@ const ProjectNavigation = ({ currentSlug }) => {
               <span className="block text-xs text-white/30 uppercase tracking-wider mb-1">
                 Next
               </span>
-              <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors">
+              <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors max-w-[150px] sm:max-w-[200px] truncate block">
                 {nextProject.title}
               </span>
             </div>

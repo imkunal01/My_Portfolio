@@ -1,63 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, MessageSquare, Send, User } from "lucide-react";
+import { ArrowLeft, MessageSquare, Send, User, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-// Placeholder entries — will be connected to backend later
-const initialEntries = [
-  {
-    id: 1,
-    name: "Alex Johnson",
-    message: "Amazing portfolio! Love the design and animations. Keep it up!",
-    date: "2025-12-20",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
-  },
-  {
-    id: 2,
-    name: "Priya Sharma",
-    message:
-      "Visited your portfolio, really impressed with the quality of projects. The attention to detail is incredible!",
-    date: "2025-12-18",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya",
-  },
-  {
-    id: 3,
-    name: "David Chen",
-    message: "Clean code, clean design. Bookmarked for inspiration!",
-    date: "2025-12-15",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David",
-  },
-  {
-    id: 4,
-    name: "Sarah Lee",
-    message:
-      "Great work Kunal! The project detail pages are especially well done.",
-    date: "2025-12-10",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-  },
-];
+const API = import.meta.env.VITE_BACKEND_URL || "";
 
 const Guestbook = () => {
   const navigate = useNavigate();
-  const [entries, setEntries] = useState(initialEntries);
+  const [entries, setEntries] = useState([]);
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name.trim() || !message.trim()) return;
-
-    const newEntry = {
-      id: Date.now(),
-      name: name.trim(),
-      message: message.trim(),
-      date: new Date().toISOString().split("T")[0],
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name.trim())}`,
+  useEffect(() => {
+    const fetchEntries = async () => {
+      try {
+        const { data } = await axios.get(`${API}/api/guestbook`);
+        setEntries(data);
+      } catch {
+        setEntries([]);
+      }
+      setLoading(false);
     };
+    fetchEntries();
+  }, []);
 
-    setEntries([newEntry, ...entries]);
-    setName("");
-    setMessage("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name.trim() || !message.trim() || submitting) return;
+    setSubmitting(true);
+    try {
+      const { data } = await axios.post(`${API}/api/guestbook`, {
+        name: name.trim(),
+        message: message.trim(),
+      });
+      setEntries([data, ...entries]);
+      setName("");
+      setMessage("");
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to sign guestbook");
+    }
+    setSubmitting(false);
   };
 
   return (
@@ -135,21 +120,31 @@ const Guestbook = () => {
           <div className="flex justify-end">
             <button
               type="submit"
-              disabled={!name.trim() || !message.trim()}
+              disabled={!name.trim() || !message.trim() || submitting}
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-accent-light text-white text-sm font-medium rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
-              <Send size={14} />
-              Sign Guestbook
+              {submitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+              {submitting ? "Signing..." : "Sign Guestbook"}
             </button>
           </div>
         </motion.form>
 
         {/* Entries */}
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="w-8 h-8 text-accent animate-spin" />
+          </div>
+        ) : entries.length === 0 ? (
+          <div className="text-center py-20">
+            <MessageSquare className="w-12 h-12 text-white/10 mx-auto mb-4" />
+            <p className="text-white/30">No messages yet. Be the first to sign!</p>
+          </div>
+        ) : (
         <div className="space-y-4">
           <AnimatePresence>
             {entries.map((entry, i) => (
               <motion.div
-                key={entry.id}
+                key={entry._id || entry.id}
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
@@ -167,7 +162,7 @@ const Guestbook = () => {
                         {entry.name}
                       </span>
                       <span className="text-[11px] text-white/20">
-                        {new Date(entry.date).toLocaleDateString("en-US", {
+                        {new Date(entry.createdAt || entry.date).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
                           year: "numeric",
@@ -183,18 +178,7 @@ const Guestbook = () => {
             ))}
           </AnimatePresence>
         </div>
-
-        {/* Backend note */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-12 text-center"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/5 border border-accent/10 text-xs text-accent">
-            Messages are saved locally for now — backend coming soon
-          </div>
-        </motion.div>
+        )}
       </div>
     </div>
   );
