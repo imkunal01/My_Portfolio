@@ -15,7 +15,8 @@ const bucketlistRoute = require("./routes/bucketlist");
 const guestbookRoute = require("./routes/guestbook");
 
 const app = express();
-app.use(cors("*"))
+app.set("trust proxy", true);
+app.use(cors());
 app.use(express.json());
 
 // HTTP request logging via Morgan → piped into Winston
@@ -27,6 +28,10 @@ app.use(
 );
 
 // MongoDB connection
+if (!process.env.MONGO_URI) {
+  logger.error("FATAL: MONGO_URI environment variable is not set");
+  process.exit(1);
+}
 mongoose.connect(process.env.MONGO_URI)
   .then(() => logger.info("MongoDB connected"))
   .catch(err => logger.error("MongoDB connection error:", err));
@@ -46,12 +51,12 @@ app.use("/api/bucketlist", bucketlistRoute);
 app.use("/api/guestbook", guestbookRoute);
 
 // 👉 Serve React frontend (after build)
-const __dirname1 = path.resolve();
-app.use(express.static(path.join(__dirname1, "frontend/dist"))); 
+const frontendDist = path.join(__dirname, "..", "frontend", "dist");
+app.use(express.static(frontendDist)); 
 
 // Fallback to index.html for SPA routes
 app.get("/{*splat}", (req, res) => {
-  res.sendFile(path.resolve(__dirname1, "frontend", "dist", "index.html"));
+  res.sendFile(path.join(frontendDist, "index.html"));
 });
 
 const PORT = process.env.PORT || 5000;
