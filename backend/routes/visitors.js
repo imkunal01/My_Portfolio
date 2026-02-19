@@ -16,7 +16,7 @@ router.post("/log", async (req, res) => {
 
     const ip =
       req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
-      req.connection?.remoteAddress ||
+      req.ip ||
       "unknown";
 
     const visitor = new Visitor({

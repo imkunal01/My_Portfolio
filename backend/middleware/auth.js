@@ -1,7 +1,11 @@
 const jwt = require("jsonwebtoken");
 const logger = require("../utils/logger");
 
-const JWT_SECRET = process.env.JWT_SECRET || "portfolio-admin-secret-change-me";
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error("FATAL: JWT_SECRET environment variable is required");
+  process.exit(1);
+}
 
 const adminAuth = (req, res, next) => {
   try {

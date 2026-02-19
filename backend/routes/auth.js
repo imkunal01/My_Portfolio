@@ -3,7 +3,11 @@ const jwt = require("jsonwebtoken");
 const logger = require("../utils/logger");
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || "portfolio-admin-secret-change-me";
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error("FATAL: JWT_SECRET environment variable is required");
+  process.exit(1);
+}
 
 // --- Login: validate admin key and return JWT ---
 router.post("/login", (req, res) => {
