@@ -5,19 +5,15 @@ const Lead = require("../models/Lead");
 const calculateQuote = require("../utils/quoteCalculator");
 const logger = require("../utils/logger");
 const checkFAQ = require("../utils/faq");
-const nodemailer = require("nodemailer");
+const sgMail = require("@sendgrid/mail");
 
-// Create email transporter once at module level
-const transporter =
-  process.env.NOTIFY_EMAIL && process.env.NOTIFY_PASS
-    ? nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.NOTIFY_EMAIL,
-          pass: process.env.NOTIFY_PASS,
-        },
-      })
-    : null;
+const sendgridApiKey = process.env.SENDGRID_API_KEY;
+const emailFrom = process.env.EMAIL_FROM;
+const emailTo = process.env.EMAIL_TO;
+
+if (sendgridApiKey) {
+  sgMail.setApiKey(sendgridApiKey);
+}
 
 router.post("/", async (req, res) => {
   const { name, email, message, projectType } = req.body;
@@ -76,12 +72,13 @@ router.post("/", async (req, res) => {
     await lead.save();
 
     // Send email notification (to you)
-    if (transporter && lead.messages.length === 2) {
+    if (sendgridApiKey && emailFrom && emailTo && lead.messages.length === 2) {
       try {
-        await transporter.sendMail({
-          from: `"Chintu Bot" <${process.env.NOTIFY_EMAIL}>`,
-          to: process.env.MY_EMAIL,
-          subject: "📩 New Lead Generated",
+        await sgMail.send({
+          from: emailFrom,
+          to: emailTo,
+          replyTo: email,
+          subject: "New Lead Generated",
           text: `New lead from ${name} (${email})\nProject Type: ${projectType}\nQuote: ${quote}\nMessage: ${message}`,
         });
       } catch (emailErr) {
