@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Hero from "./sections/Hero";
@@ -9,13 +10,15 @@ import Testimonials from "./sections/Testimonials";
 import Contact from "./sections/Contact";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
-import ProjectDetail from "./pages/ProjectDetail";
-import Blog from "./pages/Blog";
-import Guestbook from "./pages/Guestbook";
-import BucketList from "./pages/BucketList";
-import Recommendations from "./pages/Recommendations";
-import Admin from "./pages/Admin";
 import VisitorTracker from "./components/VisitorTracker";
+
+// Lazy-loaded pages (code-split)
+const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
+const Blog = lazy(() => import("./pages/Blog"));
+const Guestbook = lazy(() => import("./pages/Guestbook"));
+const BucketList = lazy(() => import("./pages/BucketList"));
+const Recommendations = lazy(() => import("./pages/Recommendations"));
+const Admin = lazy(() => import("./pages/Admin"));
 
 const HomePage = () => (
   <>
@@ -37,15 +40,17 @@ const HomePage = () => (
 const App = () => {
   return (
     <div className="relative min-h-screen bg-dark">
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/project/:slug" element={<ProjectDetail />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/guestbook" element={<Guestbook />} />
-        <Route path="/bucket-list" element={<BucketList />} />
-        <Route path="/recommendations" element={<Recommendations />} />
-        <Route path="/admin" element={<Admin />} />
-      </Routes>
+      <Suspense fallback={<div className="flex items-center justify-center min-h-screen text-white/40">Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/project/:slug" element={<ProjectDetail />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/guestbook" element={<Guestbook />} />
+          <Route path="/bucket-list" element={<BucketList />} />
+          <Route path="/recommendations" element={<Recommendations />} />
+          <Route path="/admin" element={<Admin />} />
+        </Routes>
+      </Suspense>
       <VisitorTracker />
     </div>
   );
