@@ -4,6 +4,7 @@ const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const morgan = require("morgan");
+const chalk = require("chalk");
 require("dotenv").config();
 
 const logger = require("./utils/logger");
@@ -49,11 +50,11 @@ if (!process.env.MONGO_URI) {
   process.exit(1);
 }
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => logger.info("MongoDB connected"))
-  .catch(err => logger.error("MongoDB connection error:", err));
+  .then(() => logger.info(chalk.green.bold("✔ MongoDB connected")))
+  .catch(err => logger.error(chalk.red.bold("✘ MongoDB connection error:"), err));
 
 // Health check route
-app.get("/", (req, res) => {
+app.get("/check", (req, res) => {
   res.send("Backend is working fine 🚀");
 });
 
@@ -83,4 +84,9 @@ if (process.env.SERVE_FRONTEND === "true") {
 }
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(chalk.cyan.bold(`\n  🚀 Server running on port ${PORT}`));
+  console.log(chalk.gray(`  ➜ Local:   `) + chalk.underline(`http://localhost:${PORT}`));
+  console.log(chalk.gray(`  ➜ Health:  `) + chalk.underline(`http://localhost:${PORT}/check`));
+  console.log();
+});
