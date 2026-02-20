@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const fs = require("fs");
 const path = require("path");
 const morgan = require("morgan");
 require("dotenv").config();
@@ -50,15 +51,20 @@ app.use("/api/blog", blogRoute);
 app.use("/api/bucketlist", bucketlistRoute);
 app.use("/api/guestbook", guestbookRoute);
 
-// 👉 Serve React frontend (after build)
-const frontendDist = path.join(__dirname, "..", "frontend", "dist");
-app.use(express.static(frontendDist)); 
+// Serve React frontend only when explicitly enabled
+if (process.env.SERVE_FRONTEND === "true") {
+  const frontendDist = path.join(__dirname, "..", "frontend", "dist");
+  if (fs.existsSync(frontendDist)) {
+    app.use(express.static(frontendDist));
 
-// Fallback to index.html for SPA routes
-app.get("/{*splat}", (req, res) => {
-  res.sendFile(path.join(frontendDist, "index.html"));
-});
+    // Fallback to index.html for SPA routes
+    app.get("/{*splat}", (req, res) => {
+      res.sendFile(path.join(frontendDist, "index.html"));
+    });
+  } else {
+    logger.warn(`Frontend dist not found at ${frontendDist}`);
+  }
+}
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
-// /adasd
