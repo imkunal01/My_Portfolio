@@ -18,7 +18,21 @@ const contactRoute = require("./routes/contact");
 
 const app = express();
 app.set("trust proxy", true);
-app.use(cors());
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://kunald.vercel.app",
+];
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      // allow requests with no origin (curl, server-to-server, etc.)
+      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+      cb(new Error("Not allowed by CORS"));
+    },
+  })
+);
+
 app.use(express.json());
 
 // HTTP request logging via Morgan → piped into Winston
