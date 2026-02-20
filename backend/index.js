@@ -14,6 +14,7 @@ const visitorsRoute = require("./routes/visitors");
 const blogRoute = require("./routes/blog");
 const bucketlistRoute = require("./routes/bucketlist");
 const guestbookRoute = require("./routes/guestbook");
+const contactRoute = require("./routes/contact");
 
 const app = express();
 app.set("trust proxy", true);
@@ -38,7 +39,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => logger.error("MongoDB connection error:", err));
 
 // Health check route
-app.get("/checkbackend", (req, res) => {
+app.get("/", (req, res) => {
   res.send("Backend is working fine 🚀");
 });
 
@@ -50,6 +51,7 @@ app.use("/api/visitors", visitorsRoute);
 app.use("/api/blog", blogRoute);
 app.use("/api/bucketlist", bucketlistRoute);
 app.use("/api/guestbook", guestbookRoute);
+app.use("/api/contact", contactRoute);
 
 // Serve React frontend only when explicitly enabled
 if (process.env.SERVE_FRONTEND === "true") {

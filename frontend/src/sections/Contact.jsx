@@ -4,6 +4,8 @@ import { useInView } from "react-intersection-observer";
 import { Send, ArrowUpRight, Mail, MapPin } from "lucide-react";
 import { personalInfo } from "../data/portfolio";
 
+const API = import.meta.env.VITE_BACKEND_URL || "";
+
 const Contact = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.05 });
   const [formData, setFormData] = useState({
@@ -17,13 +19,24 @@ const Contact = () => {
     e.preventDefault();
     setStatus("sending");
 
-    // Simple mailto fallback
-    const mailtoLink = `mailto:${personalInfo.email}?subject=Portfolio Contact from ${formData.name}&body=${encodeURIComponent(formData.message)}%0A%0AFrom: ${formData.email}`;
-    window.open(mailtoLink);
-    setStatus("sent");
-    setFormData({ name: "", email: "", message: "" });
+    try {
+      const response = await fetch(`${API}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    setTimeout(() => setStatus(""), 3000);
+      if (!response.ok) {
+        throw new Error("Contact request failed");
+      }
+
+      setStatus("sent");
+      setFormData({ name: "", email: "", message: "" });
+    } catch (err) {
+      setStatus("error");
+    } finally {
+      setTimeout(() => setStatus(""), 3000);
+    }
   };
 
   return (
@@ -180,9 +193,11 @@ const Contact = () => {
                 className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-accent hover:bg-accent-light text-white font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent/25 disabled:opacity-50 cursor-pointer"
               >
                 {status === "sending" ? (
-                  "Opening Email..."
+                  "Sending..."
                 ) : status === "sent" ? (
-                  "Message Ready! ✓"
+                  "Message Sent! ✓"
+                ) : status === "error" ? (
+                  "Send Failed"
                 ) : (
                   <>
                     Send Message
