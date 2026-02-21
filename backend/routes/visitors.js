@@ -1,7 +1,18 @@
 const express = require("express");
 const router = express.Router();
+const sgMail = require("@sendgrid/mail");
 const Visitor = require("../models/Visitor");
 const adminAuth = require("../middleware/auth");
+const logger = require("../utils/logger");
+const { visitorNotification } = require("../utils/emailTemplates");
+
+const sendgridApiKey = process.env.SENDGRID_API_KEY;
+const emailFrom = process.env.EMAIL_FROM;
+const emailTo = process.env.EMAIL_TO;
+
+if (sendgridApiKey) {
+  sgMail.setApiKey(sendgridApiKey);
+}
 
 // --- Public: Log a visit ---
 router.post("/log", async (req, res) => {
@@ -28,6 +39,21 @@ router.post("/log", async (req, res) => {
     });
 
     await visitor.save();
+
+    // Send visitor notification email to owner (non-blocking)
+    if (sendgridApiKey && emailFrom && emailTo) {
+      const { subject, html } = visitorNotification({
+        ip,
+        page: page || "/",
+        referrer: referrer || req.headers.referer || "",
+        userAgent: userAgent || req.headers["user-agent"],
+        visitedAt: visitor.visitedAt,
+      });
+      sgMail
+        .send({ to: emailTo, from: emailFrom, subject, html })
+        .catch((err) => logger.error("Visitor email failed: %s", err.message));
+    }
+
     res.status(201).json({ visitor });
   } catch (err) {
     res.status(500).json({ error: "Failed to log visit" });
