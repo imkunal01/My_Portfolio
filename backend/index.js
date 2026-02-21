@@ -22,7 +22,7 @@ app.set("trust proxy", true);
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://kunald.vercel.app",
+  "https://kunaldhangar.vercel.app",
 ];
 app.use(
   cors({
