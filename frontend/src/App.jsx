@@ -39,8 +39,8 @@ const HomePage = () => (
 
 const App = () => {
   return (
-    <div className="relative min-h-screen bg-dark">
-      <Suspense fallback={<div className="flex items-center justify-center min-h-screen text-white/40">Loading...</div>}>
+    <div className="relative min-h-screen bg-[#fafafa] dark:bg-[#0a0a0a]">
+      <Suspense fallback={<div className="flex items-center justify-center min-h-screen text-gray-400 dark:text-white/40">Loading...</div>}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/project/:slug" element={<ProjectDetail />} />

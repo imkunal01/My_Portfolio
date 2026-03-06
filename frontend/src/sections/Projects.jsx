@@ -20,7 +20,7 @@ const Projects = () => {
         <span className="section-label">Case Studies</span>
         <h2 className="mt-3 text-4xl md:text-5xl lg:text-6xl font-bold font-display leading-tight">
           <span className="gradient-text">Curated</span>{" "}
-          <span className="text-white">work</span>
+          <span className="text-gray-900 dark:text-white">work</span>
         </h2>
       </motion.div>
 
@@ -60,20 +60,20 @@ const ProjectCard = ({ project, index, inView, isReversed }) => {
       >
         {/* Meta row */}
         <div className="flex items-center gap-3 mb-4">
-          <span className="text-sm font-mono text-white/30">
+          <span className="text-sm font-mono text-gray-400 dark:text-white/40">
             {String(index + 1).padStart(2, "0")}
           </span>
-          <span className="w-8 h-px bg-white/20" />
+          <span className="w-8 h-px bg-gray-300 dark:bg-white/25" />
           <span className="text-xs font-semibold uppercase tracking-wider text-accent">
             {project.category}
           </span>
-          <span className="ml-auto px-3 py-1 text-xs font-mono text-white/40 border border-white/10 rounded-full">
+          <span className="ml-auto px-3 py-1 text-xs font-mono text-gray-400 dark:text-white/40 border border-gray-200 dark:border-white/[0.06] rounded-full">
             {project.quarter}
           </span>
         </div>
 
         {/* Title */}
-        <h3 className="text-3xl lg:text-4xl font-bold font-display text-white mb-4 group-hover:text-accent transition-colors duration-300">
+        <h3 className="text-3xl lg:text-4xl font-bold font-display text-gray-900 dark:text-white mb-4 group-hover:text-accent transition-colors duration-300">
           {project.title}
         </h3>
 
@@ -82,11 +82,11 @@ const ProjectCard = ({ project, index, inView, isReversed }) => {
           onClick={() => navigate(`/project/${project.slug}`)}
           className="relative rounded-2xl bg-gradient-to-br from-accent/10 via-purple-500/10 to-pink-500/10 border border-accent/20 p-6 mb-6 cursor-pointer hover:border-accent/40 transition-all duration-300"
         >
-          <p className="text-sm text-white/70 leading-relaxed pr-8">
+          <p className="text-sm text-gray-600 dark:text-white/70 leading-relaxed pr-8">
             {project.description}
           </p>
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-accent/20 transition-all duration-300">
-            <ArrowRight size={16} className="text-white/60 group-hover:text-accent transition-colors" />
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center group-hover:bg-accent/20 transition-all duration-300">
+            <ArrowRight size={16} className="text-gray-400 dark:text-white/40 group-hover:text-accent transition-colors" />
           </div>
         </div>
 
@@ -95,7 +95,7 @@ const ProjectCard = ({ project, index, inView, isReversed }) => {
           {project.tags.map((tag) => (
             <span
               key={tag.name}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/50 bg-white/5 rounded-full border border-white/5 hover:border-white/15 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-white/60 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-colors"
             >
               <img src={tag.icon} alt={tag.name} className="w-3.5 h-3.5" />
               {tag.name}
@@ -110,7 +110,7 @@ const ProjectCard = ({ project, index, inView, isReversed }) => {
       >
         <div
           onClick={() => navigate(`/project/${project.slug}`)}
-          className="relative rounded-2xl overflow-hidden cursor-pointer group/img bg-gradient-to-br from-accent/5 to-purple-500/5 border border-white/5 hover:border-white/15 transition-all duration-500"
+          className="relative rounded-2xl overflow-hidden cursor-pointer group/img bg-gradient-to-br from-accent/5 to-purple-500/5 border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all duration-500"
         >
           {/* Project Screenshot / Placeholder */}
           <div className="aspect-[16/10] relative overflow-hidden">
@@ -121,14 +121,14 @@ const ProjectCard = ({ project, index, inView, isReversed }) => {
                 className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-700"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-[#111] via-[#161616] to-[#111] flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-16 h-16 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mx-auto mb-3">
                     <span className="text-2xl font-bold font-display text-accent">
                       {project.title.charAt(0)}
                     </span>
                   </div>
-                  <span className="text-xs text-white/20 uppercase tracking-wider">Preview</span>
+                  <span className="text-xs text-gray-400 dark:text-white/40 uppercase tracking-wider">Preview</span>
                 </div>
               </div>
             )}

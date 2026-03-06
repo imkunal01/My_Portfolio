@@ -37,17 +37,17 @@ const Blog = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-dark/80 backdrop-blur-xl border-b border-white/5"
+        className="fixed top-0 left-0 right-0 z-50 bg-dark/80 backdrop-blur-xl border-b border-gray-200 dark:border-white/[0.06]"
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <ArrowLeft size={16} />
             <span className="hidden sm:inline">Back Home</span>
           </button>
-          <span className="text-sm font-medium text-white/80 font-display">
+          <span className="text-sm font-medium text-gray-700 dark:text-white/80 font-display">
             Blog
           </span>
           <div className="w-16" />
@@ -62,10 +62,10 @@ const Blog = () => {
           transition={{ duration: 0.5 }}
           className="mb-12"
         >
-          <h1 className="text-4xl md:text-5xl font-bold font-display text-white mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold font-display text-gray-900 dark:text-white mb-4">
             Blog
           </h1>
-          <p className="text-lg text-white/50">
+          <p className="text-lg text-gray-500 dark:text-white/60">
             Thoughts on code, design, and building products.
           </p>
         </motion.div>
@@ -82,7 +82,7 @@ const Blog = () => {
             className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all ${
               !selectedTag
                 ? "bg-accent/10 border-accent/30 text-accent"
-                : "bg-white/5 border-white/5 text-white/40 hover:text-white/70"
+                : "bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/[0.06] text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
             }`}
           >
             All
@@ -94,7 +94,7 @@ const Blog = () => {
               className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all ${
                 selectedTag === tag
                   ? "bg-accent/10 border-accent/30 text-accent"
-                  : "bg-white/5 border-white/5 text-white/40 hover:text-white/70"
+                  : "bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/[0.06] text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
               }`}
             >
               {tag}
@@ -105,7 +105,7 @@ const Blog = () => {
         {/* Posts */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 size={24} className="animate-spin text-white/30" />
+            <Loader2 size={24} className="animate-spin text-gray-400 dark:text-white/40" />
           </div>
         ) : (
         <div className="space-y-6">
@@ -115,12 +115,12 @@ const Blog = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.15 + i * 0.08 }}
-              className="group rounded-2xl bg-[#111] border border-white/5 hover:border-white/10 transition-all duration-300 overflow-hidden cursor-pointer"
+              className="group rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all duration-300 overflow-hidden cursor-pointer"
             >
               <div className="p-6 lg:p-8">
                 {/* Meta */}
                 <div className="flex items-center gap-4 mb-3">
-                  <span className="flex items-center gap-1.5 text-xs text-white/30">
+                  <span className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-white/40">
                     <Calendar size={12} />
                     {new Date(post.createdAt || post.date).toLocaleDateString("en-US", {
                       month: "short",
@@ -129,7 +129,7 @@ const Blog = () => {
                     })}
                   </span>
                   {post.readTime && (
-                  <span className="flex items-center gap-1.5 text-xs text-white/30">
+                  <span className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-white/40">
                     <Clock size={12} />
                     {post.readTime}
                   </span>
@@ -137,12 +137,12 @@ const Blog = () => {
                 </div>
 
                 {/* Title */}
-                <h2 className="text-xl lg:text-2xl font-bold font-display text-white mb-3 group-hover:text-accent transition-colors duration-300">
+                <h2 className="text-xl lg:text-2xl font-bold font-display text-gray-900 dark:text-white mb-3 group-hover:text-accent transition-colors duration-300">
                   {post.title}
                 </h2>
 
                 {/* Excerpt */}
-                <p className="text-sm text-white/40 leading-relaxed mb-4">
+                <p className="text-sm text-gray-400 dark:text-white/40 leading-relaxed mb-4">
                   {post.excerpt}
                 </p>
 
@@ -151,7 +151,7 @@ const Blog = () => {
                   {(post.tags || []).map((tag) => (
                     <span
                       key={tag}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/30 bg-white/5 rounded-full"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40 bg-gray-100 dark:bg-white/5 rounded-full"
                     >
                       <Tag size={10} />
                       {tag}
@@ -165,8 +165,8 @@ const Blog = () => {
         )}
 
         {!loading && filtered.length === 0 && (
-          <div className="text-center py-20 text-white/30">
-            <FileText size={40} className="mx-auto mb-3 text-white/10" />
+          <div className="text-center py-20 text-gray-400 dark:text-white/40">
+            <FileText size={40} className="mx-auto mb-3 text-gray-200 dark:text-white/15" />
             <p>{selectedTag ? "No posts found for this tag." : "No blog posts yet. Check back soon!"}</p>
           </div>
         )}
