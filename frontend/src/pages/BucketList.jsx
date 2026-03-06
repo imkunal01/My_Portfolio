@@ -83,17 +83,17 @@ const BucketList = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-dark/80 backdrop-blur-xl border-b border-white/5"
+        className="fixed top-0 left-0 right-0 z-50 bg-dark/80 backdrop-blur-xl border-b border-gray-200 dark:border-white/[0.06]"
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <ArrowLeft size={16} />
             <span className="hidden sm:inline">Back Home</span>
           </button>
-          <span className="text-sm font-medium text-white/80 font-display">
+          <span className="text-sm font-medium text-gray-700 dark:text-white/80 font-display">
             Bucket List
           </span>
           <div className="w-16" />
@@ -112,11 +112,11 @@ const BucketList = () => {
             <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center">
               <ListChecks size={20} className="text-accent" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold font-display text-white">
+            <h1 className="text-4xl md:text-5xl font-bold font-display text-gray-900 dark:text-white">
               Bucket List
             </h1>
           </div>
-          <p className="text-lg text-white/50">
+          <p className="text-lg text-gray-500 dark:text-white/60">
             Things I want to do at least once in my life.
           </p>
         </motion.div>
@@ -126,15 +126,15 @@ const BucketList = () => {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="mb-8 rounded-2xl bg-[#111] border border-white/5 p-5"
+          className="mb-8 rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] p-5"
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-white/50">Progress</span>
+            <span className="text-sm text-gray-500 dark:text-white/60">Progress</span>
             <span className="text-sm font-semibold text-accent">
               {completedCount}/{bucketListItems.length} completed
             </span>
           </div>
-          <div className="w-full h-2 rounded-full bg-white/5 overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-gray-100 dark:bg-white/5 overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
@@ -159,14 +159,14 @@ const BucketList = () => {
               className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all ${
                 filter === f
                   ? "bg-accent/10 border-accent/30 text-accent"
-                  : "bg-white/5 border-white/5 text-white/40 hover:text-white/70"
+                  : "bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/[0.06] text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
               }`}
             >
               {f}
             </button>
           ))}
 
-          <span className="w-px h-6 bg-white/10 mx-1 self-center" />
+          <span className="w-px h-6 bg-gray-200 dark:bg-white/10 mx-1 self-center" />
 
           {/* Category filters */}
           {categories.map((cat) => {
@@ -179,8 +179,8 @@ const BucketList = () => {
                 }
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all ${
                   selectedCategory === cat
-                    ? categoryColors[cat] || "bg-white/10 border-white/20 text-white"
-                    : "bg-white/5 border-white/5 text-white/40 hover:text-white/70"
+                    ? categoryColors[cat] || "bg-gray-200 dark:bg-white/10 border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"
+                    : "bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/[0.06] text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
                 }`}
               >
                 <Icon size={11} />
@@ -207,7 +207,7 @@ const BucketList = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3, delay: i * 0.04 }}
-                  className={`rounded-2xl bg-[#111] border border-white/5 p-5 transition-all ${
+                  className={`rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] p-5 transition-all ${
                     item.completed ? "opacity-60" : ""
                   }`}
                 >
@@ -220,7 +220,7 @@ const BucketList = () => {
                           className="text-accent"
                         />
                       ) : (
-                        <Circle size={20} className="text-white/15" />
+                        <Circle size={20} className="text-gray-200 dark:text-white/15" />
                       )}
                     </div>
 
@@ -230,15 +230,15 @@ const BucketList = () => {
                         <h3
                           className={`text-base font-medium ${
                             item.completed
-                              ? "text-white/40 line-through"
-                              : "text-white"
+                              ? "text-gray-400 dark:text-white/40 line-through"
+                              : "text-gray-900 dark:text-white"
                           }`}
                         >
                           {item.title}
                         </h3>
                       </div>
                       {item.description && (
-                        <p className="text-sm text-white/30 leading-relaxed">
+                        <p className="text-sm text-gray-400 dark:text-white/40 leading-relaxed">
                           {item.description}
                         </p>
                       )}
@@ -247,7 +247,7 @@ const BucketList = () => {
                     {/* Category badge */}
                     <div
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full border shrink-0 ${
-                        categoryColors[item.category] || "text-white/40 bg-white/5 border-white/5"
+                        categoryColors[item.category] || "text-gray-400 dark:text-white/40 bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/[0.06]"
                       }`}
                     >
                       <Icon size={10} />
@@ -263,8 +263,8 @@ const BucketList = () => {
 
         {!loading && filtered.length === 0 && (
           <div className="text-center py-20">
-            <ListChecks className="w-12 h-12 text-white/10 mx-auto mb-4" />
-            <p className="text-white/30">No items match the current filter.</p>
+            <ListChecks className="w-12 h-12 text-gray-200 dark:text-white/15 mx-auto mb-4" />
+            <p className="text-gray-400 dark:text-white/40">No items match the current filter.</p>
           </div>
         )}
       </div>

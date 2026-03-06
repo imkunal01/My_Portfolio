@@ -27,7 +27,7 @@ const Skills = () => {
         <span className="section-label">My Skills</span>
         <h2 className="mt-3 text-4xl md:text-5xl lg:text-6xl font-bold font-display leading-tight">
           <span className="gradient-text">The Secret</span>{" "}
-          <span className="text-white">Sauce</span>
+          <span className="text-gray-900 dark:text-white">Sauce</span>
         </h2>
       </motion.div>
 
@@ -39,16 +39,16 @@ const Skills = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: catIndex * 0.1 }}
-            className="bento-card rounded-2xl bg-[#111] border border-white/5 p-6"
+            className="bento-card rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] p-6 shadow-sm"
           >
-            <h3 className="text-sm font-semibold text-white/60 mb-5 uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-white/60 mb-5 uppercase tracking-wider">
               {category.label}
             </h3>
             <div className="flex flex-wrap gap-3">
               {skills[category.key].map((skill) => (
                 <div
                   key={skill.name}
-                  className="group flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 transition-all duration-200 cursor-default"
+                  className="group flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-gray-50 dark:bg-white/[0.03] hover:bg-gray-100 dark:hover:bg-white/5 border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all duration-200 cursor-default"
                 >
                   <img
                     src={skill.icon}
@@ -56,7 +56,7 @@ const Skills = () => {
                     className="w-5 h-5 group-hover:scale-110 transition-transform duration-200"
                     loading="lazy"
                   />
-                  <span className="text-sm text-white/60 group-hover:text-white/90 transition-colors font-medium">
+                  <span className="text-sm text-gray-600 dark:text-white/70 group-hover:text-gray-900 dark:group-hover:text-white dark:hover:text-white transition-colors font-medium">
                     {skill.name}
                   </span>
                 </div>

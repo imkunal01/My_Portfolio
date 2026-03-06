@@ -199,7 +199,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] bg-black/30 dark:bg-black/60 backdrop-blur-sm"
           />
 
           {/* Modal */}
@@ -210,25 +210,25 @@ const CommandPalette = ({ isOpen, onClose }) => {
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="fixed inset-0 z-[101] flex items-start justify-center pt-[10vh] sm:pt-[15vh] px-4"
           >
-            <div className="w-full max-w-[560px] rounded-2xl bg-[#111] border border-white/[0.08] shadow-2xl shadow-black/60 overflow-hidden">
+            <div className="w-full max-w-[560px] rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] shadow-2xl shadow-gray-300/60 dark:shadow-black/60 overflow-hidden">
               {/* Search input */}
-              <div className="flex items-center gap-3 px-5 py-4 border-b border-white/5">
-                <Search size={18} className="text-white/30 shrink-0" />
+              <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-200 dark:border-white/[0.06]">
+                <Search size={18} className="text-gray-400 dark:text-white/40 shrink-0" />
                 <input
                   ref={inputRef}
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search"
-                  className="flex-1 bg-transparent text-base text-white placeholder-white/30 outline-none"
+                  className="flex-1 bg-transparent text-base text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/25 outline-none"
                 />
                 <div className="flex items-center gap-2 shrink-0">
-                  <button className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center text-white/20 hover:text-white/50 transition-colors">
+                  <button className="w-7 h-7 rounded-lg bg-gray-100 dark:bg-white/5 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white/70 transition-colors">
                     <Sun size={13} />
                   </button>
                   <button
                     onClick={onClose}
-                    className="px-2 py-1 rounded-md bg-white/5 text-[11px] font-mono text-white/30 hover:text-white/60 transition-colors"
+                    className="px-2 py-1 rounded-md bg-gray-100 dark:bg-white/5 text-[11px] font-mono text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white/70 transition-colors"
                   >
                     ESC
                   </button>
@@ -238,7 +238,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
               {/* Results */}
               <div className="max-h-[50vh] sm:max-h-[400px] overflow-y-auto custom-scrollbar">
                 {Object.keys(grouped).length === 0 && (
-                  <div className="px-5 py-10 text-center text-sm text-white/20">
+                  <div className="px-5 py-10 text-center text-sm text-gray-400 dark:text-white/40">
                     No results found for "{query}"
                   </div>
                 )}
@@ -247,7 +247,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
                   <div key={section}>
                     {/* Section header */}
                     <div className="px-5 pt-4 pb-2">
-                      <span className="text-[11px] font-semibold uppercase tracking-wider text-white/20">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40">
                         {section}
                       </span>
                     </div>
@@ -266,25 +266,25 @@ const CommandPalette = ({ isOpen, onClose }) => {
                           onMouseEnter={() => setSelectedIndex(idx)}
                           className={`w-full flex items-center gap-3 px-5 py-2.5 text-left transition-colors ${
                             isSelected
-                              ? "bg-white/[0.06]"
-                              : "hover:bg-white/[0.03]"
+                              ? "bg-gray-100 dark:bg-white/5"
+                              : "hover:bg-gray-50 dark:hover:bg-white/[0.03]"
                           }`}
                         >
                           <Icon
                             size={16}
                             className={`shrink-0 ${
-                              isSelected ? "text-white/60" : "text-white/20"
+                              isSelected ? "text-gray-600 dark:text-white/70" : "text-gray-300 dark:text-white/25"
                             }`}
                           />
                           <span
                             className={`text-sm font-medium ${
-                              isSelected ? "text-white" : "text-white/60"
+                              isSelected ? "text-gray-900 dark:text-white" : "text-gray-600 dark:text-white/70"
                             }`}
                           >
                             {item.name}
                           </span>
                           {item.external && (
-                            <span className="ml-auto text-[10px] text-white/15">
+                            <span className="ml-auto text-[10px] text-gray-300 dark:text-white/25">
                               ↗
                             </span>
                           )}

@@ -3,23 +3,28 @@ import { useInView } from "react-intersection-observer";
 import { Copy, Search, Clock, Zap, Globe2, ArrowRight } from "lucide-react";
 import { allSkills, personalInfo } from "../data/portfolio";
 import kunalImg from "../assets/Kunal.png";
+import { useTheme } from "../components/ThemeContext";
 
 /* ── Globe Component ── */
-const Globe = () => (
+const Globe = ({ isDark }) => (
   <div className="relative w-40 h-40 mx-auto">
     <div className="absolute -inset-2 rounded-full border border-cyan-500/10" />
-    <div className="w-full h-full rounded-full relative overflow-hidden bg-[radial-gradient(ellipse_at_30%_20%,#0c1f3d,#0a0e1a_60%,#05080f)]">
+    <div className={`w-full h-full rounded-full relative overflow-hidden ${
+      isDark
+        ? 'bg-[radial-gradient(ellipse_at_30%_20%,#1e1b4b,#1a1a2e_60%,#0f172a)]'
+        : 'bg-[radial-gradient(ellipse_at_30%_20%,#dbeafe,#e0e7ff_60%,#ede9fe)]'
+    }`}>
       {[20, 35, 50, 65, 80].map((top) => (
         <div
           key={`lat-${top}`}
-          className="absolute left-[10%] right-[10%] border-t border-cyan-400/[0.07]"
+          className={`absolute left-[10%] right-[10%] border-t ${isDark ? 'border-blue-400/15' : 'border-blue-300/20'}`}
           style={{ top: `${top}%` }}
         />
       ))}
       {[30, 42, 54, 66].map((left) => (
         <div
           key={`lng-${left}`}
-          className="absolute top-[10%] bottom-[10%] border-l border-cyan-400/[0.07]"
+          className={`absolute top-[10%] bottom-[10%] border-l ${isDark ? 'border-blue-400/15' : 'border-blue-300/20'}`}
           style={{ left: `${left}%` }}
         />
       ))}
@@ -27,14 +32,14 @@ const Globe = () => (
         className="absolute inset-[15%] rounded-full opacity-70"
         style={{
           backgroundImage:
-            "radial-gradient(circle, rgba(56,189,248,0.5) 0.8px, transparent 0.8px)",
+            "radial-gradient(circle, rgba(99,102,241,0.4) 0.8px, transparent 0.8px)",
           backgroundSize: "7px 7px",
         }}
       />
-      <div className="absolute inset-0 rounded-full bg-[radial-gradient(ellipse_at_25%_25%,rgba(56,189,248,0.12),transparent_60%)]" />
-      <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-cyan-500/10 to-transparent rounded-b-full" />
+      <div className="absolute inset-0 rounded-full bg-[radial-gradient(ellipse_at_25%_25%,rgba(99,102,241,0.12),transparent_60%)]" />
+      <div className={`absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t rounded-b-full ${isDark ? 'from-blue-900/20' : 'from-blue-200/20'} to-transparent`} />
     </div>
-    <div className="absolute -inset-4 rounded-full bg-cyan-500/[0.04] blur-xl pointer-events-none" />
+    <div className={`absolute -inset-4 rounded-full blur-xl pointer-events-none ${isDark ? 'bg-blue-900/20' : 'bg-blue-200/20'}`} />
   </div>
 );
 
@@ -64,10 +69,11 @@ const insideScoopCards = [
 
 /* card style */
 const card =
-  "bento-card rounded-2xl bg-[#111] border border-white/5 overflow-hidden";
+  "bento-card rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] overflow-hidden shadow-sm";
 
 /* ════════════════════════════ Main Component ════════════════════════════ */
 const BentoGrid = () => {
+  const { isDark } = useTheme();
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.08 });
 
   const container = {
@@ -103,9 +109,9 @@ const BentoGrid = () => {
                   height="110"
                   viewBox="0 0 70 110"
                 >
-                  <path d="M60 8 Q8 55 60 102" stroke="rgba(255,255,255,0.08)" strokeWidth="1" fill="none" />
-                  <path d="M52 18 Q8 55 52 92" stroke="rgba(255,255,255,0.05)" strokeWidth="1" fill="none" />
-                  <path d="M44 28 Q8 55 44 82" stroke="rgba(255,255,255,0.03)" strokeWidth="1" fill="none" />
+                  <path d="M60 8 Q8 55 60 102" stroke={isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'} strokeWidth="1" fill="none" />
+                  <path d="M52 18 Q8 55 52 92" stroke={isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'} strokeWidth="1" fill="none" />
+                  <path d="M44 28 Q8 55 44 82" stroke={isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)'} strokeWidth="1" fill="none" />
                 </svg>
                 <svg
                   className="absolute -right-20 top-1/2 -translate-y-1/2"
@@ -113,16 +119,16 @@ const BentoGrid = () => {
                   height="110"
                   viewBox="0 0 70 110"
                 >
-                  <path d="M10 8 Q62 55 10 102" stroke="rgba(255,255,255,0.08)" strokeWidth="1" fill="none" />
-                  <path d="M18 18 Q62 55 18 92" stroke="rgba(255,255,255,0.05)" strokeWidth="1" fill="none" />
-                  <path d="M26 28 Q62 55 26 82" stroke="rgba(255,255,255,0.03)" strokeWidth="1" fill="none" />
+                  <path d="M10 8 Q62 55 10 102" stroke={isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'} strokeWidth="1" fill="none" />
+                  <path d="M18 18 Q62 55 18 92" stroke={isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'} strokeWidth="1" fill="none" />
+                  <path d="M26 28 Q62 55 26 82" stroke={isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)'} strokeWidth="1" fill="none" />
                 </svg>
 
                 <div className="w-24 h-24 rounded-full p-[2px] bg-gradient-to-br from-accent via-purple-500 to-accent">
                   <img
                     src={kunalImg}
                     alt={personalInfo.name}
-                    className="w-full h-full rounded-full object-cover object-top bg-[#111]"
+                    className="w-full h-full rounded-full object-cover object-top bg-gray-50 dark:bg-white/[0.03]"
                   />
                 </div>
               </div>
@@ -132,7 +138,7 @@ const BentoGrid = () => {
               <span className="section-label tracking-[0.25em]">
                 Collaboration
               </span>
-              <p className="text-white/80 text-lg lg:text-xl mt-3 font-light leading-relaxed max-w-md mx-auto">
+              <p className="text-gray-600 dark:text-white/70 text-lg lg:text-xl mt-3 font-light leading-relaxed max-w-md mx-auto">
                 I prioritize client collaboration, fostering open communication
               </p>
             </div>
@@ -144,7 +150,7 @@ const BentoGrid = () => {
             className={`${card} lg:col-span-2 p-6 flex flex-col`}
           >
             <div className="mb-5">
-              <h3 className="text-xl font-display font-semibold text-white leading-snug">
+              <h3 className="text-xl font-display font-semibold text-gray-900 dark:text-white leading-snug">
                 Passionate about cutting-edge
               </h3>
               <h3 className="text-xl font-display font-semibold text-accent leading-snug">
@@ -153,8 +159,8 @@ const BentoGrid = () => {
             </div>
 
             <div className="relative overflow-hidden flex-1 flex flex-col justify-center gap-2.5">
-              <div className="absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-[#111] to-transparent z-10 pointer-events-none" />
-              <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-[#111] to-transparent z-10 pointer-events-none" />
+              <div className="absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-white dark:from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-white dark:from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
 
               {/* Row 1 */}
               <div className="flex animate-marquee whitespace-nowrap">
@@ -162,10 +168,10 @@ const BentoGrid = () => {
                   (sk, i) => (
                     <div
                       key={`a-${i}`}
-                      className="flex items-center gap-2 px-3 py-1.5 mx-1 rounded-lg bg-white/[0.04] border border-white/[0.06] shrink-0"
+                      className="flex items-center gap-2 px-3 py-1.5 mx-1 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.06] shrink-0"
                     >
                       <img src={sk.icon} alt={sk.name} className="w-4 h-4" loading="lazy" />
-                      <span className="text-[11px] text-white/60 font-medium">{sk.name}</span>
+                      <span className="text-[11px] text-gray-600 dark:text-white/70 font-medium">{sk.name}</span>
                     </div>
                   )
                 )}
@@ -177,10 +183,10 @@ const BentoGrid = () => {
                   (sk, i) => (
                     <div
                       key={`b-${i}`}
-                      className="flex items-center gap-2 px-3 py-1.5 mx-1 rounded-lg bg-white/[0.04] border border-white/[0.06] shrink-0"
+                      className="flex items-center gap-2 px-3 py-1.5 mx-1 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.06] shrink-0"
                     >
                       <img src={sk.icon} alt={sk.name} className="w-4 h-4" loading="lazy" />
-                      <span className="text-[11px] text-white/60 font-medium">{sk.name}</span>
+                      <span className="text-[11px] text-gray-600 dark:text-white/70 font-medium">{sk.name}</span>
                     </div>
                   )
                 )}
@@ -192,10 +198,10 @@ const BentoGrid = () => {
                   (sk, i) => (
                     <div
                       key={`c-${i}`}
-                      className="flex items-center gap-2 px-3 py-1.5 mx-1 rounded-lg bg-white/[0.04] border border-white/[0.06] shrink-0"
+                      className="flex items-center gap-2 px-3 py-1.5 mx-1 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.06] shrink-0"
                     >
                       <img src={sk.icon} alt={sk.name} className="w-4 h-4" loading="lazy" />
-                      <span className="text-[11px] text-white/60 font-medium">{sk.name}</span>
+                      <span className="text-[11px] text-gray-600 dark:text-white/70 font-medium">{sk.name}</span>
                     </div>
                   )
                 )}
@@ -212,7 +218,7 @@ const BentoGrid = () => {
             className={`${card} flex flex-col`}
           >
             <div className="p-6">
-              <h3 className="text-lg font-display font-semibold text-white leading-snug">
+              <h3 className="text-lg font-display font-semibold text-gray-900 dark:text-white leading-snug">
                 I&apos;m very flexible with time
               </h3>
               <h3 className="text-lg font-display font-semibold text-accent leading-snug">
@@ -220,25 +226,25 @@ const BentoGrid = () => {
               </h3>
 
               <div className="flex items-center gap-2 mt-4">
-                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.06] text-xs text-white/50">
+                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.06] text-xs text-gray-500 dark:text-white/60">
                   <span className="text-sm">🇬🇧</span> UK
                 </span>
                 <span className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-accent/15 border border-accent/25 text-xs text-accent font-semibold">
                   <span className="text-sm">🇮🇳</span> INDIA
                 </span>
-                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.06] text-xs text-white/50">
+                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.06] text-xs text-gray-500 dark:text-white/60">
                   <span className="text-sm">🇺🇸</span> USA
                 </span>
               </div>
             </div>
 
             <div className="flex-1 flex flex-col items-center justify-center px-6 pb-6">
-              <Globe />
+              <Globe isDark={isDark} />
               <div className="text-center mt-4">
-                <span className="text-[10px] tracking-[0.3em] text-white/25 uppercase block">
+                <span className="text-[10px] tracking-[0.3em] text-gray-400 dark:text-white/40 uppercase block">
                   Remote
                 </span>
-                <p className="text-base font-display font-bold text-white mt-0.5 tracking-wide">
+                <p className="text-base font-display font-bold text-gray-900 dark:text-white mt-0.5 tracking-wide">
                   {personalInfo.location.toUpperCase()}
                 </p>
               </div>
@@ -260,16 +266,16 @@ const BentoGrid = () => {
               <div className="absolute -inset-2 rounded-2xl border border-accent/20 animate-pulse" />
             </div>
 
-            <h3 className="text-lg font-display font-medium text-white/80 leading-snug">
+            <h3 className="text-lg font-display font-medium text-gray-700 dark:text-white/80 leading-snug">
               Let&apos;s work together
             </h3>
-            <p className="text-lg font-display font-medium text-white/80 leading-snug">
+            <p className="text-lg font-display font-medium text-gray-700 dark:text-white/80 leading-snug">
               on your next project
             </p>
 
             <a
               href={`mailto:${personalInfo.email}`}
-              className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-sm text-white/50 hover:text-white/80 hover:border-white/15 transition-all group"
+              className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.06] text-sm text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white/80 hover:border-gray-300 dark:hover:border-white/10 transition-all group"
             >
               <Copy size={14} className="group-hover:text-accent transition-colors" />
               <span className="truncate max-w-[200px]">{personalInfo.email}</span>
@@ -281,25 +287,25 @@ const BentoGrid = () => {
             variants={item}
             className={`${card} p-4 md:col-span-2 lg:col-span-1`}
           >
-            <div className="rounded-xl bg-[#0a0a0a] border border-white/5 overflow-hidden h-full flex flex-col">
+            <div className="rounded-xl bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.06] overflow-hidden h-full flex flex-col">
               {/* Browser chrome */}
-              <div className="flex items-center gap-1.5 px-3 py-2.5 border-b border-white/5">
+              <div className="flex items-center gap-1.5 px-3 py-2.5 border-b border-gray-200 dark:border-white/[0.06]">
                 <div className="w-2 h-2 rounded-full bg-white/15" />
                 <div className="w-2 h-2 rounded-full bg-white/15" />
                 <div className="w-2 h-2 rounded-full bg-white/15" />
-                <div className="mx-auto px-6 py-0.5 rounded-md bg-white/[0.04] text-[10px] text-white/25 font-mono">
+                <div className="mx-auto px-6 py-0.5 rounded-md bg-gray-100 dark:bg-white/5 text-[10px] text-gray-400 dark:text-white/40 font-mono">
                   {personalInfo.name.toLowerCase().replace(/\s/g, "")}.in
                 </div>
               </div>
               {/* Content area */}
               <div className="flex-1 flex flex-col items-center justify-center p-6 min-h-[200px]">
-                <div className="w-9 h-9 rounded-full bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mb-4">
-                  <Search size={15} className="text-white/35" />
+                <div className="w-9 h-9 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/[0.06] flex items-center justify-center mb-4">
+                  <Search size={15} className="text-gray-400 dark:text-white/40" />
                 </div>
-                <h4 className="text-base font-display font-bold text-white">
+                <h4 className="text-base font-display font-bold text-gray-900 dark:text-white">
                   Built to Perform.
                 </h4>
-                <p className="text-xs text-white/35 mt-1.5 text-center">
+                <p className="text-xs text-gray-400 dark:text-white/40 mt-1.5 text-center">
                   Websites that impact your business.
                 </p>
               </div>
@@ -316,7 +322,7 @@ const BentoGrid = () => {
             <span className="section-label tracking-[0.25em]">
               The Inside Scoop
             </span>
-            <h3 className="text-xl lg:text-2xl font-display font-semibold text-white mt-2">
+            <h3 className="text-xl lg:text-2xl font-display font-semibold text-gray-900 dark:text-white mt-2">
               Currently building a Saas Application
             </h3>
           </div>
@@ -330,12 +336,12 @@ const BentoGrid = () => {
               {[...insideScoopCards, ...insideScoopCards].map((card, i) => (
                 <div
                   key={i}
-                  className="shrink-0 w-56 mx-2 p-5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-white/10 transition-colors"
+                  className="shrink-0 w-56 mx-2 p-5 rounded-xl bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-colors"
                 >
-                  <h4 className="text-sm font-semibold text-white whitespace-normal leading-snug mb-2">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white whitespace-normal leading-snug mb-2">
                     {card.title}
                   </h4>
-                  <p className="text-xs text-white/35 whitespace-normal leading-relaxed">
+                  <p className="text-xs text-gray-400 dark:text-white/40 whitespace-normal leading-relaxed">
                     {card.description}
                   </p>
                 </div>

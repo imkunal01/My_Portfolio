@@ -12,9 +12,12 @@ import {
   MessageSquare,
   ListChecks,
   Film,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { navLinks, moreLinks, personalInfo } from "../data/portfolio";
+import { useTheme } from "./ThemeContext";
 import CommandPalette from "./CommandPalette";
 
 const iconMap = {
@@ -32,6 +35,7 @@ const Navbar = () => {
   const moreRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isDark, toggleTheme } = useTheme();
 
   /* ── scroll spy ─────────────────────────────── */
   useEffect(() => {
@@ -99,14 +103,10 @@ const Navbar = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/5"
-            : "bg-transparent"
-        }`}
+        className="fixed top-0 left-0 right-0 z-50 pointer-events-none"
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
+          <div className="flex items-center justify-between h-16 lg:h-20 pointer-events-auto">
             {/* ── Logo ─────────────────────────── */}
             <motion.a
               href="#home"
@@ -118,12 +118,12 @@ const Navbar = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <span className="text-white">{personalInfo.firstName}</span>
+              <span className="text-gray-900 dark:text-white">{personalInfo.firstName}</span>
               <span className="text-accent">.</span>
             </motion.a>
 
             {/* ── Desktop Center Nav ────────────── */}
-            <div className="hidden lg:flex items-center gap-0.5 px-1.5 py-1.5 rounded-2xl bg-white/[0.04] border border-white/[0.06] backdrop-blur-lg">
+            <div className="hidden lg:flex items-center gap-0.5 px-1.5 py-1.5 rounded-2xl bg-white/70 dark:bg-white/[0.06] border border-gray-200/60 dark:border-white/[0.08] backdrop-blur-xl shadow-lg shadow-black/[0.03] dark:shadow-black/20">
               {navLinks.map((link) => (
                 <a
                   key={link.name}
@@ -134,14 +134,14 @@ const Navbar = () => {
                   }}
                   className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-xl ${
                     isActive(link.href)
-                      ? "text-white"
-                      : "text-white/50 hover:text-white/80"
+                      ? "text-gray-900 dark:text-white"
+                      : "text-gray-500 dark:text-white/60 hover:text-gray-800 dark:hover:text-white/90"
                   }`}
                 >
                   {isActive(link.href) && (
                     <motion.div
                       layoutId="navPill"
-                      className="absolute inset-0 bg-white/[0.08] rounded-xl"
+                      className="absolute inset-0 bg-white dark:bg-white/10 rounded-xl shadow-sm dark:shadow-none"
                       transition={{
                         type: "spring",
                         stiffness: 380,
@@ -158,8 +158,8 @@ const Navbar = () => {
                 onClick={() => handleRouteClick("/blog")}
                 className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-xl ${
                   location.pathname === "/blog"
-                    ? "text-white bg-white/[0.08]"
-                    : "text-white/50 hover:text-white/80"
+                    ? "text-gray-900 dark:text-white bg-white dark:bg-white/10 shadow-sm dark:shadow-none"
+                    : "text-gray-500 dark:text-white/60 hover:text-gray-800 dark:hover:text-white/90"
                 }`}
               >
                 Blog
@@ -171,8 +171,8 @@ const Navbar = () => {
                   onClick={() => setMoreOpen((v) => !v)}
                   className={`flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-xl transition-colors duration-200 ${
                     moreOpen
-                      ? "text-white bg-white/[0.08]"
-                      : "text-white/50 hover:text-white/80"
+                      ? "text-gray-900 dark:text-white bg-white dark:bg-white/10 shadow-sm dark:shadow-none"
+                      : "text-gray-500 dark:text-white/60 hover:text-gray-800 dark:hover:text-white/90"
                   }`}
                 >
                   More
@@ -192,11 +192,11 @@ const Navbar = () => {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.97 }}
                       transition={{ duration: 0.2, ease: "easeOut" }}
-                      className="absolute right-0 top-full mt-3 w-[560px] rounded-2xl bg-[#111]/95 backdrop-blur-xl border border-white/[0.06] shadow-2xl shadow-black/40 overflow-hidden"
+                      className="absolute right-0 top-full mt-3 w-[560px] rounded-2xl bg-white/95 dark:bg-[#111]/95 backdrop-blur-xl border border-gray-200 dark:border-white/[0.06] shadow-xl shadow-gray-200/50 dark:shadow-black/50 overflow-hidden"
                     >
                       <div className="grid grid-cols-[1fr_200px]">
                         {/* Left – Image cards */}
-                        <div className="p-3 grid grid-cols-2 gap-3 border-r border-white/5">
+                        <div className="p-3 grid grid-cols-2 gap-3 border-r border-gray-100 dark:border-white/[0.04]">
                           {moreLinks.cards.map((card) => (
                             <button
                               key={card.name}
@@ -209,12 +209,12 @@ const Navbar = () => {
                                   alt={card.name}
                                   className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                                 <div className="absolute bottom-0 left-0 right-0 p-3">
                                   <h4 className="text-sm font-semibold text-white mb-0.5">
                                     {card.name}
                                   </h4>
-                                  <p className="text-[11px] text-white/50 leading-snug">
+                                  <p className="text-[11px] text-white/60 leading-snug">
                                     {card.description}
                                   </p>
                                 </div>
@@ -237,16 +237,16 @@ const Navbar = () => {
                                     handleNavClick(item.href);
                                   }
                                 }}
-                                className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors group/item text-left"
+                                className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-white/[0.03] transition-colors group/item text-left"
                               >
-                                <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/[0.06] flex items-center justify-center shrink-0 group-hover/item:border-white/10 transition-colors">
-                                  <Icon size={14} className="text-white/40" />
+                                <div className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.06] flex items-center justify-center shrink-0 group-hover/item:border-gray-300 transition-colors">
+                                  <Icon size={14} className="text-gray-500 dark:text-white/60" />
                                 </div>
                                 <div className="min-w-0">
-                                  <h4 className="text-sm font-medium text-white/80 leading-tight">
+                                  <h4 className="text-sm font-medium text-gray-700 dark:text-white/80 leading-tight">
                                     {item.name}
                                   </h4>
-                                  <p className="text-[11px] text-white/30 leading-snug mt-0.5 truncate">
+                                  <p className="text-[11px] text-gray-400 dark:text-white/40 leading-snug mt-0.5 truncate">
                                     {item.description}
                                   </p>
                                 </div>
@@ -262,7 +262,7 @@ const Navbar = () => {
             </div>
 
             {/* ── Right side buttons ──────────── */}
-            <div className="flex items-center gap-3 z-10">
+            <div className="flex items-center gap-2 z-10">
               {/* Book a Call – desktop */}
               <a
                 href="#contact"
@@ -270,16 +270,35 @@ const Navbar = () => {
                   e.preventDefault();
                   handleNavClick("#contact");
                 }}
-                className="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-accent-light text-white text-sm font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent/25"
+                className="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-accent-light text-white text-sm font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent/20"
               >
                 <Phone size={14} />
                 Book a Call
               </a>
 
+              {/* Theme toggle */}
+              <button
+                onClick={toggleTheme}
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/70 dark:bg-white/[0.06] border border-gray-200/60 dark:border-white/[0.08] backdrop-blur-xl text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 transition-all shadow-sm dark:shadow-none"
+                title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={isDark ? "moon" : "sun"}
+                    initial={{ y: -12, opacity: 0, rotate: -90 }}
+                    animate={{ y: 0, opacity: 1, rotate: 0 }}
+                    exit={{ y: 12, opacity: 0, rotate: 90 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {isDark ? <Sun size={16} /> : <Moon size={16} />}
+                  </motion.div>
+                </AnimatePresence>
+              </button>
+
               {/* Command palette icon */}
               <button
                 onClick={() => setCmdOpen(true)}
-                className="hidden lg:flex w-10 h-10 items-center justify-center rounded-xl bg-white/[0.04] border border-white/[0.06] text-white/40 hover:text-white/70 hover:bg-white/[0.08] transition-all"
+                className="hidden lg:flex w-10 h-10 items-center justify-center rounded-xl bg-white/70 dark:bg-white/[0.06] border border-gray-200/60 dark:border-white/[0.08] backdrop-blur-xl text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80 hover:bg-white dark:hover:bg-white/10 transition-all shadow-sm dark:shadow-none"
                 title="Search (Ctrl+K)"
               >
                 <LayoutGrid size={16} />
@@ -288,7 +307,7 @@ const Navbar = () => {
               {/* Mobile menu button */}
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden p-2 text-white/70 hover:text-white transition-colors"
+                className="lg:hidden p-2 text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
                 {mobileOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
@@ -305,7 +324,7 @@ const Navbar = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-40 bg-[#0a0a0a]/95 backdrop-blur-xl lg:hidden overflow-y-auto"
+            className="fixed inset-0 z-40 bg-white/95 dark:bg-[#111]/95 backdrop-blur-xl lg:hidden overflow-y-auto"
           >
             <div className="flex flex-col items-center justify-center min-h-full gap-5 px-8 py-24">
               {navLinks.map((link, i) => (
@@ -319,7 +338,7 @@ const Navbar = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.07 }}
-                  className="text-2xl font-medium text-white/70 hover:text-white transition-colors"
+                  className="text-2xl font-medium text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
                   {link.name}
                 </motion.a>
@@ -330,7 +349,7 @@ const Navbar = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: navLinks.length * 0.07 }}
-                className="text-2xl font-medium text-white/70 hover:text-white transition-colors"
+                className="text-2xl font-medium text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
                 Blog
               </motion.button>
@@ -340,16 +359,16 @@ const Navbar = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: (navLinks.length + 1) * 0.07 }}
-                className="w-full max-w-xs border-t border-white/10 pt-5 mt-2 space-y-4"
+                className="w-full max-w-xs border-t border-gray-200 dark:border-white/[0.06] pt-5 mt-2 space-y-4"
               >
-                <span className="text-xs uppercase tracking-wider text-white/30 font-semibold">
+                <span className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/40 font-semibold">
                   More
                 </span>
 
                 {/* Guestbook */}
                 <button
                   onClick={() => handleRouteClick("/guestbook")}
-                  className="flex items-center gap-3 text-white/60 hover:text-white transition-colors w-full"
+                  className="flex items-center gap-3 text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors w-full"
                 >
                   <MessageSquare size={16} />
                   <span className="text-base">Guestbook</span>
@@ -358,7 +377,7 @@ const Navbar = () => {
                 {/* Bucket List */}
                 <button
                   onClick={() => handleRouteClick("/bucket-list")}
-                  className="flex items-center gap-3 text-white/60 hover:text-white transition-colors w-full"
+                  className="flex items-center gap-3 text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors w-full"
                 >
                   <ListChecks size={16} />
                   <span className="text-base">Bucket List</span>
@@ -367,7 +386,7 @@ const Navbar = () => {
                 {/* Recommendations */}
                 <button
                   onClick={() => handleRouteClick("/recommendations")}
-                  className="flex items-center gap-3 text-white/60 hover:text-white transition-colors w-full"
+                  className="flex items-center gap-3 text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors w-full"
                 >
                   <Film size={16} />
                   <span className="text-base">My Picks</span>
@@ -382,7 +401,7 @@ const Navbar = () => {
                         if (item.route) handleRouteClick(item.route);
                         else handleNavClick(item.href);
                       }}
-                      className="flex items-center gap-3 text-white/60 hover:text-white transition-colors w-full"
+                      className="flex items-center gap-3 text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors w-full"
                     >
                       <Icon size={16} />
                       <span className="text-base">{item.name}</span>
@@ -390,6 +409,18 @@ const Navbar = () => {
                   );
                 })}
               </motion.div>
+
+              {/* Theme toggle for mobile */}
+              <motion.button
+                onClick={toggleTheme}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: (navLinks.length + 2) * 0.07 }}
+                className="mt-2 inline-flex items-center gap-2 px-6 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/[0.06] text-gray-600 dark:text-white/70 font-medium rounded-xl hover:bg-gray-200 dark:hover:bg-white/10 transition-all"
+              >
+                {isDark ? <Sun size={16} /> : <Moon size={16} />}
+                {isDark ? "Light Mode" : "Dark Mode"}
+              </motion.button>
 
               {/* Search button for mobile */}
               <motion.button
@@ -399,8 +430,8 @@ const Navbar = () => {
                 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: (navLinks.length + 2) * 0.07 }}
-                className="mt-2 inline-flex items-center gap-2 px-6 py-2.5 bg-white/5 border border-white/10 text-white/60 font-medium rounded-xl hover:bg-white/10 transition-all"
+                transition={{ delay: (navLinks.length + 3) * 0.07 }}
+                className="mt-2 inline-flex items-center gap-2 px-6 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/[0.06] text-gray-600 dark:text-white/70 font-medium rounded-xl hover:bg-gray-200 dark:hover:bg-white/10 transition-all"
               >
                 <LayoutGrid size={16} />
                 Search
@@ -414,7 +445,7 @@ const Navbar = () => {
                 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: (navLinks.length + 3) * 0.07 }}
+                transition={{ delay: (navLinks.length + 4) * 0.07 }}
                 className="mt-2 inline-flex items-center gap-2 px-8 py-3 bg-accent text-white font-medium rounded-xl"
               >
                 <Phone size={16} />

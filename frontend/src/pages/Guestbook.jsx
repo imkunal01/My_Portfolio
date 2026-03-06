@@ -52,17 +52,17 @@ const Guestbook = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-dark/80 backdrop-blur-xl border-b border-white/5"
+        className="fixed top-0 left-0 right-0 z-50 bg-dark/80 backdrop-blur-xl border-b border-gray-200 dark:border-white/[0.06]"
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <ArrowLeft size={16} />
             <span className="hidden sm:inline">Back Home</span>
           </button>
-          <span className="text-sm font-medium text-white/80 font-display">
+          <span className="text-sm font-medium text-gray-700 dark:text-white/80 font-display">
             Guestbook
           </span>
           <div className="w-16" />
@@ -81,11 +81,11 @@ const Guestbook = () => {
             <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center">
               <MessageSquare size={20} className="text-accent" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold font-display text-white">
+            <h1 className="text-4xl md:text-5xl font-bold font-display text-gray-900 dark:text-white">
               Guestbook
             </h1>
           </div>
-          <p className="text-lg text-white/50">
+          <p className="text-lg text-gray-500 dark:text-white/60">
             Leave a message and let me know you were here!
           </p>
         </motion.div>
@@ -96,18 +96,18 @@ const Guestbook = () => {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="mb-12 rounded-2xl bg-[#111] border border-white/5 p-6"
+          className="mb-12 rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] p-6"
         >
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
-              <User size={14} className="text-white/40" />
+            <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+              <User size={14} className="text-gray-400 dark:text-white/40" />
             </div>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Your name"
-              className="flex-1 bg-transparent text-sm text-white placeholder-white/20 outline-none"
+              className="flex-1 bg-transparent text-sm text-gray-900 dark:text-white placeholder-gray-300 dark:placeholder-white/20 outline-none"
             />
           </div>
           <textarea
@@ -115,13 +115,13 @@ const Guestbook = () => {
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Leave a message..."
             rows={3}
-            className="w-full bg-white/[0.03] rounded-xl p-4 text-sm text-white placeholder-white/20 outline-none border border-white/5 focus:border-accent/30 transition-colors resize-none mb-4"
+            className="w-full bg-gray-50 dark:bg-white/[0.03] rounded-xl p-4 text-sm text-gray-900 dark:text-white placeholder-gray-300 dark:placeholder-white/20 outline-none border border-gray-200 dark:border-white/[0.06] focus:border-accent/30 transition-colors resize-none mb-4"
           />
           <div className="flex justify-end">
             <button
               type="submit"
               disabled={!name.trim() || !message.trim() || submitting}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-accent-light text-white text-sm font-medium rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-accent-light text-gray-900 dark:text-white text-sm font-medium rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
               {submitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
               {submitting ? "Signing..." : "Sign Guestbook"}
@@ -136,8 +136,8 @@ const Guestbook = () => {
           </div>
         ) : entries.length === 0 ? (
           <div className="text-center py-20">
-            <MessageSquare className="w-12 h-12 text-white/10 mx-auto mb-4" />
-            <p className="text-white/30">No messages yet. Be the first to sign!</p>
+            <MessageSquare className="w-12 h-12 text-gray-200 dark:text-white/15 mx-auto mb-4" />
+            <p className="text-gray-400 dark:text-white/40">No messages yet. Be the first to sign!</p>
           </div>
         ) : (
         <div className="space-y-4">
@@ -148,20 +148,20 @@ const Guestbook = () => {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
-                className="rounded-2xl bg-[#111] border border-white/5 p-5"
+                className="rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] p-5"
               >
                 <div className="flex items-start gap-3">
                   <img
                     src={entry.avatar}
                     alt={entry.name}
-                    className="w-9 h-9 rounded-full bg-white/5"
+                    className="w-9 h-9 rounded-full bg-gray-100 dark:bg-white/5"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">
-                      <span className="text-sm font-semibold text-white">
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white">
                         {entry.name}
                       </span>
-                      <span className="text-[11px] text-white/20">
+                      <span className="text-[11px] text-gray-300 dark:text-white/25">
                         {new Date(entry.createdAt || entry.date).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
@@ -169,7 +169,7 @@ const Guestbook = () => {
                         })}
                       </span>
                     </div>
-                    <p className="text-sm text-white/50 leading-relaxed">
+                    <p className="text-sm text-gray-500 dark:text-white/60 leading-relaxed">
                       {entry.message}
                     </p>
                   </div>

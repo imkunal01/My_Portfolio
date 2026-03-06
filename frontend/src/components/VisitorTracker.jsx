@@ -81,12 +81,12 @@ const VisitorTracker = () => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 50, scale: 0.95 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed bottom-6 right-6 z-[90] w-80 rounded-2xl bg-[#111]/95 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/40 overflow-hidden"
+          className="fixed bottom-6 right-6 z-[90] w-80 rounded-2xl bg-white/95 dark:bg-[#111]/95 backdrop-blur-xl border border-gray-200 dark:border-white/[0.06] shadow-2xl shadow-gray-300/50 dark:shadow-black/50 overflow-hidden"
         >
           {/* Close button */}
           <button
             onClick={handleDismiss}
-            className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full hover:bg-white/10 text-white/30 hover:text-white/60 transition-all"
+            className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/5 text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white/70 transition-all"
           >
             <X size={14} />
           </button>
@@ -101,10 +101,10 @@ const VisitorTracker = () => {
                 <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-3">
                   <Sparkles size={20} className="text-emerald-400" />
                 </div>
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
                   Thanks, {name}!
                 </p>
-                <p className="text-xs text-white/40 mt-1">
+                <p className="text-xs text-gray-400 dark:text-white/40 mt-1">
                   Glad you stopped by ✨
                 </p>
               </motion.div>
@@ -115,10 +115,10 @@ const VisitorTracker = () => {
                     <UserPlus size={18} className="text-accent" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
                       Hey there! 👋
                     </p>
-                    <p className="text-xs text-white/40">
+                    <p className="text-xs text-gray-400 dark:text-white/40">
                       Mind sharing your name?
                     </p>
                   </div>
@@ -130,14 +130,14 @@ const VisitorTracker = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Your name"
-                    className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/40 transition-colors"
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.06] rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-accent/40 transition-colors"
                     autoFocus
                   />
                   <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={handleDismiss}
-                      className="flex-1 py-2 text-xs text-white/30 hover:text-white/60 transition-colors rounded-xl"
+                      className="flex-1 py-2 text-xs text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white/70 transition-colors rounded-xl"
                     >
                       Maybe later
                     </button>

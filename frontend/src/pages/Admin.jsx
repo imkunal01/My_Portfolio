@@ -116,10 +116,10 @@ const Admin = () => {
             <div className="w-16 h-16 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mx-auto mb-4">
               <Lock size={28} className="text-accent" />
             </div>
-            <h1 className="text-2xl font-bold font-display text-white">
+            <h1 className="text-2xl font-bold font-display text-gray-900 dark:text-white">
               Admin Panel
             </h1>
-            <p className="text-sm text-white/40 mt-1">
+            <p className="text-sm text-gray-400 dark:text-white/40 mt-1">
               Enter your admin key to continue
             </p>
           </div>
@@ -131,7 +131,7 @@ const Admin = () => {
                 value={keyInput}
                 onChange={(e) => setKeyInput(e.target.value)}
                 placeholder="Admin Key"
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:outline-none focus:border-accent/40 transition-colors"
+                className="w-full px-4 py-3 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-accent/40 transition-colors"
                 autoFocus
               />
               {loginError && (
@@ -141,7 +141,7 @@ const Admin = () => {
             <button
               type="submit"
               disabled={loginLoading}
-              className="w-full py-3 bg-accent hover:bg-accent-light disabled:opacity-50 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="w-full py-3 bg-accent hover:bg-accent-light disabled:opacity-50 text-gray-900 dark:text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               {loginLoading ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -154,7 +154,7 @@ const Admin = () => {
 
           <button
             onClick={() => navigate("/")}
-            className="mt-6 mx-auto flex items-center gap-2 text-sm text-white/30 hover:text-white/60 transition-colors"
+            className="mt-6 mx-auto flex items-center gap-2 text-sm text-gray-400 dark:text-white/40 hover:text-gray-500 dark:hover:text-white/50 transition-colors"
           >
             <ArrowLeft size={14} />
             Back to site
@@ -175,21 +175,21 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-dark">
       {/* Top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-dark/80 backdrop-blur-xl border-b border-white/5">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-dark/80 backdrop-blur-xl border-b border-gray-200 dark:border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <ArrowLeft size={16} />
             <span className="hidden sm:inline">Back</span>
           </button>
-          <span className="text-sm font-medium text-white/80 font-display">
+          <span className="text-sm font-medium text-gray-700 dark:text-white/80 font-display">
             Admin Panel
           </span>
           <button
             onClick={handleLogout}
-            className="text-sm text-white/40 hover:text-red-400 transition-colors"
+            className="text-sm text-gray-400 dark:text-white/40 hover:text-red-400 transition-colors"
           >
             Logout
           </button>
@@ -198,7 +198,7 @@ const Admin = () => {
 
       <div className="pt-24 pb-20 px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Tabs */}
-        <div className="flex gap-1 p-1 bg-white/[0.04] border border-white/[0.06] rounded-2xl w-full sm:w-fit mb-8 overflow-x-auto">
+        <div className="flex gap-1 p-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/[0.06] rounded-2xl w-full sm:w-fit mb-8 overflow-x-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
@@ -207,8 +207,8 @@ const Admin = () => {
                 onClick={() => setActiveTab(tab.key)}
                 className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all shrink-0 ${
                   activeTab === tab.key
-                    ? "bg-white/[0.08] text-white"
-                    : "text-white/40 hover:text-white/70"
+                    ? "bg-white dark:bg-[#111] text-gray-900 dark:text-white shadow-sm"
+                    : "text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
                 }`}
               >
                 <Icon size={16} />
@@ -269,16 +269,16 @@ const RecommendationsAdmin = ({ token }) => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-bold text-white font-display">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white font-display">
             Manage Recommendations
           </h2>
-          <p className="text-sm text-white/40 mt-1">
+          <p className="text-sm text-gray-400 dark:text-white/40 mt-1">
             {recs.length} total recommendations
           </p>
         </div>
         <button
           onClick={() => setShowAddPanel(!showAddPanel)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-light text-white text-sm font-medium rounded-xl transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-light text-gray-900 dark:text-white text-sm font-medium rounded-xl transition-colors"
         >
           {showAddPanel ? <X size={16} /> : <Plus size={16} />}
           {showAddPanel ? "Close" : "Add New"}
@@ -309,11 +309,11 @@ const RecommendationsAdmin = ({ token }) => {
       {/* List */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 size={24} className="animate-spin text-white/30" />
+          <Loader2 size={24} className="animate-spin text-gray-400 dark:text-white/40" />
         </div>
       ) : recs.length === 0 ? (
-        <div className="text-center py-20 text-white/30">
-          <Film size={40} className="mx-auto mb-3 text-white/10" />
+        <div className="text-center py-20 text-gray-400 dark:text-white/40">
+          <Film size={40} className="mx-auto mb-3 text-gray-200 dark:text-white/15" />
           <p>No recommendations yet. Add your first one!</p>
         </div>
       ) : (
@@ -327,10 +327,10 @@ const RecommendationsAdmin = ({ token }) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="flex items-center gap-4 p-4 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-all group"
+                className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all group"
               >
                 {/* Poster thumb */}
-                <div className="w-12 h-16 rounded-lg overflow-hidden shrink-0 bg-white/5">
+                <div className="w-12 h-16 rounded-lg overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
                   {rec.poster && rec.poster !== "N/A" ? (
                     <img
                       src={rec.poster}
@@ -339,7 +339,7 @@ const RecommendationsAdmin = ({ token }) => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Icon size={16} className="text-white/20" />
+                      <Icon size={16} className="text-gray-300 dark:text-white/25" />
                     </div>
                   )}
                 </div>
@@ -347,19 +347,19 @@ const RecommendationsAdmin = ({ token }) => {
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-semibold text-white truncate">
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                       {rec.title}
                     </h3>
                     <span className="shrink-0 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-accent/10 text-accent rounded-full">
                       {rec.type}
                     </span>
                     {rec.category && rec.category !== "general" && (
-                      <span className="shrink-0 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-white/5 text-white/30 rounded-full">
+                      <span className="shrink-0 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/40 rounded-full">
                         {rec.category}
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-3 mt-1 text-xs text-white/30">
+                  <div className="flex items-center gap-3 mt-1 text-xs text-gray-400 dark:text-white/40">
                     {rec.year && <span>{rec.year}</span>}
                     {rec.genre && (
                       <span className="truncate max-w-[200px]">
@@ -381,7 +381,7 @@ const RecommendationsAdmin = ({ token }) => {
                 {/* Actions */}
                 <button
                   onClick={() => handleDelete(rec._id)}
-                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/10 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-red-400 hover:bg-red-400/10 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -504,13 +504,13 @@ const AddRecommendation = ({ token, onAdded }) => {
   };
 
   return (
-    <div className="p-6 rounded-2xl bg-[#111] border border-white/10">
+    <div className="p-6 rounded-2xl bg-white dark:bg-[#111] border border-gray-300 dark:border-white/10">
       {/* Type selector */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
-        <span className="text-xs text-white/40 uppercase tracking-wider font-semibold">
+        <span className="text-xs text-gray-400 dark:text-white/40 uppercase tracking-wider font-semibold">
           Type:
         </span>
-        <div className="flex gap-1 p-1 bg-white/[0.04] rounded-xl">
+        <div className="flex gap-1 p-1 bg-gray-100 dark:bg-white/5 rounded-xl">
           {Object.entries(typeLabels).map(([key, label]) => {
             const Icon = typeIcons[key];
             return (
@@ -525,7 +525,7 @@ const AddRecommendation = ({ token, onAdded }) => {
                 className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
                   selectedType === key
                     ? "bg-accent/20 text-accent"
-                    : "text-white/40 hover:text-white/70"
+                    : "text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
                 }`}
               >
                 <Icon size={12} />
@@ -544,7 +544,7 @@ const AddRecommendation = ({ token, onAdded }) => {
           className={`ml-auto text-xs px-3 py-1.5 rounded-lg border transition-all ${
             manualMode
               ? "bg-accent/10 border-accent/30 text-accent"
-              : "bg-white/5 border-white/10 text-white/40 hover:text-white/60"
+              : "bg-gray-100 dark:bg-white/5 border-gray-300 dark:border-white/10 text-gray-400 dark:text-white/40 hover:text-gray-500 dark:hover:text-white/50"
           }`}
         >
           {manualMode ? "API Search" : "Manual Entry"}
@@ -560,28 +560,28 @@ const AddRecommendation = ({ token, onAdded }) => {
               placeholder="Title *"
               value={manualTitle}
               onChange={(e) => setManualTitle(e.target.value)}
-              className="px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/40"
+              className="px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-accent/40"
             />
             <input
               type="text"
               placeholder="Year"
               value={manualYear}
               onChange={(e) => setManualYear(e.target.value)}
-              className="px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/40"
+              className="px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-accent/40"
             />
             <input
               type="text"
               placeholder="Poster URL"
               value={manualPoster}
               onChange={(e) => setManualPoster(e.target.value)}
-              className="px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/40"
+              className="px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-accent/40"
             />
             <input
               type="text"
               placeholder="Genre"
               value={manualGenre}
               onChange={(e) => setManualGenre(e.target.value)}
-              className="px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/40"
+              className="px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-accent/40"
             />
           </div>
           <textarea
@@ -589,7 +589,7 @@ const AddRecommendation = ({ token, onAdded }) => {
             value={manualPlot}
             onChange={(e) => setManualPlot(e.target.value)}
             rows={3}
-            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/40 resize-none"
+            className="w-full px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-accent/40 resize-none"
           />
         </div>
       ) : (
@@ -597,24 +597,24 @@ const AddRecommendation = ({ token, onAdded }) => {
         <div className="relative mb-6">
           <Search
             size={14}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40"
           />
           <input
             type="text"
             placeholder={`Search for a ${selectedType}...`}
             value={query}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/40 transition-colors"
+            className="w-full pl-9 pr-4 py-3 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-accent/40 transition-colors"
           />
 
           {/* Search results dropdown */}
           {(searchResults.length > 0 || searching) && (
-            <div className="absolute left-0 right-0 top-full mt-2 max-h-80 overflow-y-auto rounded-xl bg-[#1a1a1a] border border-white/10 shadow-xl z-20 custom-scrollbar">
+            <div className="absolute left-0 right-0 top-full mt-2 max-h-80 overflow-y-auto rounded-xl bg-white dark:bg-[#111] border border-gray-300 dark:border-white/10 shadow-xl z-20 custom-scrollbar">
               {searching ? (
                 <div className="flex items-center justify-center py-8">
                   <Loader2
                     size={20}
-                    className="animate-spin text-white/30"
+                    className="animate-spin text-gray-400 dark:text-white/40"
                   />
                 </div>
               ) : (
@@ -622,9 +622,9 @@ const AddRecommendation = ({ token, onAdded }) => {
                   <button
                     key={item.imdbID}
                     onClick={() => handleSelect(item)}
-                    className="flex items-center gap-3 w-full p-3 hover:bg-white/5 transition-colors text-left"
+                    className="flex items-center gap-3 w-full p-3 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-left"
                   >
-                    <div className="w-10 h-14 rounded-lg overflow-hidden shrink-0 bg-white/5">
+                    <div className="w-10 h-14 rounded-lg overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
                       {item.Poster && item.Poster !== "N/A" ? (
                         <img
                           src={item.Poster}
@@ -633,15 +633,15 @@ const AddRecommendation = ({ token, onAdded }) => {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Film size={14} className="text-white/20" />
+                          <Film size={14} className="text-gray-300 dark:text-white/25" />
                         </div>
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-white truncate">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                         {item.Title}
                       </p>
-                      <p className="text-xs text-white/30">
+                      <p className="text-xs text-gray-400 dark:text-white/40">
                         {item.Year} • {item.Type}
                       </p>
                     </div>
@@ -658,7 +658,7 @@ const AddRecommendation = ({ token, onAdded }) => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/5 mb-6"
+          className="flex gap-4 p-4 rounded-xl bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.06] mb-6"
         >
           <div className="w-20 h-28 rounded-lg overflow-hidden shrink-0">
             {(details?.Poster || selected.Poster) !== "N/A" ? (
@@ -673,23 +673,23 @@ const AddRecommendation = ({ token, onAdded }) => {
             {loadingDetails ? (
               <Loader2
                 size={16}
-                className="animate-spin text-white/30 mt-2"
+                className="animate-spin text-gray-400 dark:text-white/40 mt-2"
               />
             ) : (
               <>
-                <h3 className="text-lg font-bold text-white">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                   {details?.Title || selected.Title}
                 </h3>
-                <p className="text-xs text-white/40 mt-0.5">
+                <p className="text-xs text-gray-400 dark:text-white/40 mt-0.5">
                   {details?.Year || selected.Year}
                   {details?.Runtime && ` • ${details.Runtime}`}
                   {details?.imdbRating && ` • ⭐ ${details.imdbRating}`}
                 </p>
                 {details?.Genre && (
-                  <p className="text-xs text-white/30 mt-1">{details.Genre}</p>
+                  <p className="text-xs text-gray-400 dark:text-white/40 mt-1">{details.Genre}</p>
                 )}
                 {details?.Plot && (
-                  <p className="text-xs text-white/30 mt-2 line-clamp-2">
+                  <p className="text-xs text-gray-400 dark:text-white/40 mt-2 line-clamp-2">
                     {details.Plot}
                   </p>
                 )}
@@ -701,10 +701,10 @@ const AddRecommendation = ({ token, onAdded }) => {
 
       {/* Rating, Review, Category */}
       {(selected || manualMode) && (
-        <div className="space-y-4 mt-6 pt-6 border-t border-white/5">
+        <div className="space-y-4 mt-6 pt-6 border-t border-gray-200 dark:border-white/[0.06]">
           {/* My Rating */}
           <div>
-            <label className="text-xs text-white/40 uppercase tracking-wider font-semibold mb-2 block">
+            <label className="text-xs text-gray-400 dark:text-white/40 uppercase tracking-wider font-semibold mb-2 block">
               Your Rating
             </label>
             <div className="flex items-center gap-1">
@@ -719,7 +719,7 @@ const AddRecommendation = ({ token, onAdded }) => {
                     className={
                       i < myRating
                         ? "text-accent fill-accent"
-                        : "text-white/10 hover:text-white/30"
+                        : "text-gray-200 dark:text-white/15 hover:text-gray-400"
                     }
                   />
                 </button>
@@ -732,7 +732,7 @@ const AddRecommendation = ({ token, onAdded }) => {
 
           {/* Review */}
           <div>
-            <label className="text-xs text-white/40 uppercase tracking-wider font-semibold mb-2 block">
+            <label className="text-xs text-gray-400 dark:text-white/40 uppercase tracking-wider font-semibold mb-2 block">
               Your Review (optional)
             </label>
             <textarea
@@ -740,13 +740,13 @@ const AddRecommendation = ({ token, onAdded }) => {
               onChange={(e) => setMyReview(e.target.value)}
               placeholder="Why do you recommend this?"
               rows={3}
-              className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/40 resize-none"
+              className="w-full px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-accent/40 resize-none"
             />
           </div>
 
           {/* Category */}
           <div>
-            <label className="text-xs text-white/40 uppercase tracking-wider font-semibold mb-2 block">
+            <label className="text-xs text-gray-400 dark:text-white/40 uppercase tracking-wider font-semibold mb-2 block">
               Category
             </label>
             <div className="flex gap-2 flex-wrap">
@@ -757,7 +757,7 @@ const AddRecommendation = ({ token, onAdded }) => {
                   className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all ${
                     category === cat
                       ? "bg-accent/10 border-accent/30 text-accent"
-                      : "bg-white/5 border-white/10 text-white/30 hover:text-white/50"
+                      : "bg-gray-100 dark:bg-white/5 border-gray-300 dark:border-white/10 text-gray-400 dark:text-white/40 hover:text-gray-500 dark:hover:text-white/50"
                   }`}
                 >
                   {cat.replace("-", " ")}
@@ -770,7 +770,7 @@ const AddRecommendation = ({ token, onAdded }) => {
           <button
             onClick={handleSubmit}
             disabled={submitting || (!manualMode && !selected) || (manualMode && !manualTitle)}
-            className="flex items-center justify-center gap-2 w-full py-3 bg-accent hover:bg-accent-light disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-3 bg-accent hover:bg-accent-light disabled:opacity-40 disabled:cursor-not-allowed text-gray-900 dark:text-white font-medium rounded-xl transition-colors"
           >
             {submitting ? (
               <Loader2 size={16} className="animate-spin" />
@@ -841,10 +841,10 @@ const GuestbookAdmin = ({ token }) => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-bold text-white font-display">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white font-display">
             Guestbook Entries
           </h2>
-          <p className="text-sm text-white/40 mt-1">
+          <p className="text-sm text-gray-400 dark:text-white/40 mt-1">
             {entries.length} total · {approvedCount} approved · {entries.length - approvedCount} hidden
           </p>
         </div>
@@ -853,11 +853,11 @@ const GuestbookAdmin = ({ token }) => {
       {/* List */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 size={24} className="animate-spin text-white/30" />
+          <Loader2 size={24} className="animate-spin text-gray-400 dark:text-white/40" />
         </div>
       ) : entries.length === 0 ? (
-        <div className="text-center py-20 text-white/30">
-          <MessageSquare size={40} className="mx-auto mb-3 text-white/10" />
+        <div className="text-center py-20 text-gray-400 dark:text-white/40">
+          <MessageSquare size={40} className="mx-auto mb-3 text-gray-200 dark:text-white/15" />
           <p>No guestbook entries yet.</p>
         </div>
       ) : (
@@ -868,9 +868,9 @@ const GuestbookAdmin = ({ token }) => {
               layout
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`flex items-start gap-4 p-4 rounded-xl bg-[#111] border transition-all group ${
+              className={`flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-[#111] border transition-all group ${
                 entry.approved
-                  ? "border-white/5 hover:border-white/10"
+                  ? "border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10"
                   : "border-red-500/10 opacity-60"
               }`}
             >
@@ -878,16 +878,16 @@ const GuestbookAdmin = ({ token }) => {
               <img
                 src={entry.avatar}
                 alt={entry.name}
-                className="w-9 h-9 rounded-full bg-white/5 shrink-0 mt-0.5"
+                className="w-9 h-9 rounded-full bg-gray-100 dark:bg-white/5 shrink-0 mt-0.5"
               />
 
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-semibold text-white">
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
                     {entry.name}
                   </span>
-                  <span className="text-[11px] text-white/20">
+                  <span className="text-[11px] text-gray-300 dark:text-white/25">
                     {new Date(entry.createdAt).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
@@ -900,7 +900,7 @@ const GuestbookAdmin = ({ token }) => {
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-white/50 leading-relaxed">
+                <p className="text-sm text-gray-500 dark:text-white/60 leading-relaxed">
                   {entry.message}
                 </p>
               </div>
@@ -912,7 +912,7 @@ const GuestbookAdmin = ({ token }) => {
                   className={`shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all ${
                     entry.approved
                       ? "text-emerald-400/50 hover:text-emerald-400 hover:bg-emerald-400/10"
-                      : "text-white/20 hover:text-emerald-400 hover:bg-emerald-400/10"
+                      : "text-gray-300 dark:text-white/25 hover:text-emerald-400 hover:bg-emerald-400/10"
                   }`}
                   title={entry.approved ? "Hide entry" : "Approve entry"}
                 >
@@ -920,7 +920,7 @@ const GuestbookAdmin = ({ token }) => {
                 </button>
                 <button
                   onClick={() => handleDelete(entry._id)}
-                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-red-400 hover:bg-red-400/10 transition-all"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -995,7 +995,7 @@ const VisitorsAdmin = ({ token }) => {
               className={`p-5 rounded-2xl border transition-all ${stat.bg}`}
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs text-white/40 uppercase tracking-wider font-semibold">
+                <span className="text-xs text-gray-400 dark:text-white/40 uppercase tracking-wider font-semibold">
                   {stat.label}
                 </span>
                 <Icon size={18} className={stat.color} />
@@ -1009,17 +1009,17 @@ const VisitorsAdmin = ({ token }) => {
       </div>
 
       {/* Visitors list */}
-      <h3 className="text-lg font-bold text-white font-display mb-4">
+      <h3 className="text-lg font-bold text-gray-900 dark:text-white font-display mb-4">
         Recent Visitors
       </h3>
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 size={24} className="animate-spin text-white/30" />
+          <Loader2 size={24} className="animate-spin text-gray-400 dark:text-white/40" />
         </div>
       ) : visitors.length === 0 ? (
-        <div className="text-center py-20 text-white/30">
-          <Users size={40} className="mx-auto mb-3 text-white/10" />
+        <div className="text-center py-20 text-gray-400 dark:text-white/40">
+          <Users size={40} className="mx-auto mb-3 text-gray-200 dark:text-white/15" />
           <p>No visitors tracked yet.</p>
         </div>
       ) : (
@@ -1030,21 +1030,21 @@ const VisitorsAdmin = ({ token }) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: Math.min(i * 0.03, 0.5) }}
-              className="flex items-center gap-4 p-4 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-all"
+              className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all"
             >
               {/* Avatar */}
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
                   v.name && v.name !== "Anonymous"
                     ? "bg-accent/10 border border-accent/20"
-                    : "bg-white/5 border border-white/10"
+                    : "bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10"
                 }`}
               >
                 <span
                   className={`text-sm font-bold ${
                     v.name && v.name !== "Anonymous"
                       ? "text-accent"
-                      : "text-white/30"
+                      : "text-gray-400 dark:text-white/40"
                   }`}
                 >
                   {v.name && v.name !== "Anonymous"
@@ -1055,10 +1055,10 @@ const VisitorsAdmin = ({ token }) => {
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
                   {v.name || "Anonymous"}
                 </p>
-                <div className="flex items-center gap-3 mt-0.5 text-xs text-white/30 flex-wrap">
+                <div className="flex items-center gap-3 mt-0.5 text-xs text-gray-400 dark:text-white/40 flex-wrap">
                   <span className="flex items-center gap-1">
                     <Calendar size={10} />
                     {new Date(v.visitedAt).toLocaleDateString("en-US", {
@@ -1084,7 +1084,7 @@ const VisitorsAdmin = ({ token }) => {
               </div>
 
               {/* IP */}
-              <span className="hidden md:block text-[11px] text-white/20 font-mono">
+              <span className="hidden md:block text-[11px] text-gray-300 dark:text-white/25 font-mono">
                 {v.ip}
               </span>
             </motion.div>
@@ -1209,18 +1209,18 @@ const BlogAdmin = ({ token }) => {
   };
 
   const inputClass =
-    "w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/40 transition-colors";
+    "w-full px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-accent/40 transition-colors";
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-bold text-white font-display">Manage Blog</h2>
-          <p className="text-sm text-white/40 mt-1">{posts.length} posts</p>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white font-display">Manage Blog</h2>
+          <p className="text-sm text-gray-400 dark:text-white/40 mt-1">{posts.length} posts</p>
         </div>
         <button
           onClick={() => (showForm ? (setShowForm(false), resetForm()) : openAddForm())}
-          className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-light text-white text-sm font-medium rounded-xl transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-light text-gray-900 dark:text-white text-sm font-medium rounded-xl transition-colors"
         >
           {showForm ? <X size={16} /> : <Plus size={16} />}
           {showForm ? "Close" : "New Post"}
@@ -1236,7 +1236,7 @@ const BlogAdmin = ({ token }) => {
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden mb-8"
           >
-            <div className="p-6 rounded-2xl bg-[#111] border border-white/10 space-y-4">
+            <div className="p-6 rounded-2xl bg-white dark:bg-[#111] border border-gray-300 dark:border-white/10 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input type="text" placeholder="Title *" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
                 <input type="text" placeholder="Slug (auto-generated if empty)" value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} />
@@ -1251,7 +1251,7 @@ const BlogAdmin = ({ token }) => {
               <div className="flex items-center justify-between pt-2">
                 <button
                   onClick={() => setPublished(!published)}
-                  className={`flex items-center gap-2 text-sm transition-colors ${published ? "text-emerald-400" : "text-white/30"}`}
+                  className={`flex items-center gap-2 text-sm transition-colors ${published ? "text-emerald-400" : "text-gray-400 dark:text-white/40"}`}
                 >
                   {published ? <ToggleRight size={20} /> : <ToggleLeft size={20} />}
                   {published ? "Published" : "Draft"}
@@ -1259,7 +1259,7 @@ const BlogAdmin = ({ token }) => {
                 <button
                   onClick={handleSubmit}
                   disabled={submitting || !title.trim() || !excerpt.trim()}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-accent hover:bg-accent-light disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors"
+                  className="flex items-center gap-2 px-6 py-2.5 bg-accent hover:bg-accent-light disabled:opacity-40 disabled:cursor-not-allowed text-gray-900 dark:text-white text-sm font-medium rounded-xl transition-colors"
                 >
                   {submitting ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
                   {editing ? "Update Post" : "Publish Post"}
@@ -1273,11 +1273,11 @@ const BlogAdmin = ({ token }) => {
       {/* List */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 size={24} className="animate-spin text-white/30" />
+          <Loader2 size={24} className="animate-spin text-gray-400 dark:text-white/40" />
         </div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-20 text-white/30">
-          <FileText size={40} className="mx-auto mb-3 text-white/10" />
+        <div className="text-center py-20 text-gray-400 dark:text-white/40">
+          <FileText size={40} className="mx-auto mb-3 text-gray-200 dark:text-white/15" />
           <p>No blog posts yet. Write your first one!</p>
         </div>
       ) : (
@@ -1288,7 +1288,7 @@ const BlogAdmin = ({ token }) => {
               layout
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-4 p-4 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-all group"
+              className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all group"
             >
               {/* Status dot */}
               <div className={`w-2 h-2 rounded-full shrink-0 ${post.published ? "bg-emerald-400" : "bg-white/20"}`} />
@@ -1296,14 +1296,14 @@ const BlogAdmin = ({ token }) => {
               {/* Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-semibold text-white truncate">{post.title}</h3>
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">{post.title}</h3>
                   {!post.published && (
-                    <span className="shrink-0 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-white/5 text-white/30 rounded-full">
+                    <span className="shrink-0 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/40 rounded-full">
                       Draft
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-3 mt-1 text-xs text-white/30">
+                <div className="flex items-center gap-3 mt-1 text-xs text-gray-400 dark:text-white/40">
                   <span className="flex items-center gap-1">
                     <Calendar size={10} />
                     {new Date(post.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
@@ -1330,7 +1330,7 @@ const BlogAdmin = ({ token }) => {
                   className={`shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all ${
                     post.published
                       ? "text-emerald-400/50 hover:text-emerald-400 hover:bg-emerald-400/10"
-                      : "text-white/20 hover:text-white/50 hover:bg-white/5"
+                      : "text-gray-300 dark:text-white/25 hover:text-gray-500 dark:hover:text-white/50 hover:bg-gray-100 dark:hover:bg-white/5"
                   }`}
                   title={post.published ? "Unpublish" : "Publish"}
                 >
@@ -1338,13 +1338,13 @@ const BlogAdmin = ({ token }) => {
                 </button>
                 <button
                   onClick={() => openEditForm(post)}
-                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-white/20 hover:text-accent hover:bg-accent/10 transition-all"
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-accent hover:bg-accent/10 transition-all"
                 >
                   <Edit3 size={14} />
                 </button>
                 <button
                   onClick={() => handleDelete(post._id)}
-                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-red-400 hover:bg-red-400/10 transition-all"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -1470,20 +1470,20 @@ const BucketListAdmin = ({ token }) => {
 
   const completedCount = items.filter((i) => i.completed).length;
   const inputClass =
-    "w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/40 transition-colors";
+    "w-full px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-accent/40 transition-colors";
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-bold text-white font-display">Manage Bucket List</h2>
-          <p className="text-sm text-white/40 mt-1">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white font-display">Manage Bucket List</h2>
+          <p className="text-sm text-gray-400 dark:text-white/40 mt-1">
             {completedCount}/{items.length} completed
           </p>
         </div>
         <button
           onClick={() => (showForm ? (setShowForm(false), resetForm()) : openAddForm())}
-          className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-light text-white text-sm font-medium rounded-xl transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-light text-gray-900 dark:text-white text-sm font-medium rounded-xl transition-colors"
         >
           {showForm ? <X size={16} /> : <Plus size={16} />}
           {showForm ? "Close" : "Add Item"}
@@ -1492,14 +1492,14 @@ const BucketListAdmin = ({ token }) => {
 
       {/* Progress */}
       {items.length > 0 && (
-        <div className="mb-6 rounded-xl bg-[#111] border border-white/5 p-4">
+        <div className="mb-6 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-white/40">Progress</span>
+            <span className="text-xs text-gray-400 dark:text-white/40">Progress</span>
             <span className="text-xs font-semibold text-accent">
               {Math.round((completedCount / items.length) * 100)}%
             </span>
           </div>
-          <div className="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
+          <div className="w-full h-1.5 rounded-full bg-gray-100 dark:bg-white/5 overflow-hidden">
             <div
               className="h-full rounded-full bg-gradient-to-r from-accent to-purple-500 transition-all duration-500"
               style={{ width: `${(completedCount / items.length) * 100}%` }}
@@ -1517,13 +1517,13 @@ const BucketListAdmin = ({ token }) => {
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden mb-8"
           >
-            <div className="p-6 rounded-2xl bg-[#111] border border-white/10 space-y-4">
+            <div className="p-6 rounded-2xl bg-white dark:bg-[#111] border border-gray-300 dark:border-white/10 space-y-4">
               <input type="text" placeholder="What do you want to do? *" value={itemTitle} onChange={(e) => setItemTitle(e.target.value)} className={inputClass} />
               <input type="text" placeholder="Description (optional)" value={itemDesc} onChange={(e) => setItemDesc(e.target.value)} className={inputClass} />
 
               {/* Category pills */}
               <div>
-                <label className="text-xs text-white/40 uppercase tracking-wider font-semibold mb-2 block">Category</label>
+                <label className="text-xs text-gray-400 dark:text-white/40 uppercase tracking-wider font-semibold mb-2 block">Category</label>
                 <div className="flex gap-2 flex-wrap">
                   {bucketCategories.map((cat) => {
                     const CatIcon = bucketCategoryIcons[cat] || Circle;
@@ -1534,7 +1534,7 @@ const BucketListAdmin = ({ token }) => {
                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all ${
                           itemCategory === cat
                             ? "bg-accent/10 border-accent/30 text-accent"
-                            : "bg-white/5 border-white/10 text-white/30 hover:text-white/50"
+                            : "bg-gray-100 dark:bg-white/5 border-gray-300 dark:border-white/10 text-gray-400 dark:text-white/40 hover:text-gray-500 dark:hover:text-white/50"
                         }`}
                       >
                         <CatIcon size={10} />
@@ -1548,7 +1548,7 @@ const BucketListAdmin = ({ token }) => {
               <div className="flex items-center justify-between pt-2">
                 <button
                   onClick={() => setItemCompleted(!itemCompleted)}
-                  className={`flex items-center gap-2 text-sm transition-colors ${itemCompleted ? "text-emerald-400" : "text-white/30"}`}
+                  className={`flex items-center gap-2 text-sm transition-colors ${itemCompleted ? "text-emerald-400" : "text-gray-400 dark:text-white/40"}`}
                 >
                   {itemCompleted ? <CheckCircle2 size={18} /> : <Circle size={18} />}
                   {itemCompleted ? "Completed" : "Pending"}
@@ -1556,7 +1556,7 @@ const BucketListAdmin = ({ token }) => {
                 <button
                   onClick={handleSubmit}
                   disabled={submitting || !itemTitle.trim()}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-accent hover:bg-accent-light disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors"
+                  className="flex items-center gap-2 px-6 py-2.5 bg-accent hover:bg-accent-light disabled:opacity-40 disabled:cursor-not-allowed text-gray-900 dark:text-white text-sm font-medium rounded-xl transition-colors"
                 >
                   {submitting ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
                   {editing ? "Update" : "Add Item"}
@@ -1570,11 +1570,11 @@ const BucketListAdmin = ({ token }) => {
       {/* List */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 size={24} className="animate-spin text-white/30" />
+          <Loader2 size={24} className="animate-spin text-gray-400 dark:text-white/40" />
         </div>
       ) : items.length === 0 ? (
-        <div className="text-center py-20 text-white/30">
-          <ListChecks size={40} className="mx-auto mb-3 text-white/10" />
+        <div className="text-center py-20 text-gray-400 dark:text-white/40">
+          <ListChecks size={40} className="mx-auto mb-3 text-gray-200 dark:text-white/15" />
           <p>No bucket list items yet. Add your first goal!</p>
         </div>
       ) : (
@@ -1587,7 +1587,7 @@ const BucketListAdmin = ({ token }) => {
                 layout
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`flex items-center gap-4 p-4 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-all group ${
+                className={`flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all group ${
                   item.completed ? "opacity-60" : ""
                 }`}
               >
@@ -1596,22 +1596,22 @@ const BucketListAdmin = ({ token }) => {
                   {item.completed ? (
                     <CheckCircle2 size={20} className="text-accent" />
                   ) : (
-                    <Circle size={20} className="text-white/15 hover:text-white/30 transition-colors" />
+                    <Circle size={20} className="text-gray-200 dark:text-white/15 hover:text-gray-400 transition-colors" />
                   )}
                 </button>
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <h3 className={`text-sm font-medium ${item.completed ? "text-white/40 line-through" : "text-white"}`}>
+                  <h3 className={`text-sm font-medium ${item.completed ? "text-gray-400 dark:text-white/40 line-through" : "text-gray-900 dark:text-white"}`}>
                     {item.title}
                   </h3>
                   {item.description && (
-                    <p className="text-xs text-white/25 mt-0.5 truncate">{item.description}</p>
+                    <p className="text-xs text-gray-300 dark:text-white/25 mt-0.5 truncate">{item.description}</p>
                   )}
                 </div>
 
                 {/* Category badge */}
-                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white/25 bg-white/5 rounded-full shrink-0">
+                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gray-300 dark:text-white/25 bg-gray-100 dark:bg-white/5 rounded-full shrink-0">
                   <CatIcon size={9} />
                   {item.category}
                 </span>
@@ -1620,13 +1620,13 @@ const BucketListAdmin = ({ token }) => {
                 <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => openEditForm(item)}
-                    className="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-white/20 hover:text-accent hover:bg-accent/10 transition-all"
+                    className="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-accent hover:bg-accent/10 transition-all"
                   >
                     <Edit3 size={12} />
                   </button>
                   <button
                     onClick={() => handleDelete(item._id)}
-                    className="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                    className="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-red-400 hover:bg-red-400/10 transition-all"
                   >
                     <Trash2 size={12} />
                   </button>

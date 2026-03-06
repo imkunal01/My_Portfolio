@@ -83,72 +83,75 @@ export const allSkills = [
 export const projects = [
   {
     id: 1,
-    slug: "project-one",
-    title: "Project One",
-    category: "WEB APP",
+    slug: "kripa-connect",
+    title: "KripaConnect",
+    category: "E-COMMERCE",
     quarter: "Q1 2025",
     description:
-      "A modern full-stack web application built with cutting-edge technologies for optimal performance and user experience.",
+      "A production-grade, full-stack e-commerce platform with B2B retailer portal, admin dashboard, Razorpay payments, PDF invoices, and a native Android TWA app.",
     longDescription:
-      "Project One is a web platform for early-stage entrepreneurs to create, share, and explore startup pitches. It combines modern full-stack development practices with a carefully crafted user experience — enabling founders to go from idea to presentation effortlessly.",
+      "KripaConnect is a comprehensive e-commerce ecosystem serving customers, B2B retailers, and administrators. Customers browse products, manage carts, and checkout via Cash on Delivery or Razorpay. Retailers access a dedicated bulk-ordering portal with spending analytics. Admins control everything — products, orders, users, reviews, and real-time revenue dashboards — from a feature-rich panel. The platform ships as a responsive PWA, and a native Android app via Trusted Web Activity.",
     tags: [
       { name: "REACT", icon: "https://cdn.simpleicons.org/react/61DAFB" },
       { name: "NODE.JS", icon: "https://cdn.simpleicons.org/nodedotjs/339933" },
       { name: "MONGODB", icon: "https://cdn.simpleicons.org/mongodb/47A248" },
-      { name: "TAILWIND CSS", icon: "https://cdn.simpleicons.org/tailwindcss/06B6D4" },
       { name: "EXPRESS.JS", icon: "https://cdn.simpleicons.org/express/white" },
+      { name: "RAZORPAY", icon: "https://cdn.simpleicons.org/razorpay/0C68FF" },
     ],
     features: [
       {
-        title: "High-Performance Architecture",
+        title: "Multi-Role Access Control",
         description:
-          "Built with server-side rendering and optimized data fetching for lightning-fast page loads.",
+          "Three distinct user roles — Customer, Retailer, and Admin — each with dedicated dashboards, routes, and backend middleware enforcement.",
       },
       {
-        title: "Real-Time Data Sync",
+        title: "Razorpay Payment Integration",
         description:
-          "Leveraging WebSockets and event-driven architecture for seamless real-time updates.",
+          "Full payment lifecycle with Razorpay checkout modal, HMAC signature verification, webhook handler, and a transaction audit trail alongside COD support.",
       },
       {
-        title: "Seamless Authentication",
+        title: "Admin Dashboard & Analytics",
         description:
-          "Secure OAuth-based authentication with role-based access control.",
+          "Real-time KPI cards, revenue charts, order distribution, low-stock alerts, product/order/user/review management, and PDF invoice generation.",
       },
       {
-        title: "Polished & Accessible UI",
+        title: "PWA + Android TWA App",
         description:
-          "Carefully crafted interface following WCAG guidelines with smooth animations.",
+          "Installable Progressive Web App with offline caching, plus a native Android app via Trusted Web Activity with Digital Asset Links verification.",
       },
     ],
     techStack: [
-      { name: "React", url: "https://react.dev", description: "Component-based UI library for building interactive interfaces" },
-      { name: "Node.js", url: "https://nodejs.org", description: "Server-side JavaScript runtime for scalable backends" },
-      { name: "MongoDB", url: "https://mongodb.com", description: "NoSQL database for flexible data modeling" },
-      { name: "Tailwind CSS", url: "https://tailwindcss.com", description: "Utility-first styling for modern UIs" },
-      { name: "Express.js", url: "https://expressjs.com", description: "Minimal and flexible Node.js web framework" },
+      { name: "React 19", url: "https://react.dev", description: "Frontend SPA with lazy-loaded routes and Context API state management" },
+      { name: "Node.js + Express 5", url: "https://expressjs.com", description: "REST API with JWT dual-token auth, rate limiting, Helmet, and input sanitization" },
+      { name: "MongoDB Atlas", url: "https://mongodb.com", description: "Cloud NoSQL database with Mongoose ODM for all platform data" },
+      { name: "Razorpay", url: "https://razorpay.com", description: "Online payment gateway with order creation, verification, and webhook support" },
+      { name: "Cloudinary", url: "https://cloudinary.com", description: "Cloud image storage for product photos and profile pictures" },
+      { name: "SendGrid", url: "https://sendgrid.com", description: "Transactional emails — OTP login, password reset, and order confirmations" },
+      { name: "Recharts", url: "https://recharts.org", description: "Interactive charts for admin analytics — revenue trends, order distribution" },
+      { name: "PDFKit", url: "https://pdfkit.org", description: "Server-side PDF generation for downloadable order invoices" },
     ],
     challenges: [
       {
-        title: "Optimizing Data Fetching",
+        title: "Dual-Token Authentication",
         description:
-          "Implementing efficient data fetching patterns to minimize round trips and ensure fast page loads across varying network conditions.",
+          "Implementing a secure JWT access + refresh token pattern with httpOnly cookies, Google OAuth, and passwordless Email OTP — all while preventing token theft and ensuring seamless session renewal.",
       },
       {
-        title: "Real-Time Collaboration",
+        title: "Payment Security & Idempotency",
         description:
-          "Building a robust real-time system that handles concurrent edits and synchronization without data conflicts.",
+          "Building a PCI-compliant Razorpay integration with raw-body HMAC webhook verification, idempotent payment capture, and graceful handling of edge cases like failed payments and duplicate webhooks.",
       },
       {
-        title: "Responsive Design at Scale",
+        title: "Multi-Role Architecture",
         description:
-          "Ensuring pixel-perfect responsiveness across all breakpoints while maintaining design consistency throughout the application.",
+          "Designing a system where Customer, Retailer, and Admin personas coexist with isolated routes, context-aware dashboards, and backend middleware that enforces role boundaries without code duplication.",
       },
     ],
     outcome:
-      "The project successfully demonstrated modern full-stack capabilities with a polished UI, achieving fast load times and seamless user interactions.",
+      "Delivered a production-ready e-commerce platform with complete order lifecycle management, secure online payments, role-based dashboards, transactional emails, PDF invoicing, and multi-platform delivery (Web, PWA, Android).",
     screenshots: [],
-    link: "#",
-    github: "https://github.com/imkunal01",
+    link: "https://kripa-connect-app.vercel.app",
+    github: "https://github.com/imkunal01/KripaConnect-App",
     image: "",
   },
   {

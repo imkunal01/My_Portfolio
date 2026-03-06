@@ -61,7 +61,7 @@ const ProjectDetail = () => {
     return (
       <div className="min-h-screen bg-dark flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-4xl font-bold font-display text-white mb-4">
+          <h1 className="text-4xl font-bold font-display text-gray-900 dark:text-white mb-4">
             Project Not Found
           </h1>
           <button
@@ -92,24 +92,24 @@ const ProjectDetail = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-dark/80 backdrop-blur-xl border-b border-white/5"
+        className="fixed top-0 left-0 right-0 z-50 bg-dark/80 backdrop-blur-xl border-b border-gray-200 dark:border-white/[0.06]"
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <ArrowLeft size={16} />
             <span className="hidden sm:inline">Back to Projects</span>
           </button>
 
-          <span className="text-sm font-medium text-white/80 font-display">
+          <span className="text-sm font-medium text-gray-700 dark:text-white/80 font-display">
             {project.title}
           </span>
 
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden p-2 rounded-lg bg-white/5 text-white/60 hover:text-white"
+            className="lg:hidden p-2 rounded-lg bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white"
           >
             <Menu size={16} />
           </button>
@@ -143,12 +143,12 @@ const ProjectDetail = () => {
           </div>
 
           {/* Title */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-white mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-gray-900 dark:text-white mb-6 leading-tight">
             {project.title}
           </h1>
 
           {/* Description */}
-          <p className="text-lg text-white/60 max-w-3xl leading-relaxed mb-8">
+          <p className="text-lg text-gray-500 dark:text-white/60 max-w-3xl leading-relaxed mb-8">
             {project.longDescription}
           </p>
 
@@ -157,7 +157,7 @@ const ProjectDetail = () => {
             {project.tags.map((tag) => (
               <span
                 key={tag.name}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/50 bg-white/5 rounded-full border border-white/5"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-white/60 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/[0.06]"
               >
                 <img src={tag.icon} alt={tag.name} className="w-3.5 h-3.5" />
                 {tag.name}
@@ -172,7 +172,7 @@ const ProjectDetail = () => {
                 href={project.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-white/90 transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm font-semibold hover:bg-gray-800 dark:hover:bg-white/90 transition-colors"
               >
                 <Github size={16} />
                 Star on GitHub
@@ -183,7 +183,7 @@ const ProjectDetail = () => {
                 href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-semibold hover:bg-white/10 transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white text-sm font-semibold hover:bg-gray-200 dark:hover:bg-white/10 transition-colors"
               >
                 Check it out
                 <ArrowUpRight size={14} />
@@ -205,7 +205,7 @@ const ProjectDetail = () => {
             {project.screenshots.slice(0, 2).map((screenshot, i) => (
               <div
                 key={i}
-                className="rounded-2xl overflow-hidden border border-white/5 bg-[#111]"
+                className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#111]"
               >
                 <img
                   src={screenshot}
@@ -225,7 +225,7 @@ const ProjectDetail = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="rounded-2xl overflow-hidden border border-white/5 bg-[#111]"
+            className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#111]"
           >
             <img
               src={project.image}
@@ -249,10 +249,10 @@ const ProjectDetail = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
               >
-                <h2 className="text-2xl lg:text-3xl font-bold font-display text-white mb-8">
+                <h2 className="text-2xl lg:text-3xl font-bold font-display text-gray-900 dark:text-white mb-8">
                   Key Features
                 </h2>
-                <div className="rounded-2xl border border-white/5 bg-[#111] overflow-hidden divide-y divide-white/5">
+                <div className="rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#111] overflow-hidden divide-y divide-gray-200 dark:divide-white/5">
                   {project.features.map((feature, i) => (
                     <FeatureAccordion key={i} feature={feature} />
                   ))}
@@ -268,7 +268,7 @@ const ProjectDetail = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
               >
-                <h2 className="text-2xl lg:text-3xl font-bold font-display text-white mb-8">
+                <h2 className="text-2xl lg:text-3xl font-bold font-display text-gray-900 dark:text-white mb-8">
                   Tech Stack
                 </h2>
                 <ul className="space-y-4">
@@ -291,7 +291,7 @@ const ProjectDetail = () => {
                         >
                           {tech.name}
                         </a>
-                        <span className="text-white/50"> – {tech.description}</span>
+                        <span className="text-gray-500 dark:text-white/60"> – {tech.description}</span>
                       </div>
                     </motion.li>
                   ))}
@@ -307,7 +307,7 @@ const ProjectDetail = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
               >
-                <h2 className="text-2xl lg:text-3xl font-bold font-display text-white mb-8">
+                <h2 className="text-2xl lg:text-3xl font-bold font-display text-gray-900 dark:text-white mb-8">
                   Challenges & Learnings
                 </h2>
                 <div className="space-y-6">
@@ -318,12 +318,12 @@ const ProjectDetail = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.4, delay: i * 0.1 }}
-                      className="rounded-2xl bg-[#111] border border-white/5 p-6"
+                      className="rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] p-6"
                     >
-                      <h3 className="text-lg font-semibold text-white mb-2 font-display">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-display">
                         {challenge.title}
                       </h3>
-                      <p className="text-sm text-white/50 leading-relaxed">
+                      <p className="text-sm text-gray-500 dark:text-white/60 leading-relaxed">
                         {challenge.description}
                       </p>
                     </motion.div>
@@ -340,11 +340,11 @@ const ProjectDetail = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
               >
-                <h2 className="text-2xl lg:text-3xl font-bold font-display text-white mb-6">
+                <h2 className="text-2xl lg:text-3xl font-bold font-display text-gray-900 dark:text-white mb-6">
                   Outcome
                 </h2>
                 <div className="rounded-2xl bg-gradient-to-br from-accent/5 to-purple-500/5 border border-accent/10 p-8">
-                  <p className="text-base text-white/70 leading-relaxed">
+                  <p className="text-base text-gray-600 dark:text-white/70 leading-relaxed">
                     {project.outcome}
                   </p>
                 </div>
@@ -360,14 +360,14 @@ const ProjectDetail = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
                 >
-                  <h2 className="text-2xl lg:text-3xl font-bold font-display text-white mb-8">
+                  <h2 className="text-2xl lg:text-3xl font-bold font-display text-gray-900 dark:text-white mb-8">
                     Screenshots
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {project.screenshots.slice(2).map((screenshot, i) => (
                       <div
                         key={i}
-                        className="rounded-2xl overflow-hidden border border-white/5 bg-[#111]"
+                        className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#111]"
                       >
                         <img
                           src={screenshot}
@@ -385,10 +385,10 @@ const ProjectDetail = () => {
           {/* Sidebar - On this page */}
           <div className="hidden lg:block">
             <div className="sticky top-24">
-              <div className="rounded-2xl border border-white/5 bg-[#111] p-5">
+              <div className="rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#111] p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <Menu size={14} className="text-white/40" />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-white/40">
+                  <Menu size={14} className="text-gray-400 dark:text-white/40" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40">
                     On this page
                   </span>
                 </div>
@@ -399,8 +399,8 @@ const ProjectDetail = () => {
                       onClick={() => scrollToSection(item.key)}
                       className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
                         activeSection === item.key
-                          ? "text-white bg-accent/10 border-l-2 border-accent font-medium"
-                          : "text-white/40 hover:text-white/70 hover:bg-white/5 border-l-2 border-transparent"
+                          ? "text-gray-900 dark:text-white bg-accent/10 border-l-2 border-accent font-medium"
+                          : "text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 border-l-2 border-transparent"
                       }`}
                     >
                       {item.label}
@@ -410,8 +410,8 @@ const ProjectDetail = () => {
               </div>
 
               {/* Quick Links */}
-              <div className="mt-4 rounded-2xl border border-white/5 bg-[#111] p-5">
-                <span className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-3 block">
+              <div className="mt-4 rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#111] p-5">
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40 mb-3 block">
                   Links
                 </span>
                 <div className="space-y-2">
@@ -420,7 +420,7 @@ const ProjectDetail = () => {
                       href={project.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
+                      className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors"
                     >
                       <Github size={14} />
                       GitHub Repository
@@ -431,7 +431,7 @@ const ProjectDetail = () => {
                       href={project.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
+                      className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors"
                     >
                       <ArrowUpRight size={14} />
                       Live Demo
@@ -453,18 +453,18 @@ const ProjectDetail = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSidebarOpen(false)}
-              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-40 bg-black/30 dark:bg-black/60 backdrop-blur-sm lg:hidden"
             />
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-72 z-50 bg-dark border-l border-white/5 p-6 lg:hidden"
+              className="fixed top-0 right-0 bottom-0 w-72 z-50 bg-dark border-l border-gray-200 dark:border-white/[0.06] p-6 lg:hidden"
             >
               <div className="flex items-center gap-2 mb-6">
-                <Menu size={14} className="text-white/40" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-white/40">
+                <Menu size={14} className="text-gray-400 dark:text-white/40" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40">
                   On this page
                 </span>
               </div>
@@ -475,8 +475,8 @@ const ProjectDetail = () => {
                     onClick={() => scrollToSection(item.key)}
                     className={`w-full text-left px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${
                       activeSection === item.key
-                        ? "text-white bg-accent/10 border-l-2 border-accent font-medium"
-                        : "text-white/40 hover:text-white/70 hover:bg-white/5 border-l-2 border-transparent"
+                        ? "text-gray-900 dark:text-white bg-accent/10 border-l-2 border-accent font-medium"
+                        : "text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 border-l-2 border-transparent"
                     }`}
                   >
                     {item.label}
@@ -485,8 +485,8 @@ const ProjectDetail = () => {
               </nav>
 
               {/* Quick Links in mobile */}
-              <div className="mt-6 pt-6 border-t border-white/5">
-                <span className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-3 block">
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-white/[0.06]">
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40 mb-3 block">
                   Links
                 </span>
                 <div className="space-y-3">
@@ -495,7 +495,7 @@ const ProjectDetail = () => {
                       href={project.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
+                      className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors"
                     >
                       <Github size={14} />
                       GitHub Repository
@@ -506,7 +506,7 @@ const ProjectDetail = () => {
                       href={project.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
+                      className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors"
                     >
                       <ArrowUpRight size={14} />
                       Live Demo
@@ -535,20 +535,20 @@ const FeatureAccordion = ({ feature }) => {
     <div className="group/accordion">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-5 text-left hover:bg-white/[0.02] transition-colors"
+        className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 dark:hover:bg-white/[0.03] transition-colors"
       >
         <div className="flex items-center gap-3">
           <ChevronDown
             size={16}
-            className={`text-white/30 transition-transform duration-300 ${
+            className={`text-gray-400 dark:text-white/40 transition-transform duration-300 ${
               isOpen ? "rotate-180" : ""
             }`}
           />
-          <span className="text-sm font-medium text-white/80">
+          <span className="text-sm font-medium text-gray-700 dark:text-white/80">
             {feature.title}
           </span>
         </div>
-        <LinkIcon size={14} className="text-white/20" />
+        <LinkIcon size={14} className="text-gray-300 dark:text-white/25" />
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -559,7 +559,7 @@ const FeatureAccordion = ({ feature }) => {
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <p className="px-5 pb-5 pl-12 text-sm text-white/50 leading-relaxed">
+            <p className="px-5 pb-5 pl-12 text-sm text-gray-500 dark:text-white/60 leading-relaxed">
               {feature.description}
             </p>
           </motion.div>
@@ -578,7 +578,7 @@ const ProjectNavigation = ({ currentSlug }) => {
     currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
 
   return (
-    <div className="border-t border-white/5 pt-12">
+    <div className="border-t border-gray-200 dark:border-white/[0.06] pt-12">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         {prevProject ? (
           <button
@@ -590,13 +590,13 @@ const ProjectNavigation = ({ currentSlug }) => {
           >
             <ArrowLeft
               size={16}
-              className="text-white/40 group-hover:text-accent transition-colors"
+              className="text-gray-400 dark:text-white/40 group-hover:text-accent transition-colors"
             />
             <div>
-              <span className="block text-xs text-white/30 uppercase tracking-wider mb-1">
+              <span className="block text-xs text-gray-400 dark:text-white/40 uppercase tracking-wider mb-1">
                 Previous
               </span>
-              <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors max-w-[150px] sm:max-w-[200px] truncate block">
+              <span className="text-sm font-medium text-gray-600 dark:text-white/70 group-hover:text-gray-900 dark:group-hover:text-white dark:hover:text-white transition-colors max-w-[150px] sm:max-w-[200px] truncate block">
                 {prevProject.title}
               </span>
             </div>
@@ -607,7 +607,7 @@ const ProjectNavigation = ({ currentSlug }) => {
 
         <button
           onClick={() => navigate("/")}
-          className="px-4 py-2 text-xs uppercase tracking-wider text-white/40 hover:text-white border border-white/10 rounded-lg hover:border-white/20 transition-all"
+          className="px-4 py-2 text-xs uppercase tracking-wider text-gray-400 dark:text-white/40 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-white/10 rounded-lg hover:border-gray-300 dark:hover:border-white/10 transition-all"
         >
           All Projects
         </button>
@@ -621,16 +621,16 @@ const ProjectNavigation = ({ currentSlug }) => {
             className="group flex items-center gap-3 text-right"
           >
             <div>
-              <span className="block text-xs text-white/30 uppercase tracking-wider mb-1">
+              <span className="block text-xs text-gray-400 dark:text-white/40 uppercase tracking-wider mb-1">
                 Next
               </span>
-              <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors max-w-[150px] sm:max-w-[200px] truncate block">
+              <span className="text-sm font-medium text-gray-600 dark:text-white/70 group-hover:text-gray-900 dark:group-hover:text-white dark:hover:text-white transition-colors max-w-[150px] sm:max-w-[200px] truncate block">
                 {nextProject.title}
               </span>
             </div>
             <ArrowUpRight
               size={16}
-              className="text-white/40 group-hover:text-accent transition-colors"
+              className="text-gray-400 dark:text-white/40 group-hover:text-accent transition-colors"
             />
           </button>
         ) : (
