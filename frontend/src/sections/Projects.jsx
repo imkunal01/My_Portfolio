@@ -2,10 +2,50 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { projects } from "../data/portfolio";
+import { projects as staticProjects } from "../data/portfolio";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
+const API = import.meta.env.VITE_BACKEND_URL || "";
 
 const Projects = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.05 });
+  const [projects, setProjects] = useState(staticProjects);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const { data } = await axios.get(`${API}/api/projects`);
+        // Map _id to id for consistency
+        const mappedProjects = data.map((project) => ({
+          ...project,
+          id: project._id || project.id,
+        }));
+        setProjects(mappedProjects);
+      } catch (error) {
+        console.log("Failed to fetch projects from API, using static data");
+        // Keep using static projects as fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="projects" className="py-20 lg:py-32 px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-accent/20 border-t-accent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-400 dark:text-white/40 text-sm">Loading projects...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="projects" className="py-20 lg:py-32 px-6 lg:px-8 max-w-7xl mx-auto">
@@ -92,9 +132,9 @@ const ProjectCard = ({ project, index, inView, isReversed }) => {
 
         {/* Tech tags */}
         <div className="flex flex-wrap gap-2">
-          {project.tags.map((tag) => (
+          {project.tags?.map((tag, tagIdx) => (
             <span
-              key={tag.name}
+              key={tagIdx}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-white/60 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-colors"
             >
               <img src={tag.icon} alt={tag.name} className="w-3.5 h-3.5" />
@@ -116,12 +156,12 @@ const ProjectCard = ({ project, index, inView, isReversed }) => {
           <div className="aspect-[16/10] relative overflow-hidden">
             {project.image ? (
               <img
-                src={project.image}
+                src={project.image.startsWith('/uploads') ? `${API}${project.image}` : project.image}
                 alt={project.title}
                 className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-700"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-16 h-16 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mx-auto mb-3">
                     <span className="text-2xl font-bold font-display text-accent">

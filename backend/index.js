@@ -16,6 +16,7 @@ const blogRoute = require("./routes/blog");
 const bucketlistRoute = require("./routes/bucketlist");
 const guestbookRoute = require("./routes/guestbook");
 const contactRoute = require("./routes/contact");
+const projectsRoute = require("./routes/projects");
 
 const app = express();
 app.set("trust proxy", true);
@@ -35,6 +36,9 @@ app.use(
 );
 
 app.use(express.json());
+
+// Serve static files from uploads directory
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // HTTP request logging via Morgan → piped into Winston
 const morganStream = { write: (msg) => logger.info(msg.trimEnd()) };
@@ -64,6 +68,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/recommendations", recommendationsRoute);
 app.use("/api/visitors", visitorsRoute);
 app.use("/api/blog", blogRoute);
+app.use("/api/projects", projectsRoute);
 app.use("/api/bucketlist", bucketlistRoute);
 app.use("/api/guestbook", guestbookRoute);
 app.use("/api/contact", contactRoute);

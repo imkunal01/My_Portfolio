@@ -38,6 +38,10 @@ import {
   Dumbbell,
   ToggleLeft,
   ToggleRight,
+  Briefcase,
+  Image,
+  Link as LinkIcon,
+  Upload,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -54,7 +58,7 @@ const Admin = () => {
   const navigate = useNavigate();
   const [token, setToken] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState("recommendations");
+  const [activeTab, setActiveTab] = useState("projects");
   const [keyInput, setKeyInput] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
@@ -165,6 +169,7 @@ const Admin = () => {
   }
 
   const tabs = [
+    { key: "projects", label: "Projects", icon: Briefcase },
     { key: "recommendations", label: "Picks", icon: Film },
     { key: "blog", label: "Blog", icon: FileText },
     { key: "bucketlist", label: "Bucket List", icon: ListChecks },
@@ -218,6 +223,7 @@ const Admin = () => {
           })}
         </div>
 
+        {activeTab === "projects" && <ProjectsAdmin token={token} />}
         {activeTab === "recommendations" && (
           <RecommendationsAdmin token={token} />
         )}
@@ -227,6 +233,815 @@ const Admin = () => {
         {activeTab === "visitors" && <VisitorsAdmin token={token} />}
       </div>
     </div>
+  );
+};
+
+/* ─────────────────────────────────────────────
+   PROJECTS ADMIN TAB
+   ───────────────────────────────────────────── */
+const ProjectsAdmin = ({ token }) => {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddPanel, setShowAddPanel] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
+
+  const fetchProjects = async () => {
+    try {
+      const { data } = await axios.get(`${API}/api/projects`);
+      setProjects(data);
+    } catch {
+      setProjects([]);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (!confirm("Delete this project?")) return;
+    try {
+      await axios.delete(`${API}/api/projects/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProjects((prev) => prev.filter((p) => p._id !== id));
+    } catch (err) {
+      alert(err.response?.data?.error || "Delete failed");
+    }
+  };
+
+  const handleToggleActive = async (id) => {
+    try {
+      const { data } = await axios.patch(
+        `${API}/api/projects/${id}/toggle`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setProjects((prev) =>
+        prev.map((p) => (p._id === id ? data : p))
+      );
+    } catch (err) {
+      alert(err.response?.data?.error || "Toggle failed");
+    }
+  };
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white font-display">
+            Manage Projects
+          </h2>
+          <p className="text-sm text-gray-400 dark:text-white/40 mt-1">
+            {projects.length} total projects
+          </p>
+        </div>
+        <button
+          onClick={() => {
+            setShowAddPanel(!showAddPanel);
+            setEditingProject(null);
+          }}
+          className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-light text-gray-900 dark:text-white text-sm font-medium rounded-xl transition-colors"
+        >
+          {showAddPanel ? <X size={16} /> : <Plus size={16} />}
+          {showAddPanel ? "Close" : "Add New"}
+        </button>
+      </div>
+
+      {/* Add/Edit Panel */}
+      <AnimatePresence>
+        {showAddPanel && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto", overflow: "visible" }}
+            exit={{ opacity: 0, height: 0, overflow: "hidden" }}
+            className="overflow-hidden mb-8"
+            transition={{ duration: 0.3 }}
+          >
+            <AddProject
+              token={token}
+              editingProject={editingProject}
+              onSaved={(project) => {
+                if (editingProject) {
+                  setProjects((prev) =>
+                    prev.map((p) => (p._id === project._id ? project : p))
+                  );
+                } else {
+                  setProjects((prev) => [project, ...prev]);
+                }
+                setShowAddPanel(false);
+                setEditingProject(null);
+              }}
+              onCancel={() => {
+                setShowAddPanel(false);
+                setEditingProject(null);
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* List */}
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 size={24} className="animate-spin text-gray-400 dark:text-white/40" />
+        </div>
+      ) : projects.length === 0 ? (
+        <div className="text-center py-20 text-gray-400 dark:text-white/40">
+          <Briefcase size={40} className="mx-auto mb-3 text-gray-200 dark:text-white/15" />
+          <p>No projects yet. Add your first one!</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {projects.map((project) => (
+            <motion.div
+              key={project._id}
+              layout
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all group"
+            >
+              {/* Project Image */}
+              <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
+                {project.image ? (
+                  <img
+                    src={`${API}${project.image}`}
+                    alt={project.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Briefcase size={24} className="text-gray-300 dark:text-white/25" />
+                  </div>
+                )}
+              </div>
+
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+                    {project.title}
+                  </h3>
+                  <span className="shrink-0 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-accent/10 text-accent rounded-full">
+                    {project.category}
+                  </span>
+                  <span className="shrink-0 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/40 rounded-full">
+                    {project.quarter}
+                  </span>
+                  {!project.isActive && (
+                    <span className="shrink-0 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full">
+                      Hidden
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 dark:text-white/50 mt-1 line-clamp-2">
+                  {project.description}
+                </p>
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                  {project.tags?.slice(0, 3).map((tag, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-white/60 rounded-full"
+                    >
+                      <img src={tag.icon} alt={tag.name} className="w-2.5 h-2.5" />
+                      {tag.name}
+                    </span>
+                  ))}
+                  {project.tags?.length > 3 && (
+                    <span className="text-[10px] text-gray-400 dark:text-white/40">
+                      +{project.tags.length - 3} more
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => handleToggleActive(project._id)}
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all"
+                  title={project.isActive ? "Hide project" : "Show project"}
+                >
+                  {project.isActive ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
+                </button>
+                <button
+                  onClick={() => {
+                    setEditingProject(project);
+                    setShowAddPanel(true);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-accent hover:bg-accent/10 transition-all"
+                >
+                  <Edit3 size={14} />
+                </button>
+                <button
+                  onClick={() => handleDelete(project._id)}
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────────
+   ADD/EDIT PROJECT PANEL
+   ───────────────────────────────────────────── */
+const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
+  const [formData, setFormData] = useState({
+    title: "",
+    slug: "",
+    category: "",
+    quarter: "",
+    description: "",
+    longDescription: "",
+    outcome: "",
+    link: "",
+    github: "",
+    isActive: true,
+  });
+
+  const [tags, setTags] = useState([]);
+  const [features, setFeatures] = useState([]);
+  const [techStack, setTechStack] = useState([]);
+  const [challenges, setChallenges] = useState([]);
+  
+  const [mainImage, setMainImage] = useState(null);
+  const [screenshots, setScreenshots] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Current editing states for arrays
+  const [currentTag, setCurrentTag] = useState({ name: "", icon: "" });
+  const [currentFeature, setCurrentFeature] = useState({ title: "", description: "" });
+  const [currentTech, setCurrentTech] = useState({ name: "", url: "", description: "" });
+  const [currentChallenge, setCurrentChallenge] = useState({ title: "", description: "" });
+
+  useEffect(() => {
+    if (editingProject) {
+      setFormData({
+        title: editingProject.title || "",
+        slug: editingProject.slug || "",
+        category: editingProject.category || "",
+        quarter: editingProject.quarter || "",
+        description: editingProject.description || "",
+        longDescription: editingProject.longDescription || "",
+        outcome: editingProject.outcome || "",
+        link: editingProject.link || "",
+        github: editingProject.github || "",
+        isActive: editingProject.isActive ?? true,
+      });
+      setTags(editingProject.tags || []);
+      setFeatures(editingProject.features || []);
+      setTechStack(editingProject.techStack || []);
+      setChallenges(editingProject.challenges || []);
+    }
+  }, [editingProject]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      const projectData = {
+        ...formData,
+        tags,
+        features,
+        techStack,
+        challenges,
+      };
+
+      const formPayload = new FormData();
+      formPayload.append("data", JSON.stringify(projectData));
+
+      if (mainImage) {
+        formPayload.append("image", mainImage);
+      }
+
+      screenshots.forEach((file) => {
+        formPayload.append("screenshots", file);
+      });
+
+      const url = editingProject
+        ? `${API}/api/projects/${editingProject._id}`
+        : `${API}/api/projects`;
+      
+      const method = editingProject ? "put" : "post";
+
+      const { data } = await axios[method](url, formPayload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      onSaved(data);
+    } catch (err) {
+      alert(err.response?.data?.error || "Save failed");
+    }
+    setSubmitting(false);
+  };
+
+  const addTag = () => {
+    if (currentTag.name && currentTag.icon) {
+      setTags((prev) => [...prev, currentTag]);
+      setCurrentTag({ name: "", icon: "" });
+    }
+  };
+
+  const addFeature = () => {
+    if (currentFeature.title && currentFeature.description) {
+      setFeatures((prev) => [...prev, currentFeature]);
+      setCurrentFeature({ title: "", description: "" });
+    }
+  };
+
+  const addTech = () => {
+    if (currentTech.name) {
+      setTechStack((prev) => [...prev, currentTech]);
+      setCurrentTech({ name: "", url: "", description: "" });
+    }
+  };
+
+  const addChallenge = () => {
+    if (currentChallenge.title && currentChallenge.description) {
+      setChallenges((prev) => [...prev, currentChallenge]);
+      setCurrentChallenge({ title: "", description: "" });
+    }
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="p-6 rounded-2xl bg-gradient-to-br from-accent/5 via-purple-500/5 to-pink-500/5 border border-accent/20"
+    >
+      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">
+        {editingProject ? "Edit Project" : "Add New Project"}
+      </h3>
+
+      <div className="space-y-6">
+        {/* Basic Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+              Title *
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              required
+              className="w-full px-4 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
+              placeholder="Project name"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+              Slug
+            </label>
+            <input
+              type="text"
+              name="slug"
+              value={formData.slug}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
+              placeholder="Auto-generated from title"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+              Category *
+            </label>
+            <input
+              type="text"
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              required
+              className="w-full px-4 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
+              placeholder="E-COMMERCE, MOBILE APP, etc."
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+              Quarter *
+            </label>
+            <input
+              type="text"
+              name="quarter"
+              value={formData.quarter}
+              onChange={handleInputChange}
+              required
+              className="w-full px-4 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
+              placeholder="Q1 2025"
+            />
+          </div>
+        </div>
+
+        {/* Description */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+            Short Description *
+          </label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            required
+            rows={2}
+            className="w-full px-4 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
+            placeholder="Brief one-line description"
+          />
+        </div>
+
+        {/* Long Description */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+            Long Description *
+          </label>
+          <textarea
+            name="longDescription"
+            value={formData.longDescription}
+            onChange={handleInputChange}
+            required
+            rows={4}
+            className="w-full px-4 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
+            placeholder="Detailed project description"
+          />
+        </div>
+
+        {/* Outcome */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+            Outcome
+          </label>
+          <textarea
+            name="outcome"
+            value={formData.outcome}
+            onChange={handleInputChange}
+            rows={2}
+            className="w-full px-4 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
+            placeholder="What was achieved"
+          />
+        </div>
+
+        {/* Links */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+              Live Link
+            </label>
+            <input
+              type="url"
+              name="link"
+              value={formData.link}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
+              placeholder="https://project.com"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+              GitHub Link
+            </label>
+            <input
+              type="url"
+              name="github"
+              value={formData.github}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
+              placeholder="https://github.com/..."
+            />
+          </div>
+        </div>
+
+        {/* Images */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+              Main Image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setMainImage(e.target.files[0])}
+              className="w-full px-4 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-accent/10 file:text-accent hover:file:bg-accent/20 file:cursor-pointer focus:outline-none transition-colors"
+            />
+            {editingProject?.image && !mainImage && (
+              <p className="text-xs text-gray-400 dark:text-white/40 mt-1">
+                Current: {editingProject.image}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+              Screenshots (Multiple)
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => setScreenshots(Array.from(e.target.files))}
+              className="w-full px-4 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-accent/10 file:text-accent hover:file:bg-accent/20 file:cursor-pointer focus:outline-none transition-colors"
+            />
+            {screenshots.length > 0 && (
+              <p className="text-xs text-gray-400 dark:text-white/40 mt-1">
+                {screenshots.length} file(s) selected
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Tags */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+            Technologies / Tags
+          </label>
+          <div className="flex gap-2 mb-2">
+            <input
+              type="text"
+              value={currentTag.name}
+              onChange={(e) => setCurrentTag({ ...currentTag, name: e.target.value })}
+              placeholder="Tag name (e.g., REACT)"
+              className="flex-1 px-3 py-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none focus:border-accent/40"
+            />
+            <input
+              type="url"
+              value={currentTag.icon}
+              onChange={(e) => setCurrentTag({ ...currentTag, icon: e.target.value })}
+              placeholder="Icon URL"
+              className="flex-1 px-3 py-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none focus:border-accent/40"
+            />
+            <button
+              type="button"
+              onClick={addTag}
+              className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-medium rounded-lg transition-colors"
+            >
+              Add
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag, idx) => (
+              <span
+                key={idx}
+                className="inline-flex items-center gap-1.5 px-2 py-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-xs text-gray-700 dark:text-white/70 rounded-lg"
+              >
+                <img src={tag.icon} alt={tag.name} className="w-3 h-3" />
+                {tag.name}
+                <button
+                  type="button"
+                  onClick={() => setTags((prev) => prev.filter((_, i) => i !== idx))}
+                  className="ml-1 text-gray-400 hover:text-red-400"
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Features */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+            Key Features
+          </label>
+          <div className="space-y-2 mb-2">
+            <input
+              type="text"
+              value={currentFeature.title}
+              onChange={(e) => setCurrentFeature({ ...currentFeature, title: e.target.value })}
+              placeholder="Feature title"
+              className="w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none focus:border-accent/40"
+            />
+            <div className="flex gap-2">
+              <textarea
+                value={currentFeature.description}
+                onChange={(e) => setCurrentFeature({ ...currentFeature, description: e.target.value })}
+                placeholder="Feature description"
+                rows={2}
+                className="flex-1 px-3 py-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none focus:border-accent/40"
+              />
+              <button
+                type="button"
+                onClick={addFeature}
+                className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-medium rounded-lg transition-colors h-fit"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {features.map((feature, idx) => (
+              <div
+                key={idx}
+                className="p-3 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h4 className="text-xs font-semibold text-gray-900 dark:text-white">
+                      {feature.title}
+                    </h4>
+                    <p className="text-xs text-gray-500 dark:text-white/60 mt-1">
+                      {feature.description}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFeatures((prev) => prev.filter((_, i) => i !== idx))}
+                    className="ml-2 text-gray-400 hover:text-red-400"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Tech Stack */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+            Tech Stack
+          </label>
+          <div className="space-y-2 mb-2">
+            <input
+              type="text"
+              value={currentTech.name}
+              onChange={(e) => setCurrentTech({ ...currentTech, name: e.target.value })}
+              placeholder="Technology name"
+              className="w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none focus:border-accent/40"
+            />
+            <input
+              type="url"
+              value={currentTech.url}
+              onChange={(e) => setCurrentTech({ ...currentTech, url: e.target.value })}
+              placeholder="URL (optional)"
+              className="w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none focus:border-accent/40"
+            />
+            <div className="flex gap-2">
+              <textarea
+                value={currentTech.description}
+                onChange={(e) => setCurrentTech({ ...currentTech, description: e.target.value })}
+                placeholder="Description (optional)"
+                rows={2}
+                className="flex-1 px-3 py-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none focus:border-accent/40"
+              />
+              <button
+                type="button"
+                onClick={addTech}
+                className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-medium rounded-lg transition-colors h-fit"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {techStack.map((tech, idx) => (
+              <div
+                key={idx}
+                className="p-3 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h4 className="text-xs font-semibold text-gray-900 dark:text-white">
+                      {tech.name}
+                      {tech.url && (
+                        <a
+                          href={tech.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="ml-2 text-accent hover:underline"
+                        >
+                          <LinkIcon size={10} className="inline" />
+                        </a>
+                      )}
+                    </h4>
+                    {tech.description && (
+                      <p className="text-xs text-gray-500 dark:text-white/60 mt-1">
+                        {tech.description}
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setTechStack((prev) => prev.filter((_, i) => i !== idx))}
+                    className="ml-2 text-gray-400 hover:text-red-400"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Challenges */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+            Challenges & Solutions
+          </label>
+          <div className="space-y-2 mb-2">
+            <input
+              type="text"
+              value={currentChallenge.title}
+              onChange={(e) => setCurrentChallenge({ ...currentChallenge, title: e.target.value })}
+              placeholder="Challenge title"
+              className="w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none focus:border-accent/40"
+            />
+            <div className="flex gap-2">
+              <textarea
+                value={currentChallenge.description}
+                onChange={(e) => setCurrentChallenge({ ...currentChallenge, description: e.target.value })}
+                placeholder="How you solved it"
+                rows={2}
+                className="flex-1 px-3 py-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none focus:border-accent/40"
+              />
+              <button
+                type="button"
+                onClick={addChallenge}
+                className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-medium rounded-lg transition-colors h-fit"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {challenges.map((challenge, idx) => (
+              <div
+                key={idx}
+                className="p-3 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h4 className="text-xs font-semibold text-gray-900 dark:text-white">
+                      {challenge.title}
+                    </h4>
+                    <p className="text-xs text-gray-500 dark:text-white/60 mt-1">
+                      {challenge.description}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setChallenges((prev) => prev.filter((_, i) => i !== idx))}
+                    className="ml-2 text-gray-400 hover:text-red-400"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-4 pt-4 border-t border-gray-200 dark:border-white/10">
+          <button
+            type="submit"
+            disabled={submitting}
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-accent hover:bg-accent-light disabled:opacity-50 text-gray-900 dark:text-white font-medium rounded-xl transition-colors"
+          >
+            {submitting ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Check size={16} />
+                {editingProject ? "Update Project" : "Create Project"}
+              </>
+            )}
+          </button>
+          {onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-6 py-3 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-white/70 font-medium rounded-xl transition-colors"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      </div>
+    </form>
   );
 };
 

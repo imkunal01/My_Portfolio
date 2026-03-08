@@ -10,12 +10,17 @@ import {
   Star,
   Menu,
 } from "lucide-react";
-import { projects } from "../data/portfolio";
+import { projects as staticProjects } from "../data/portfolio";
+import axios from "axios";
+
+const API = import.meta.env.VITE_BACKEND_URL || "";
 
 const ProjectDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const project = projects.find((p) => p.slug === slug);
+  const [project, setProject] = useState(null);
+  const [allProjects, setAllProjects] = useState(staticProjects);
+  const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("features");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -29,7 +34,32 @@ const ProjectDetail = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    
+    const fetchData = async () => {
+      try {
+        // Fetch all projects for navigation
+        const allProjectsRes = await axios.get(`${API}/api/projects`);
+        const mappedProjects = allProjectsRes.data.map((p) => ({
+          ...p,
+          id: p._id || p.id,
+        }));
+        setAllProjects(mappedProjects);
+        
+        // Fetch current project
+        const { data } = await axios.get(`${API}/api/projects/${slug}`);
+        setProject(data);
+      } catch (error) {
+        console.log("Failed to fetch project from API, using static data");
+        const staticProject = staticProjects.find((p) => p.slug === slug);
+        setProject(staticProject);
+        setAllProjects(staticProjects);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [slug]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,6 +86,17 @@ const ProjectDetail = () => {
     sectionRefs[key]?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     setSidebarOpen(false);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-dark flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-accent/20 border-t-accent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400 dark:text-white/40 text-sm">Loading project...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!project) {
     return (
@@ -122,7 +163,7 @@ const ProjectDetail = () => {
         {project.image && (
           <div className="fixed inset-0 z-0 opacity-5">
             <img
-              src={project.image}
+              src={project.image.startsWith('/uploads') ? `${API}${project.image}` : project.image}
               alt=""
               className="w-full h-full object-cover blur-3xl"
             />
@@ -208,7 +249,7 @@ const ProjectDetail = () => {
                 className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#111]"
               >
                 <img
-                  src={screenshot}
+                  src={screenshot.startsWith('/uploads') ? `${API}${screenshot}` : screenshot}
                   alt={`${project.title} screenshot ${i + 1}`}
                   className="w-full h-auto object-cover"
                 />
@@ -228,7 +269,7 @@ const ProjectDetail = () => {
             className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#111]"
           >
             <img
-              src={project.image}
+              src={project.image.startsWith('/uploads') ? `${API}${project.image}` : project.image}
               alt={project.title}
               className="w-full h-auto object-cover"
             />
@@ -370,7 +411,7 @@ const ProjectDetail = () => {
                         className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#111]"
                       >
                         <img
-                          src={screenshot}
+                          src={screenshot.startsWith('/uploads') ? `${API}${screenshot}` : screenshot}
                           alt={`${project.title} screenshot ${i + 3}`}
                           className="w-full h-auto object-cover"
                         />
@@ -521,7 +562,7 @@ const ProjectDetail = () => {
 
       {/* Navigate other projects */}
       <section className="px-6 lg:px-8 max-w-7xl mx-auto pb-20">
-        <ProjectNavigation currentSlug={slug} />
+        <ProjectNavigation currentSlug={slug} projects={allProjects} />
       </section>
     </div>
   );
@@ -570,7 +611,7 @@ const FeatureAccordion = ({ feature }) => {
 };
 
 /* ===== Project Navigation ===== */
-const ProjectNavigation = ({ currentSlug }) => {
+const ProjectNavigation = ({ currentSlug, projects }) => {
   const navigate = useNavigate();
   const currentIndex = projects.findIndex((p) => p.slug === currentSlug);
   const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null;
