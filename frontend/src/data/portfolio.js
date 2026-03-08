@@ -17,6 +17,8 @@ export const personalInfo = {
     github: "https://github.com/imkunal01",
     linkedin: "https://www.linkedin.com/in/kunaldhangar/",
     twitter: "https://x.com/",
+    instagram: "https://instagram.com/kunal_dhangar_kd",
+    threads: "https://threads.net/@kunaldhangar",
     email: "mailto:kunaldhangar184@gmail.com",
   },
   available: true,
