@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Hero from "./sections/Hero";
+import LifeCanvas from "./sections/LifeCanvas";
 import BentoGrid from "./sections/BentoGrid";
 import Projects from "./sections/Projects";
 import Skills from "./sections/Skills";
@@ -25,6 +26,7 @@ const HomePage = () => (
     <Navbar />
     <main>
       <Hero />
+      <LifeCanvas />
       <BentoGrid />
       <Projects />
       <Skills />
