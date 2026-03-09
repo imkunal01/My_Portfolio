@@ -73,6 +73,7 @@ const Projects = () => {
             index={index}
             inView={inView}
             isReversed={index % 2 !== 0}
+            totalProjects={projects.length}
           />
         ))}
       </div>
@@ -80,7 +81,7 @@ const Projects = () => {
   );
 };
 
-const ProjectCard = ({ project, index, inView, isReversed }) => {
+const ProjectCard = ({ project, index, inView, isReversed, totalProjects }) => {
   const navigate = useNavigate();
 
   return (
@@ -184,7 +185,7 @@ const ProjectCard = ({ project, index, inView, isReversed }) => {
       </div>
 
       {/* Timeline connector */}
-      {index < projects.length - 1 && (
+      {index < totalProjects - 1 && (
         <div className="hidden lg:block absolute left-1/2 -bottom-12 w-px h-12 bg-gradient-to-b from-white/10 to-transparent" />
       )}
     </motion.div>
