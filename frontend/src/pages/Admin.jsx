@@ -42,6 +42,7 @@ import {
   Image,
   Link as LinkIcon,
   Upload,
+  Mail,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -174,6 +175,7 @@ const Admin = () => {
     { key: "blog", label: "Blog", icon: FileText },
     { key: "bucketlist", label: "Bucket List", icon: ListChecks },
     { key: "guestbook", label: "Guestbook", icon: MessageSquare },
+    { key: "contacts", label: "Contacts", icon: Mail },
     { key: "visitors", label: "Visitors", icon: Users },
   ];
 
@@ -230,6 +232,7 @@ const Admin = () => {
         {activeTab === "blog" && <BlogAdmin token={token} />}
         {activeTab === "bucketlist" && <BucketListAdmin token={token} />}
         {activeTab === "guestbook" && <GuestbookAdmin token={token} />}
+        {activeTab === "contacts" && <ContactsAdmin token={token} />}
         {activeTab === "visitors" && <VisitorsAdmin token={token} />}
       </div>
     </div>
@@ -2449,6 +2452,131 @@ const BucketListAdmin = ({ token }) => {
               </motion.div>
             );
           })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────────
+   CONTACTS ADMIN TAB
+   ───────────────────────────────────────────── */
+const ContactsAdmin = ({ token }) => {
+  const [submissions, setSubmissions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      try {
+        const { data } = await axios.get(`${API}/api/contact`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setSubmissions(data);
+      } catch {
+        setSubmissions([]);
+      }
+      setLoading(false);
+    };
+    fetchSubmissions();
+  }, [token]);
+
+  const handleDelete = async (id) => {
+    if (!confirm("Delete this contact submission?")) return;
+    try {
+      await axios.delete(`${API}/api/contact/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSubmissions((prev) => prev.filter((s) => s._id !== id));
+    } catch (err) {
+      alert(err.response?.data?.error || "Delete failed");
+    }
+  };
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white font-display">
+            Contact Submissions
+          </h2>
+          <p className="text-sm text-gray-400 dark:text-white/40 mt-1">
+            {submissions.length} total
+          </p>
+        </div>
+      </div>
+
+      {/* List */}
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 size={24} className="animate-spin text-gray-400 dark:text-white/40" />
+        </div>
+      ) : submissions.length === 0 ? (
+        <div className="text-center py-20 text-gray-400 dark:text-white/40">
+          <Mail size={40} className="mx-auto mb-3 text-gray-200 dark:text-white/15" />
+          <p>No contact submissions yet.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {submissions.map((sub) => (
+            <motion.div
+              key={sub._id}
+              layout
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-5 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all group"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  {/* Name & email */}
+                  <div className="flex items-center gap-3 mb-2 flex-wrap">
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                      {sub.name}
+                    </span>
+                    <a
+                      href={`mailto:${sub.email}`}
+                      className="text-xs text-accent hover:underline truncate"
+                    >
+                      {sub.email}
+                    </a>
+                    {sub.emailSent ? (
+                      <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 rounded-full flex items-center gap-1">
+                        <Check size={10} /> Email Sent
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-amber-500/10 text-amber-400 rounded-full">
+                        Pending
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Message */}
+                  <p className="text-sm text-gray-500 dark:text-white/60 leading-relaxed whitespace-pre-wrap">
+                    {sub.message}
+                  </p>
+
+                  {/* Date */}
+                  <p className="text-[11px] text-gray-300 dark:text-white/25 mt-2">
+                    {new Date(sub.createdAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+
+                {/* Delete */}
+                <button
+                  onClick={() => handleDelete(sub._id)}
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-red-400 hover:bg-red-400/10 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            </motion.div>
+          ))}
         </div>
       )}
     </div>
