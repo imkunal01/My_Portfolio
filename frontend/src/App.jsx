@@ -26,11 +26,11 @@ const HomePage = () => (
     <Navbar />
     <main>
       <Hero />
+      <About />
       <LifeCanvas />
       <BentoGrid />
       <Projects />
       <Skills />
-      <About />
       <Testimonials />
       <Contact />
     </main>

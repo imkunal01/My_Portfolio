@@ -5,15 +5,14 @@ const Lead = require("../models/Lead");
 const calculateQuote = require("../utils/quoteCalculator");
 const logger = require("../utils/logger");
 const checkFAQ = require("../utils/faq");
-const sgMail = require("@sendgrid/mail");
+const { BrevoClient } = require("@getbrevo/brevo");
 
-const sendgridApiKey = process.env.SENDGRID_API_KEY;
+const brevoApiKey = process.env.BREVO_API_KEY;
 const emailFrom = process.env.EMAIL_FROM;
+const emailFromName = process.env.EMAIL_FROM_NAME || "Portfolio Contact";
 const emailTo = process.env.EMAIL_TO;
 
-if (sendgridApiKey) {
-  sgMail.setApiKey(sendgridApiKey);
-}
+const brevo = new BrevoClient({ apiKey: brevoApiKey || "" });
 
 router.post("/", async (req, res) => {
   const { name, email, message, projectType } = req.body;
@@ -72,14 +71,14 @@ router.post("/", async (req, res) => {
     await lead.save();
 
     // Send email notification (to you)
-    if (sendgridApiKey && emailFrom && emailTo && lead.messages.length === 2) {
+    if (brevoApiKey && emailFrom && emailTo && lead.messages.length === 2) {
       try {
-        await sgMail.send({
-          from: emailFrom,
-          to: emailTo,
-          replyTo: email,
+        await brevo.transactionalEmails.sendTransacEmail({
+          sender: { name: emailFromName, email: emailFrom },
+          to: [{ email: emailTo }],
+          replyTo: { email },
           subject: "New Lead Generated",
-          text: `New lead from ${name} (${email})\nProject Type: ${projectType}\nQuote: ${quote}\nMessage: ${message}`,
+          textContent: `New lead from ${name} (${email})\nProject Type: ${projectType}\nQuote: ${quote}\nMessage: ${message}`,
         });
       } catch (emailErr) {
         logger.error("Email notification failed: %s", emailErr.message);
