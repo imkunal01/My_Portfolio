@@ -1,43 +1,19 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 const Project = require("../models/Project");
 const verifyToken = require("../middleware/auth");
+const { uploadToCloudinary, deleteFromCloudinary } = require("../utils/cloudinary");
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, "../uploads/projects");
-    // Create directory if it doesn't exist
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  },
-});
-
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif|webp/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
-
-  if (mimetype && extname) {
-    return cb(null, true);
-  } else {
-    cb(new Error("Only image files are allowed!"));
-  }
-};
-
+// Use memory storage — files go to Cloudinary, not disk
 const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: fileFilter,
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    const allowed = /jpeg|jpg|png|gif|webp/;
+    if (allowed.test(file.mimetype)) return cb(null, true);
+    cb(new Error("Only image files are allowed!"));
+  },
 });
 
 // GET all projects (public)
@@ -75,28 +51,26 @@ router.post(
     try {
       const projectData = JSON.parse(req.body.data);
 
-      // Add uploaded file paths
-      if (req.files) {
-        if (req.files.image && req.files.image[0]) {
-          projectData.image = `/uploads/projects/${req.files.image[0].filename}`;
-        }
-        if (req.files.screenshots) {
-          projectData.screenshots = req.files.screenshots.map(
-            (file) => `/uploads/projects/${file.filename}`
-          );
-        }
+      // Upload main image to Cloudinary
+      if (req.files && req.files.image && req.files.image[0]) {
+        const result = await uploadToCloudinary(req.files.image[0].buffer);
+        projectData.image = result.secure_url;
+        projectData.imagePublicId = result.public_id;
+      }
+
+      // Upload screenshots to Cloudinary
+      if (req.files && req.files.screenshots) {
+        const uploads = await Promise.all(
+          req.files.screenshots.map((file) => uploadToCloudinary(file.buffer))
+        );
+        projectData.screenshots = uploads.map((u) => u.secure_url);
+        projectData.screenshotPublicIds = uploads.map((u) => u.public_id);
       }
 
       const project = new Project(projectData);
       await project.save();
       res.status(201).json(project);
     } catch (err) {
-      // Clean up uploaded files if project creation fails
-      if (req.files) {
-        Object.values(req.files).flat().forEach((file) => {
-          fs.unlink(file.path, () => {});
-        });
-      }
       res.status(400).json({ error: err.message });
     }
   }
@@ -119,42 +93,36 @@ router.put(
 
       const updateData = JSON.parse(req.body.data);
 
-      // Handle new uploaded files
-      if (req.files) {
-        if (req.files.image && req.files.image[0]) {
-          // Delete old image
-          if (project.image && project.image.startsWith("/uploads")) {
-            const oldImagePath = path.join(__dirname, "..", project.image);
-            fs.unlink(oldImagePath, () => {});
-          }
-          updateData.image = `/uploads/projects/${req.files.image[0].filename}`;
+      // Replace main image
+      if (req.files && req.files.image && req.files.image[0]) {
+        // Delete old image from Cloudinary
+        if (project.imagePublicId) {
+          await deleteFromCloudinary(project.imagePublicId);
         }
-        if (req.files.screenshots) {
-          // Delete old screenshots
-          if (project.screenshots && project.screenshots.length > 0) {
-            project.screenshots.forEach((screenshot) => {
-              if (screenshot.startsWith("/uploads")) {
-                const oldPath = path.join(__dirname, "..", screenshot);
-                fs.unlink(oldPath, () => {});
-              }
-            });
-          }
-          updateData.screenshots = req.files.screenshots.map(
-            (file) => `/uploads/projects/${file.filename}`
+        const result = await uploadToCloudinary(req.files.image[0].buffer);
+        updateData.image = result.secure_url;
+        updateData.imagePublicId = result.public_id;
+      }
+
+      // Replace screenshots
+      if (req.files && req.files.screenshots) {
+        // Delete old screenshots from Cloudinary
+        if (project.screenshotPublicIds && project.screenshotPublicIds.length > 0) {
+          await Promise.all(
+            project.screenshotPublicIds.map((id) => deleteFromCloudinary(id))
           );
         }
+        const uploads = await Promise.all(
+          req.files.screenshots.map((file) => uploadToCloudinary(file.buffer))
+        );
+        updateData.screenshots = uploads.map((u) => u.secure_url);
+        updateData.screenshotPublicIds = uploads.map((u) => u.public_id);
       }
 
       Object.assign(project, updateData);
       await project.save();
       res.json(project);
     } catch (err) {
-      // Clean up uploaded files if update fails
-      if (req.files) {
-        Object.values(req.files).flat().forEach((file) => {
-          fs.unlink(file.path, () => {});
-        });
-      }
       res.status(400).json({ error: err.message });
     }
   }
@@ -168,19 +136,14 @@ router.delete("/:id", verifyToken, async (req, res) => {
       return res.status(404).json({ error: "Project not found" });
     }
 
-    // Delete associated image files
-    if (project.image && project.image.startsWith("/uploads")) {
-      const imagePath = path.join(__dirname, "..", project.image);
-      fs.unlink(imagePath, () => {});
+    // Delete images from Cloudinary
+    if (project.imagePublicId) {
+      await deleteFromCloudinary(project.imagePublicId);
     }
-
-    if (project.screenshots && project.screenshots.length > 0) {
-      project.screenshots.forEach((screenshot) => {
-        if (screenshot.startsWith("/uploads")) {
-          const screenshotPath = path.join(__dirname, "..", screenshot);
-          fs.unlink(screenshotPath, () => {});
-        }
-      });
+    if (project.screenshotPublicIds && project.screenshotPublicIds.length > 0) {
+      await Promise.all(
+        project.screenshotPublicIds.map((id) => deleteFromCloudinary(id))
+      );
     }
 
     await Project.findByIdAndDelete(req.params.id);
