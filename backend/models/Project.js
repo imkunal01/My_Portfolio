@@ -34,10 +34,12 @@ const projectSchema = new mongoose.Schema(
     techStack: [techStackSchema],
     challenges: [challengeSchema],
     outcome: { type: String },
-    screenshots: [{ type: String }], // Array of image URLs/paths
+    screenshots: [{ type: String }], // Array of image URLs
+    screenshotPublicIds: [{ type: String }], // Cloudinary public IDs
     link: { type: String },
     github: { type: String },
-    image: { type: String }, // Main project image
+    image: { type: String }, // Main project image URL
+    imagePublicId: { type: String }, // Cloudinary public ID
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }

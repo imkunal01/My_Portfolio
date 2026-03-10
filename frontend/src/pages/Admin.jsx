@@ -203,23 +203,23 @@ const Admin = () => {
         </div>
       </div>
 
-      <div className="pt-24 pb-20 px-6 lg:px-8 max-w-7xl mx-auto">
+      <div className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Tabs */}
-        <div className="flex gap-1 p-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/[0.06] rounded-2xl w-full sm:w-fit mb-8 overflow-x-auto">
+        <div className="flex gap-1 p-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/[0.06] rounded-2xl w-full sm:w-fit mb-8 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all shrink-0 ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2.5 text-xs sm:text-sm font-medium rounded-xl transition-all shrink-0 ${
                   activeTab === tab.key
                     ? "bg-white dark:bg-[#111] text-gray-900 dark:text-white shadow-sm"
                     : "text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
                 }`}
               >
                 <Icon size={16} />
-                {tab.label}
+                <span className="hidden sm:inline">{tab.label}</span>
               </button>
             );
           })}
@@ -365,26 +365,54 @@ const ProjectsAdmin = ({ token }) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all group"
+              className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 p-4 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all group"
             >
-              {/* Project Image */}
-              <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
-                {project.image ? (
-                  <img
-                    src={`${API}${project.image}`}
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Briefcase size={24} className="text-gray-300 dark:text-white/25" />
-                  </div>
-                )}
+              <div className="flex items-start gap-3 w-full sm:w-auto">
+                {/* Project Image */}
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
+                  {project.image ? (
+                    <img
+                      src={project.image.startsWith('http') ? project.image : `${API}${project.image}`}
+                      alt={project.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Briefcase size={24} className="text-gray-300 dark:text-white/25" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Mobile-only actions (top-right) */}
+                <div className="flex items-center gap-1 sm:hidden ml-auto">
+                  <button
+                    onClick={() => handleToggleActive(project._id)}
+                    className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all"
+                  >
+                    {project.isActive ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditingProject(project);
+                      setShowAddPanel(true);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-accent hover:bg-accent/10 transition-all"
+                  >
+                    <Edit3 size={14} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(project._id)}
+                    className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               </div>
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
                     {project.title}
                   </h3>
@@ -421,8 +449,8 @@ const ProjectsAdmin = ({ token }) => {
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-1">
+              {/* Desktop Actions */}
+              <div className="hidden sm:flex items-center gap-1">
                 <button
                   onClick={() => handleToggleActive(project._id)}
                   className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-white/25 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all"
@@ -588,7 +616,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-6 rounded-2xl bg-gradient-to-br from-accent/5 via-purple-500/5 to-pink-500/5 border border-accent/20"
+      className="p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-accent/5 via-purple-500/5 to-pink-500/5 border border-accent/20"
     >
       <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">
         {editingProject ? "Edit Project" : "Add New Project"}
@@ -778,7 +806,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
           <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
             Technologies / Tags
           </label>
-          <div className="flex gap-2 mb-2">
+          <div className="flex flex-col sm:flex-row gap-2 mb-2">
             <input
               type="text"
               value={currentTag.name}
@@ -796,7 +824,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
             <button
               type="button"
               onClick={addTag}
-              className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-medium rounded-lg transition-colors"
+              className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-medium rounded-lg transition-colors shrink-0"
             >
               Add
             </button>
@@ -834,7 +862,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
               placeholder="Feature title"
               className="w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none focus:border-accent/40"
             />
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <textarea
                 value={currentFeature.description}
                 onChange={(e) => setCurrentFeature({ ...currentFeature, description: e.target.value })}
@@ -845,7 +873,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
               <button
                 type="button"
                 onClick={addFeature}
-                className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-medium rounded-lg transition-colors h-fit"
+                className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-medium rounded-lg transition-colors h-fit shrink-0"
               >
                 Add
               </button>
@@ -899,7 +927,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
               placeholder="URL (optional)"
               className="w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none focus:border-accent/40"
             />
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <textarea
                 value={currentTech.description}
                 onChange={(e) => setCurrentTech({ ...currentTech, description: e.target.value })}
@@ -910,7 +938,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
               <button
                 type="button"
                 onClick={addTech}
-                className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-medium rounded-lg transition-colors h-fit"
+                className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-medium rounded-lg transition-colors h-fit shrink-0"
               >
                 Add
               </button>
@@ -969,7 +997,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
               placeholder="Challenge title"
               className="w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none focus:border-accent/40"
             />
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <textarea
                 value={currentChallenge.description}
                 onChange={(e) => setCurrentChallenge({ ...currentChallenge, description: e.target.value })}
@@ -980,7 +1008,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
               <button
                 type="button"
                 onClick={addChallenge}
-                className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-medium rounded-lg transition-colors h-fit"
+                className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-medium rounded-lg transition-colors h-fit shrink-0"
               >
                 Add
               </button>
@@ -1015,7 +1043,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-4 pt-4 border-t border-gray-200 dark:border-white/10">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-4 border-t border-gray-200 dark:border-white/10">
           <button
             type="submit"
             disabled={submitting}
@@ -1037,7 +1065,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
             <button
               type="button"
               onClick={onCancel}
-              className="px-6 py-3 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-white/70 font-medium rounded-xl transition-colors"
+              className="px-6 py-3 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-white/70 font-medium rounded-xl transition-colors text-center"
             >
               Cancel
             </button>
@@ -1145,10 +1173,10 @@ const RecommendationsAdmin = ({ token }) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all group"
+                className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all group"
               >
                 {/* Poster thumb */}
-                <div className="w-12 h-16 rounded-lg overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
+                <div className="w-10 h-14 sm:w-12 sm:h-16 rounded-lg overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
                   {rec.poster && rec.poster !== "N/A" ? (
                     <img
                       src={rec.poster}
@@ -1686,7 +1714,7 @@ const GuestbookAdmin = ({ token }) => {
               layout
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-[#111] border transition-all group ${
+              className={`flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-white dark:bg-[#111] border transition-all group ${
                 entry.approved
                   ? "border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10"
                   : "border-red-500/10 opacity-60"
@@ -1696,7 +1724,7 @@ const GuestbookAdmin = ({ token }) => {
               <img
                 src={entry.avatar}
                 alt={entry.name}
-                className="w-9 h-9 rounded-full bg-gray-100 dark:bg-white/5 shrink-0 mt-0.5"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-100 dark:bg-white/5 shrink-0 mt-0.5"
               />
 
               {/* Content */}
@@ -1848,11 +1876,11 @@ const VisitorsAdmin = ({ token }) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: Math.min(i * 0.03, 0.5) }}
-              className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all"
+              className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all"
             >
               {/* Avatar */}
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 ${
                   v.name && v.name !== "Anonymous"
                     ? "bg-accent/10 border border-accent/20"
                     : "bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10"
@@ -2524,9 +2552,9 @@ const ContactsAdmin = ({ token }) => {
               layout
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-5 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all group"
+              className="p-4 sm:p-5 rounded-xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all group"
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start justify-between gap-3 sm:gap-4">
                 <div className="flex-1 min-w-0">
                   {/* Name & email */}
                   <div className="flex items-center gap-3 mb-2 flex-wrap">
