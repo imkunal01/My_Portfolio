@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   Github,
@@ -9,15 +10,82 @@ import {
   Mail,
   Code2,
   Sparkles,
+  Award,
+  X,
+  Download,
+  ExternalLink,
 } from "lucide-react";
-import { personalInfo, experience } from "../data/portfolio";
+import { personalInfo, experience, certificates } from "../data/portfolio";
 import kunalImg from "../assets/Kunal.png";
+
+/* ═══════════════════════ Certificate Modal ═══════════════════════ */
+const CertificateModal = ({ cert, isOpen, onClose }) => {
+  if (!isOpen || !cert) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 dark:bg-black/70 backdrop-blur-sm"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          transition={{ type: "spring", damping: 25 }}
+          className="relative w-full max-w-5xl h-[90vh] bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200 dark:border-white/[0.06] bg-white/95 dark:bg-[#111]/95 backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              <Award className="text-accent" size={18} />
+              <span className="text-gray-800 dark:text-white/90 text-sm font-medium">
+                {cert.title} &mdash; {cert.issuer}
+              </span>
+            </div>
+            <div className="flex items-center gap-1">
+              <a
+                href={cert.pdfUrl}
+                download
+                className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
+                title="Download Certificate"
+              >
+                <Download size={16} />
+              </a>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
+              >
+                <X size={18} />
+              </button>
+            </div>
+          </div>
+
+          {/* PDF Viewer */}
+          <div className="w-full h-[calc(100%-52px)] bg-gray-50 dark:bg-white/[0.03]">
+            <iframe
+              src={`${cert.pdfUrl}#toolbar=1&navpanes=0&scrollbar=1`}
+              className="w-full h-full"
+              title={`${cert.title} Certificate`}
+              style={{ border: "none" }}
+            />
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
 
 const cardBase =
   "bento-card rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] p-6 h-full shadow-sm";
 
 const About = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.05 });
+  const [selectedCert, setSelectedCert] = useState(null);
 
   const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 30 },
@@ -202,7 +270,63 @@ const About = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* ── 6. Certificates Card (full width) ── */}
+        <motion.div {...fadeUp(0.35)} className="md:col-span-2 lg:col-span-4">
+          <div className={cardBase}>
+            <div className="flex items-center gap-2 mb-6">
+              <Award size={16} className="text-accent" />
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40">
+                Certificates
+              </h3>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {certificates.map((cert) => (
+                <button
+                  key={cert.id}
+                  onClick={() => setSelectedCert(cert)}
+                  className="group relative text-left p-5 rounded-xl bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
+                >
+                  {/* Accent top bar */}
+                  <div
+                    className="absolute top-0 left-4 right-4 h-[2px] rounded-full opacity-60 group-hover:opacity-100 transition-opacity"
+                    style={{ backgroundColor: cert.color }}
+                  />
+
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                        {cert.title}
+                      </h4>
+                      <p className="text-xs mt-1 font-medium" style={{ color: cert.color }}>
+                        {cert.issuer}
+                      </p>
+                      <p className="text-[11px] text-gray-400 dark:text-white/40 mt-1.5">
+                        {cert.period}
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0 p-2 rounded-lg bg-gray-100 dark:bg-white/[0.05] group-hover:bg-gray-200 dark:group-hover:bg-white/[0.08] transition-colors">
+                      <ExternalLink size={14} className="text-gray-400 dark:text-white/40 group-hover:text-accent transition-colors" />
+                    </div>
+                  </div>
+
+                  <div className="mt-3 flex items-center gap-1.5 text-[11px] text-gray-400 dark:text-white/30 group-hover:text-accent/70 transition-colors">
+                    <Award size={11} />
+                    <span>Click to view certificate</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </motion.div>
       </div>
+
+      {/* Certificate Modal */}
+      <CertificateModal
+        cert={selectedCert}
+        isOpen={!!selectedCert}
+        onClose={() => setSelectedCert(null)}
+      />
     </section>
   );
 };

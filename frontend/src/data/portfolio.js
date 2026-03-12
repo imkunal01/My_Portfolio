@@ -399,6 +399,33 @@ export const testimonials = [
   },
 ];
 
+export const certificates = [
+  {
+    id: 1,
+    title: "Cloud Computing",
+    issuer: "NPTEL",
+    period: "Aug' 2025 – Oct' 2025",
+    pdfUrl: "/certificates/cloud-computing-nptel.pdf",
+    color: "#3B82F6",
+  },
+  {
+    id: 2,
+    title: "DSA In C++ Decode C++ Batch",
+    issuer: "Decode",
+    period: "Jul' 2024 – Feb' 2025",
+    pdfUrl: "/certificates/dsa-cpp-decode.pdf",
+    color: "#8B5CF6",
+  },
+  {
+    id: 3,
+    title: "Legacy Web Development Certificate",
+    issuer: "freeCodeCamp",
+    period: "Aug' 2023 – Jan' 2024",
+    pdfUrl: "/certificates/web-dev-freecodecamp.pdf",
+    color: "#10B981",
+  },
+];
+
 export const experience = [
   {
     id: 1,
