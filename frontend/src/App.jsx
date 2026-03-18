@@ -38,7 +38,6 @@ const HomePage = () => (
     <ScrollToTop />
   </>
 );
-
 const App = () => {
   return (
     <div className="relative min-h-screen bg-[#fafafa] dark:bg-[#0a0a0a]">
@@ -57,5 +56,4 @@ const App = () => {
     </div>
   );
 };
-
 export default App;
