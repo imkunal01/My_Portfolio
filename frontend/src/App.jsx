@@ -1,12 +1,14 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useCallback, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import LandingAnimation from "./components/LandingAnimation";
 import Hero from "./sections/Hero";
 import LifeCanvas from "./sections/LifeCanvas";
 import BentoGrid from "./sections/BentoGrid";
 import Projects from "./sections/Projects";
 import Skills from "./sections/Skills";
 import About from "./sections/About";
+import CodingProfiles from "./sections/CodingProfiles";
 import Testimonials from "./sections/Testimonials";
 import Contact from "./sections/Contact";
 import Footer from "./components/Footer";
@@ -27,6 +29,7 @@ const HomePage = () => (
     <main>
       <Hero />
       <About />
+      <CodingProfiles />
       <LifeCanvas />
       <BentoGrid />
       <Projects />
@@ -39,8 +42,15 @@ const HomePage = () => (
   </>
 );
 const App = () => {
+  const [showLanding, setShowLanding] = useState(true);
+
+  const handleLandingComplete = useCallback(() => {
+    setShowLanding(false);
+  }, []);
+
   return (
     <div className="relative min-h-screen bg-[#fafafa] dark:bg-[#0a0a0a]">
+      {showLanding && <LandingAnimation onComplete={handleLandingComplete} />}
       <Suspense fallback={<div className="flex items-center justify-center min-h-screen text-gray-400 dark:text-white/40">Loading...</div>}>
         <Routes>
           <Route path="/" element={<HomePage />} />

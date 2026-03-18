@@ -18,10 +18,17 @@ const Projects = () => {
       try {
         const { data } = await axios.get(`${API}/api/projects`);
         // Map _id to id for consistency
-        const mappedProjects = data.map((project) => ({
-          ...project,
-          id: project._id || project.id,
-        }));
+        const mappedProjects = data
+          .map((project) => ({
+            ...project,
+            id: project._id || project.id,
+          }))
+          .sort((a, b) => {
+            const aPriority = Number.isFinite(Number(a.priority)) ? Number(a.priority) : 0;
+            const bPriority = Number.isFinite(Number(b.priority)) ? Number(b.priority) : 0;
+            if (aPriority !== bPriority) return aPriority - bPriority;
+            return 0;
+          });
         setProjects(mappedProjects);
       } catch (error) {
         console.log("Failed to fetch projects from API, using static data");

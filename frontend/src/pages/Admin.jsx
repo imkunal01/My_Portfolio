@@ -248,10 +248,19 @@ const ProjectsAdmin = ({ token }) => {
   const [showAddPanel, setShowAddPanel] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
 
+  const sortProjectsByPriority = (items) => {
+    return [...items].sort((a, b) => {
+      const aPriority = Number.isFinite(Number(a.priority)) ? Number(a.priority) : 0;
+      const bPriority = Number.isFinite(Number(b.priority)) ? Number(b.priority) : 0;
+      if (aPriority !== bPriority) return aPriority - bPriority;
+      return (a.title || "").localeCompare(b.title || "");
+    });
+  };
+
   const fetchProjects = async () => {
     try {
       const { data } = await axios.get(`${API}/api/projects`);
-      setProjects(data);
+      setProjects(sortProjectsByPriority(data));
     } catch {
       setProjects([]);
     }
@@ -329,10 +338,10 @@ const ProjectsAdmin = ({ token }) => {
               onSaved={(project) => {
                 if (editingProject) {
                   setProjects((prev) =>
-                    prev.map((p) => (p._id === project._id ? project : p))
+                    sortProjectsByPriority(prev.map((p) => (p._id === project._id ? project : p)))
                   );
                 } else {
-                  setProjects((prev) => [project, ...prev]);
+                  setProjects((prev) => sortProjectsByPriority([project, ...prev]));
                 }
                 setShowAddPanel(false);
                 setEditingProject(null);
@@ -416,6 +425,9 @@ const ProjectsAdmin = ({ token }) => {
                   <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
                     {project.title}
                   </h3>
+                  <span className="shrink-0 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-white/50 rounded-full">
+                    Priority {project.priority ?? 0}
+                  </span>
                   <span className="shrink-0 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-accent/10 text-accent rounded-full">
                     {project.category}
                   </span>
@@ -492,6 +504,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
     slug: "",
     category: "",
     quarter: "",
+    priority: 0,
     description: "",
     longDescription: "",
     outcome: "",
@@ -522,6 +535,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
         slug: editingProject.slug || "",
         category: editingProject.category || "",
         quarter: editingProject.quarter || "",
+        priority: editingProject.priority ?? 0,
         description: editingProject.description || "",
         longDescription: editingProject.longDescription || "",
         outcome: editingProject.outcome || "",
@@ -548,6 +562,7 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
     try {
       const projectData = {
         ...formData,
+        priority: Math.max(0, Number(formData.priority) || 0),
         tags,
         features,
         techStack,
@@ -681,6 +696,21 @@ const AddProject = ({ token, editingProject, onSaved, onCancel }) => {
               required
               className="w-full px-4 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
               placeholder="Q1 2025"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 dark:text-white/60 mb-2">
+              Priority (lower = higher)
+            </label>
+            <input
+              type="number"
+              name="priority"
+              min="0"
+              value={formData.priority}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
+              placeholder="0"
             />
           </div>
         </div>

@@ -72,6 +72,52 @@ export const skills = {
   ],
 };
 
+export const codingProfiles = {
+  note: "Update usernames, links, and stats here.",
+  platforms: [
+    {
+      key: "github",
+      label: "GitHub",
+      username: "imkunal01",
+      profileUrl: "https://github.com/imkunal01",
+      totalSolved: 0,
+      metricLabel: "Public Repos",
+      metricValue: "0",
+      activity: [2, 4, 1, 3, 5, 6, 2, 1, 4, 5, 3, 2, 4, 7, 5, 2, 1, 3, 6, 4, 2, 5, 3, 6],
+    },
+    {
+      key: "leetcode",
+      label: "LeetCode",
+      username: "imkunal01",
+      profileUrl: "https://leetcode.com/imkunal01",
+      totalSolved: 0,
+      metricLabel: "Contest Rating",
+      metricValue: "--",
+      activity: [1, 2, 3, 4, 2, 1, 3, 5, 4, 3, 2, 2, 4, 6, 5, 3, 2, 1, 4, 5, 6, 4, 3, 2],
+    },
+    {
+      key: "codechef",
+      label: "CodeChef",
+      username: "kunaldhangar18",
+      profileUrl: "https://www.codechef.com/users/kunaldhangar18",
+      totalSolved: 0,
+      metricLabel: "Stars",
+      metricValue: "--",
+      activity: [0, 1, 2, 2, 3, 1, 2, 4, 5, 3, 2, 1, 3, 4, 5, 4, 2, 1, 2, 3, 4, 2, 1, 2],
+    },
+    {
+      key: "gfg",
+      label: "GeeksforGeeks",
+      username: "kunaldhafzmv",
+      profileUrl: "https://www.geeksforgeeks.org/user/kunaldhafzmv",
+      totalSolved: 0,
+      metricLabel: "Coding Score",
+      metricValue: "--",
+      activity: [1, 1, 2, 3, 2, 1, 2, 3, 4, 2, 1, 2, 4, 5, 3, 2, 1, 3, 4, 2, 2, 3, 1, 2],
+    },
+  ],
+};
+
 // Flatten all skills for the marquee
 export const allSkills = [
   ...skills.languages,
