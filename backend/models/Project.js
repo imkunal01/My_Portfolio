@@ -40,6 +40,7 @@ const projectSchema = new mongoose.Schema(
     github: { type: String },
     image: { type: String }, // Main project image URL
     imagePublicId: { type: String }, // Cloudinary public ID
+    priority: { type: Number, default: 0, min: 0 },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }

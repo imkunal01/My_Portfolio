@@ -19,7 +19,7 @@ const upload = multer({
 // GET all projects (public)
 router.get("/", async (req, res) => {
   try {
-    const projects = await Project.find({ isActive: true }).sort({ createdAt: -1 });
+    const projects = await Project.find({ isActive: true }).sort({ priority: 1, createdAt: -1 });
     res.json(projects);
   } catch (err) {
     res.status(500).json({ error: err.message });
