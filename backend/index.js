@@ -108,6 +108,11 @@ app.get("/healthz", (req, res) => {
   });
 });
 
+app.get("/ping", (req, res) => {
+  setNoCache(res);
+  res.status(200).json({ ok: true, status: "pong", timestamp: new Date().toISOString() });
+});
+
 app.get("/readyz", (req, res) => {
   setNoCache(res);
   const dbReady = mongoose.connection.readyState === 1;
@@ -161,9 +166,14 @@ const server = app.listen(PORT, () => {
   console.log(chalk.gray(`  ➜ Local:   `) + chalk.underline(`http://localhost:${PORT}`));
   console.log(chalk.gray(`  ➜ Health:  `) + chalk.underline(`http://localhost:${PORT}/check`));
   console.log(chalk.gray(`  ➜ Alive:   `) + chalk.underline(`http://localhost:${PORT}/healthz`));
+  console.log(chalk.gray(`  ➜ Ping:    `) + chalk.underline(`http://localhost:${PORT}/ping`));
   console.log(chalk.gray(`  ➜ Ready:   `) + chalk.underline(`http://localhost:${PORT}/readyz`));
   console.log();
 });
+
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 66000;
+server.requestTimeout = 30000;
 
 const shutdown = (signal) => {
   logger.warn(`Received ${signal}. Shutting down gracefully...`);

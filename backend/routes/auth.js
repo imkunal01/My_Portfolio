@@ -4,14 +4,15 @@ const logger = require("../utils/logger");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
-  console.error("FATAL: JWT_SECRET environment variable is required");
-  process.exit(1);
-}
 
 // --- Login: validate admin key and return JWT ---
 router.post("/login", (req, res) => {
   try {
+    if (!JWT_SECRET) {
+      logger.error("JWT_SECRET environment variable is required");
+      return res.status(500).json({ error: "Server misconfigured" });
+    }
+
     const { adminKey } = req.body;
     const validKey = process.env.ADMIN_KEY;
 
@@ -38,6 +39,11 @@ router.post("/login", (req, res) => {
 // --- Verify: check if a token is still valid ---
 router.get("/verify", (req, res) => {
   try {
+    if (!JWT_SECRET) {
+      logger.error("JWT_SECRET environment variable is required");
+      return res.status(500).json({ valid: false, error: "Server misconfigured" });
+    }
+
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ valid: false });

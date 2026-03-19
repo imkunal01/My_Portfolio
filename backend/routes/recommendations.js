@@ -32,7 +32,7 @@ router.get("/search", async (req, res) => {
     let url = `https://www.omdbapi.com/?apikey=${omdbKey}&s=${encodeURIComponent(q)}`;
     if (type && type !== "book") url += `&type=${type}`;
 
-    const { data } = await axios.get(url);
+    const { data } = await axios.get(url, { timeout: 12000 });
 
     if (data.Response === "False") {
       return res.json({ results: [] });
@@ -51,7 +51,8 @@ router.get("/details/:imdbId", async (req, res) => {
     if (!omdbKey) return res.status(500).json({ error: "OMDB API key not configured" });
 
     const { data } = await axios.get(
-      `https://www.omdbapi.com/?apikey=${omdbKey}&i=${req.params.imdbId}&plot=full`
+      `https://www.omdbapi.com/?apikey=${omdbKey}&i=${req.params.imdbId}&plot=full`,
+      { timeout: 12000 }
     );
 
     if (data.Response === "False") {

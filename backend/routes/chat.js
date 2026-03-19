@@ -56,7 +56,10 @@ router.post("/", async (req, res) => {
             }
           ]
         },
-        { headers: { "Content-Type": "application/json" } }
+        {
+          headers: { "Content-Type": "application/json" },
+          timeout: 20000,
+        }
       );
 
       botReply =
@@ -87,7 +90,7 @@ router.post("/", async (req, res) => {
 
     res.json({ reply: botReply, quote });
   } catch (err) {
-    logger.error("Chat API Error: %s", err.response?.data || err.message);
+    logger.error("Chat API Error: %o", err.response?.data || err.message);
     res.status(500).json({ error: "Something went wrong with chat backend" });
   }
 });
