@@ -15,7 +15,14 @@ cloudinary.config({
 function uploadToCloudinary(buffer, folder = "portfolio/projects") {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder, resource_type: "image" },
+      {
+        folder,
+        resource_type: "image",
+        transformation: [
+          { width: 2200, height: 2200, crop: "limit" },
+          { quality: "auto:good" },
+        ],
+      },
       (error, result) => {
         if (error) return reject(error);
         resolve({ secure_url: result.secure_url, public_id: result.public_id });
@@ -37,4 +44,24 @@ async function deleteFromCloudinary(publicId) {
   }
 }
 
-module.exports = { uploadToCloudinary, deleteFromCloudinary, cloudinary };
+/**
+ * Build an optimized Cloudinary URL from public_id.
+ * @param {string} publicId
+ * @param {{ width?: number, height?: number, crop?: string, gravity?: string }} options
+ */
+function buildCloudinaryImageUrl(publicId, options = {}) {
+  if (!publicId) return "";
+
+  const { width, height, crop = "limit", gravity = "auto" } = options;
+  return cloudinary.url(publicId, {
+    secure: true,
+    fetch_format: "auto",
+    quality: "auto:good",
+    crop,
+    gravity,
+    width,
+    height,
+  });
+}
+
+module.exports = { uploadToCloudinary, deleteFromCloudinary, buildCloudinaryImageUrl, cloudinary };

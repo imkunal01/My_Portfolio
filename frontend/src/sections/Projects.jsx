@@ -8,6 +8,12 @@ import axios from "axios";
 
 const API = import.meta.env.VITE_BACKEND_URL || "";
 
+const resolveProjectImage = (project) => {
+  if (project?.imageOptimized) return project.imageOptimized;
+  if (!project?.image) return "";
+  return project.image.startsWith('/uploads') ? `${API}${project.image}` : project.image;
+};
+
 const Projects = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.05 });
   const [projects, setProjects] = useState(staticProjects);
@@ -164,9 +170,11 @@ const ProjectCard = ({ project, index, inView, isReversed, totalProjects }) => {
           <div className="aspect-[16/10] relative overflow-hidden">
             {project.image ? (
               <img
-                src={project.image.startsWith('/uploads') ? `${API}${project.image}` : project.image}
+                src={resolveProjectImage(project)}
                 alt={project.title}
                 className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-700"
+                loading="lazy"
+                decoding="async"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 flex items-center justify-center">

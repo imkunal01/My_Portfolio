@@ -3,7 +3,36 @@ const router = express.Router();
 const multer = require("multer");
 const Project = require("../models/Project");
 const verifyToken = require("../middleware/auth");
-const { uploadToCloudinary, deleteFromCloudinary } = require("../utils/cloudinary");
+const { uploadToCloudinary, deleteFromCloudinary, buildCloudinaryImageUrl } = require("../utils/cloudinary");
+
+function withOptimizedImages(project) {
+  const data = typeof project?.toObject === "function" ? project.toObject() : project;
+  if (!data) return data;
+
+  const imageOptimized = data.imagePublicId
+    ? buildCloudinaryImageUrl(data.imagePublicId, { width: 960, height: 600, crop: "fill" })
+    : data.image;
+
+  const imageHero = data.imagePublicId
+    ? buildCloudinaryImageUrl(data.imagePublicId, { width: 1600, height: 1000, crop: "limit" })
+    : data.image;
+
+  const imageBackdrop = data.imagePublicId
+    ? buildCloudinaryImageUrl(data.imagePublicId, { width: 1200, height: 1200, crop: "fill" })
+    : data.image;
+
+  const screenshotsOptimized = Array.isArray(data.screenshotPublicIds) && data.screenshotPublicIds.length > 0
+    ? data.screenshotPublicIds.map((id) => buildCloudinaryImageUrl(id, { width: 1400, height: 1000, crop: "limit" }))
+    : data.screenshots;
+
+  return {
+    ...data,
+    imageOptimized,
+    imageHero,
+    imageBackdrop,
+    screenshotsOptimized,
+  };
+}
 
 // Use memory storage — files go to Cloudinary, not disk
 const upload = multer({
@@ -20,7 +49,7 @@ const upload = multer({
 router.get("/", async (req, res) => {
   try {
     const projects = await Project.find({ isActive: true }).sort({ priority: 1, createdAt: -1 });
-    res.json(projects);
+    res.json(projects.map(withOptimizedImages));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -33,7 +62,7 @@ router.get("/:slug", async (req, res) => {
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
-    res.json(project);
+    res.json(withOptimizedImages(project));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

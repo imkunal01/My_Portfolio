@@ -15,6 +15,11 @@ import axios from "axios";
 
 const API = import.meta.env.VITE_BACKEND_URL || "";
 
+const resolveImageUrl = (url) => {
+  if (!url) return "";
+  return url.startsWith('/uploads') ? `${API}${url}` : url;
+};
+
 const ProjectDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -126,6 +131,12 @@ const ProjectDetail = () => {
       : []),
   ];
 
+  const heroImage = resolveImageUrl(project.imageHero || project.imageOptimized || project.image);
+  const backdropImage = resolveImageUrl(project.imageBackdrop || project.imageOptimized || project.image);
+  const screenshotList = (project.screenshotsOptimized && project.screenshotsOptimized.length > 0)
+    ? project.screenshotsOptimized
+    : project.screenshots;
+
   return (
     <div className="min-h-screen bg-dark">
       {/* Fixed Top Bar */}
@@ -160,12 +171,14 @@ const ProjectDetail = () => {
       {/* Hero Section */}
       <section className="pt-24 pb-12 lg:pt-32 lg:pb-16 px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Background project image (blurred) */}
-        {project.image && (
+        {backdropImage && (
           <div className="fixed inset-0 z-0 opacity-5">
             <img
-              src={project.image.startsWith('/uploads') ? `${API}${project.image}` : project.image}
+              src={backdropImage}
               alt=""
               className="w-full h-full object-cover blur-3xl"
+              loading="eager"
+              decoding="async"
             />
           </div>
         )}
@@ -235,7 +248,7 @@ const ProjectDetail = () => {
       </section>
 
       {/* Project Screenshots Hero */}
-      {project.screenshots && project.screenshots.length > 0 && (
+      {screenshotList && screenshotList.length > 0 && (
         <section className="px-6 lg:px-8 max-w-7xl mx-auto mb-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -243,15 +256,17 @@ const ProjectDetail = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
           >
-            {project.screenshots.slice(0, 2).map((screenshot, i) => (
+            {screenshotList.slice(0, 2).map((screenshot, i) => (
               <div
                 key={i}
                 className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#111]"
               >
                 <img
-                  src={screenshot.startsWith('/uploads') ? `${API}${screenshot}` : screenshot}
+                  src={resolveImageUrl(screenshot)}
                   alt={`${project.title} screenshot ${i + 1}`}
                   className="w-full h-auto object-cover"
+                  loading="eager"
+                  decoding="async"
                 />
               </div>
             ))}
@@ -260,7 +275,7 @@ const ProjectDetail = () => {
       )}
 
       {/* Main preview when no screenshots */}
-      {(!project.screenshots || project.screenshots.length === 0) && project.image && (
+      {(!screenshotList || screenshotList.length === 0) && heroImage && (
         <section className="px-6 lg:px-8 max-w-7xl mx-auto mb-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -269,9 +284,11 @@ const ProjectDetail = () => {
             className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#111]"
           >
             <img
-              src={project.image.startsWith('/uploads') ? `${API}${project.image}` : project.image}
+              src={heroImage}
               alt={project.title}
               className="w-full h-auto object-cover"
+              loading="eager"
+              decoding="async"
             />
           </motion.div>
         </section>
@@ -393,7 +410,7 @@ const ProjectDetail = () => {
             </div>
 
             {/* More Screenshots */}
-            {project.screenshots && project.screenshots.length > 2 && (
+            {screenshotList && screenshotList.length > 2 && (
               <div ref={sectionRefs.screenshots}>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -405,15 +422,17 @@ const ProjectDetail = () => {
                     Screenshots
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {project.screenshots.slice(2).map((screenshot, i) => (
+                    {screenshotList.slice(2).map((screenshot, i) => (
                       <div
                         key={i}
                         className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#111]"
                       >
                         <img
-                          src={screenshot.startsWith('/uploads') ? `${API}${screenshot}` : screenshot}
+                          src={resolveImageUrl(screenshot)}
                           alt={`${project.title} screenshot ${i + 3}`}
                           className="w-full h-auto object-cover"
+                          loading="lazy"
+                          decoding="async"
                         />
                       </div>
                     ))}
