@@ -46,11 +46,28 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { optimizeCloudinaryUrl } from "../utils/imageOptimization";
 
 const API = import.meta.env.VITE_BACKEND_URL || "";
 
 const typeIcons = { movie: Film, series: Tv, anime: Sparkles, book: BookOpen };
 const typeLabels = { movie: "Movie", series: "Series", anime: "Anime", book: "Book" };
+
+const resolveMediaUrl = (url) => {
+  if (!url) return "";
+  if (url.startsWith("/")) return `${API}${url}`;
+  return optimizeCloudinaryUrl(url);
+};
+
+const projectThumbUrl = (project) => {
+  if (project?.imageOptimized) return project.imageOptimized;
+  return optimizeCloudinaryUrl(resolveMediaUrl(project?.image), { width: 240, height: 180, crop: "fill" });
+};
+
+const recThumbUrl = (rec) => {
+  if (rec?.posterThumb) return rec.posterThumb;
+  return optimizeCloudinaryUrl(rec?.poster, { width: 240, height: 360, crop: "fill" });
+};
 
 /* ─────────────────────────────────────────────
    ADMIN PAGE
@@ -381,9 +398,11 @@ const ProjectsAdmin = ({ token }) => {
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
                   {project.image ? (
                     <img
-                      src={project.image.startsWith('http') ? project.image : `${API}${project.image}`}
+                      src={projectThumbUrl(project)}
                       alt={project.title}
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
@@ -1209,9 +1228,11 @@ const RecommendationsAdmin = ({ token }) => {
                 <div className="w-10 h-14 sm:w-12 sm:h-16 rounded-lg overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
                   {rec.poster && rec.poster !== "N/A" ? (
                     <img
-                      src={rec.poster}
+                      src={recThumbUrl(rec)}
                       alt=""
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
@@ -1503,9 +1524,11 @@ const AddRecommendation = ({ token, onAdded }) => {
                     <div className="w-10 h-14 rounded-lg overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
                       {item.Poster && item.Poster !== "N/A" ? (
                         <img
-                          src={item.Poster}
+                          src={optimizeCloudinaryUrl(item.Poster, { width: 240, height: 360, crop: "fill" })}
                           alt=""
                           className="w-full h-full object-cover"
+                          loading="lazy"
+                          decoding="async"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
@@ -1539,9 +1562,11 @@ const AddRecommendation = ({ token, onAdded }) => {
           <div className="w-20 h-28 rounded-lg overflow-hidden shrink-0">
             {(details?.Poster || selected.Poster) !== "N/A" ? (
               <img
-                src={details?.Poster || selected.Poster}
+                src={optimizeCloudinaryUrl(details?.Poster || selected.Poster, { width: 400, height: 600, crop: "fill" })}
                 alt=""
                 className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
             ) : null}
           </div>
@@ -1752,9 +1777,11 @@ const GuestbookAdmin = ({ token }) => {
             >
               {/* Avatar */}
               <img
-                src={entry.avatar}
+                src={optimizeCloudinaryUrl(entry.avatar, { width: 80, height: 80, crop: "fill" })}
                 alt={entry.name}
                 className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-100 dark:bg-white/5 shrink-0 mt-0.5"
+                loading="lazy"
+                decoding="async"
               />
 
               {/* Content */}

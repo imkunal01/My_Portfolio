@@ -12,12 +12,14 @@ import {
 } from "lucide-react";
 import { projects as staticProjects } from "../data/portfolio";
 import axios from "axios";
+import { optimizeCloudinaryUrl } from "../utils/imageOptimization";
 
 const API = import.meta.env.VITE_BACKEND_URL || "";
 
 const resolveImageUrl = (url) => {
   if (!url) return "";
-  return url.startsWith('/uploads') ? `${API}${url}` : url;
+  if (url.startsWith('/uploads')) return `${API}${url}`;
+  return optimizeCloudinaryUrl(url);
 };
 
 const ProjectDetail = () => {
@@ -131,8 +133,12 @@ const ProjectDetail = () => {
       : []),
   ];
 
-  const heroImage = resolveImageUrl(project.imageHero || project.imageOptimized || project.image);
-  const backdropImage = resolveImageUrl(project.imageBackdrop || project.imageOptimized || project.image);
+  const heroImage = resolveImageUrl(
+    project.imageHero || optimizeCloudinaryUrl(project.imageOptimized || project.image, { width: 1600, height: 1000, crop: "limit" })
+  );
+  const backdropImage = resolveImageUrl(
+    project.imageBackdrop || optimizeCloudinaryUrl(project.imageOptimized || project.image, { width: 1200, height: 1200, crop: "fill" })
+  );
   const screenshotList = (project.screenshotsOptimized && project.screenshotsOptimized.length > 0)
     ? project.screenshotsOptimized
     : project.screenshots;

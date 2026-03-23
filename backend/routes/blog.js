@@ -3,6 +3,19 @@ const router = express.Router();
 const BlogPost = require("../models/BlogPost");
 const adminAuth = require("../middleware/auth");
 const logger = require("../utils/logger");
+const { optimizeCloudinaryDeliveryUrl } = require("../utils/cloudinary");
+
+function withOptimizedCover(post) {
+  const data = typeof post?.toObject === "function" ? post.toObject() : post;
+  if (!data) return data;
+
+  const cover = data.coverImage || "";
+  return {
+    ...data,
+    coverImageCard: optimizeCloudinaryDeliveryUrl(cover, { width: 960, height: 540, crop: "fill" }),
+    coverImageHero: optimizeCloudinaryDeliveryUrl(cover, { width: 1600, height: 900, crop: "limit" }),
+  };
+}
 
 // --- Public: Get all published posts ---
 router.get("/", async (req, res) => {
@@ -14,7 +27,7 @@ router.get("/", async (req, res) => {
     const posts = await BlogPost.find(filter)
       .sort({ createdAt: -1 })
       .select("-content"); // exclude full content from list
-    res.json(posts);
+    res.json(posts.map(withOptimizedCover));
   } catch (err) {
     logger.error("Failed to fetch blog posts: %s", err.message);
     res.status(500).json({ error: "Failed to fetch posts" });
@@ -29,7 +42,7 @@ router.get("/slug/:slug", async (req, res) => {
       published: true,
     });
     if (!post) return res.status(404).json({ error: "Post not found" });
-    res.json(post);
+    res.json(withOptimizedCover(post));
   } catch (err) {
     logger.error("Failed to fetch post: %s", err.message);
     res.status(500).json({ error: "Failed to fetch post" });
@@ -40,7 +53,7 @@ router.get("/slug/:slug", async (req, res) => {
 router.get("/admin", adminAuth, async (req, res) => {
   try {
     const posts = await BlogPost.find().sort({ createdAt: -1 });
-    res.json(posts);
+    res.json(posts.map(withOptimizedCover));
   } catch (err) {
     logger.error("Failed to fetch admin posts: %s", err.message);
     res.status(500).json({ error: "Failed to fetch posts" });
@@ -68,7 +81,7 @@ router.post("/", adminAuth, async (req, res) => {
 
     await post.save();
     logger.info("Blog post created: %s", post.title);
-    res.status(201).json(post);
+    res.status(201).json(withOptimizedCover(post));
   } catch (err) {
     logger.error("Failed to create blog post: %s", err.message);
     res.status(500).json({ error: "Failed to create post", details: err.message });
@@ -93,7 +106,7 @@ router.put("/:id", adminAuth, async (req, res) => {
     if (!post) return res.status(404).json({ error: "Post not found" });
 
     logger.info("Blog post updated: %s", post.title);
-    res.json(post);
+    res.json(withOptimizedCover(post));
   } catch (err) {
     logger.error("Failed to update blog post: %s", err.message);
     res.status(500).json({ error: "Failed to update post" });

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, MessageSquare, Send, User, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { optimizeCloudinaryUrl } from "../utils/imageOptimization";
 
 const API = import.meta.env.VITE_BACKEND_URL || "";
 
@@ -152,9 +153,11 @@ const Guestbook = () => {
               >
                 <div className="flex items-start gap-3">
                   <img
-                    src={entry.avatar}
+                    src={optimizeCloudinaryUrl(entry.avatar, { width: 96, height: 96, crop: "fill" })}
                     alt={entry.name}
                     className="w-9 h-9 rounded-full bg-gray-100 dark:bg-white/5"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">

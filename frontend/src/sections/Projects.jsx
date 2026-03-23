@@ -5,13 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { projects as staticProjects } from "../data/portfolio";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { optimizeCloudinaryUrl } from "../utils/imageOptimization";
 
 const API = import.meta.env.VITE_BACKEND_URL || "";
 
 const resolveProjectImage = (project) => {
   if (project?.imageOptimized) return project.imageOptimized;
   if (!project?.image) return "";
-  return project.image.startsWith('/uploads') ? `${API}${project.image}` : project.image;
+  if (project.image.startsWith('/uploads')) return `${API}${project.image}`;
+  return optimizeCloudinaryUrl(project.image, { width: 960, height: 600, crop: "fill" });
 };
 
 const Projects = () => {

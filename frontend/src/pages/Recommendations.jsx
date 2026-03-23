@@ -21,8 +21,28 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { optimizeCloudinaryUrl } from "../utils/imageOptimization";
 
 const API = import.meta.env.VITE_BACKEND_URL || "";
+
+const getPosterUrl = (rec, variant = "default") => {
+  if (!rec) return "";
+
+  if (variant === "thumb" && rec.posterThumb) return rec.posterThumb;
+  if (variant === "backdrop" && rec.posterBackdrop) return rec.posterBackdrop;
+  if (variant === "default" && rec.posterOptimized) return rec.posterOptimized;
+
+  const source = rec.poster;
+  if (!source || source === "N/A") return "";
+
+  if (variant === "thumb") {
+    return optimizeCloudinaryUrl(source, { width: 360, height: 540, crop: "fill" });
+  }
+  if (variant === "backdrop") {
+    return optimizeCloudinaryUrl(source, { width: 1280, height: 720, crop: "fill" });
+  }
+  return optimizeCloudinaryUrl(source, { width: 720, height: 1080, crop: "fill" });
+};
 
 const typeIcons = {
   movie: Film,
@@ -160,9 +180,11 @@ const Recommendations = () => {
           <div className="absolute inset-0 overflow-hidden">
             {featured.poster && featured.poster !== "N/A" && (
               <img
-                src={featured.poster}
+                src={getPosterUrl(featured, "backdrop")}
                 alt=""
                 className="w-full h-full object-cover opacity-[0.08] scale-110 blur-2xl"
+                loading="eager"
+                decoding="async"
               />
             )}
             <div className="absolute inset-0 bg-gradient-to-b from-[#fafafa]/50 dark:from-[#0a0a0a]/50 via-[#fafafa]/80 dark:via-[#0a0a0a]/80 to-[#fafafa] dark:to-[#0a0a0a]" />
@@ -183,9 +205,11 @@ const Recommendations = () => {
                 <div className="w-44 md:w-52 rounded-2xl overflow-hidden shadow-2xl shadow-gray-300/50 dark:shadow-black/50 ring-1 ring-gray-300 dark:ring-white/10">
                   {featured.poster && featured.poster !== "N/A" ? (
                     <img
-                      src={featured.poster}
+                      src={getPosterUrl(featured, "default")}
                       alt={featured.title}
                       className="w-full aspect-[2/3] object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="eager"
+                      decoding="async"
                     />
                   ) : (
                     <div className="w-full aspect-[2/3] bg-gray-100 dark:bg-white/5 flex items-center justify-center">
@@ -503,10 +527,11 @@ const RecCard = ({ rec, index, onClick }) => {
           <>
             {!imageLoaded && <div className="absolute inset-0 shimmer" />}
             <img
-              src={rec.poster}
+              src={getPosterUrl(rec, "thumb")}
               alt={rec.title}
               className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-500 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
               loading="lazy"
+              decoding="async"
               onLoad={() => setImageLoaded(true)}
             />
           </>
@@ -591,7 +616,7 @@ const RecDetailModal = ({ rec, onClose }) => {
         {/* Background blur from poster */}
         {rec.poster && rec.poster !== "N/A" && (
           <div className="absolute inset-0 overflow-hidden">
-            <img src={rec.poster} alt="" className="w-full h-40 object-cover opacity-[0.06] blur-2xl scale-150" />
+            <img src={getPosterUrl(rec, "backdrop")} alt="" className="w-full h-40 object-cover opacity-[0.06] blur-2xl scale-150" loading="lazy" decoding="async" />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white" />
           </div>
         )}
@@ -610,7 +635,7 @@ const RecDetailModal = ({ rec, onClose }) => {
             <div className="md:w-[280px] shrink-0 p-5 md:p-6">
               <div className="rounded-xl overflow-hidden ring-1 ring-gray-300 dark:ring-white/10 shadow-xl shadow-gray-300/40 dark:shadow-black/40">
                 {rec.poster && rec.poster !== "N/A" ? (
-                  <img src={rec.poster} alt={rec.title} className="w-full aspect-[2/3] object-cover" />
+                  <img src={getPosterUrl(rec, "default")} alt={rec.title} className="w-full aspect-[2/3] object-cover" loading="lazy" decoding="async" />
                 ) : (
                   <div className="w-full aspect-[2/3] flex items-center justify-center bg-gray-50 dark:bg-white/[0.03]">
                     <Icon size={50} className="text-gray-200 dark:text-white/15" />

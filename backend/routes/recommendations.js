@@ -4,6 +4,20 @@ const axios = require("axios");
 const Recommendation = require("../models/Recommendation");
 const adminAuth = require("../middleware/auth");
 const logger = require("../utils/logger");
+const { optimizeCloudinaryDeliveryUrl } = require("../utils/cloudinary");
+
+function withOptimizedPoster(rec) {
+  const data = typeof rec?.toObject === "function" ? rec.toObject() : rec;
+  if (!data) return data;
+
+  const poster = data.poster || "";
+  return {
+    ...data,
+    posterThumb: optimizeCloudinaryDeliveryUrl(poster, { width: 360, height: 540, crop: "fill" }),
+    posterOptimized: optimizeCloudinaryDeliveryUrl(poster, { width: 720, height: 1080, crop: "fill" }),
+    posterBackdrop: optimizeCloudinaryDeliveryUrl(poster, { width: 1280, height: 720, crop: "fill" }),
+  };
+}
 
 // --- Public: Get all recommendations ---
 router.get("/", async (req, res) => {
@@ -14,7 +28,7 @@ router.get("/", async (req, res) => {
     if (category) filter.category = category;
 
     const recs = await Recommendation.find(filter).sort({ addedAt: -1 });
-    res.json(recs);
+    res.json(recs.map(withOptimizedPoster));
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch recommendations" });
   }
@@ -87,7 +101,7 @@ router.post("/", adminAuth, async (req, res) => {
 
     await rec.save();
     logger.info("Recommendation added: %s", rec.title);
-    res.status(201).json(rec);
+    res.status(201).json(withOptimizedPoster(rec));
   } catch (err) {
     logger.error("Failed to add recommendation: %s", err.message);
     res.status(500).json({ error: "Failed to add recommendation", details: err.message });
@@ -118,7 +132,7 @@ router.put("/:id", adminAuth, async (req, res) => {
       },
       { new: true }
     );
-    res.json(updated);
+    res.json(withOptimizedPoster(updated));
   } catch (err) {
     res.status(500).json({ error: "Failed to update recommendation" });
   }
