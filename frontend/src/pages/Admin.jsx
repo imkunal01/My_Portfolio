@@ -188,6 +188,7 @@ const Admin = () => {
 
   const tabs = [
     { key: "projects", label: "Projects", icon: Briefcase },
+    { key: "cv", label: "CV/Resume", icon: Upload },
     { key: "recommendations", label: "Picks", icon: Film },
     { key: "blog", label: "Blog", icon: FileText },
     { key: "bucketlist", label: "Bucket List", icon: ListChecks },
@@ -243,6 +244,7 @@ const Admin = () => {
         </div>
 
         {activeTab === "projects" && <ProjectsAdmin token={token} />}
+        {activeTab === "cv" && <CVAdmin token={token} />}
         {activeTab === "recommendations" && (
           <RecommendationsAdmin token={token} />
         )}
@@ -2664,6 +2666,148 @@ const ContactsAdmin = ({ token }) => {
           ))}
         </div>
       )}
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────────
+   CV / RESUME ADMIN TAB
+   ───────────────────────────────────────────── */
+const CVAdmin = ({ token }) => {
+  const [cvUrl, setCvUrl] = useState("");
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const fetchCV = async () => {
+      try {
+        const { data } = await axios.get(`${API}/api/settings/cv_url`);
+        setCvUrl(data.value || "");
+      } catch (err) {
+        // setting might not exist yet
+      }
+      setLoading(false);
+    };
+    fetchCV();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setSuccess(false);
+
+    try {
+      const formData = new FormData();
+      if (file) {
+        formData.append("file", file);
+      } else if (cvUrl) {
+        formData.append("url", cvUrl);
+      } else {
+        alert("Please provide a URL or a file");
+        setSaving(false);
+        return;
+      }
+
+      const { data } = await axios.post(`${API}/api/settings/cv`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setCvUrl(data.value);
+      setFile(null);
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err) {
+      alert(err.response?.data?.error || "Save failed");
+    }
+    setSaving(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 size={24} className="animate-spin text-gray-400 dark:text-white/40" />
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="mb-6">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white font-display">
+          Manage CV / Resume
+        </h2>
+        <p className="text-sm text-gray-400 dark:text-white/40 mt-1">
+          Upload a new PDF or set a direct link to your CV.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="p-6 rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] max-w-xl">
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-white/80 mb-2">
+              Current CV URL
+            </label>
+            <input
+              type="url"
+              value={cvUrl}
+              onChange={(e) => setCvUrl(e.target.value)}
+              placeholder="https://..."
+              className="w-full px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
+            />
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+              <div className="w-full border-t border-gray-200 dark:border-white/10" />
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-white dark:bg-[#111] px-3 text-xs text-gray-400">OR</span>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-white/80 mb-2">
+              Upload New PDF
+            </label>
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => setFile(e.target.files[0])}
+              className="w-full px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20 cursor-pointer focus:outline-none transition-colors"
+            />
+            {file && <p className="text-xs mt-2 text-accent">Selected: {file.name}</p>}
+          </div>
+
+          <button
+            type="submit"
+            disabled={saving}
+            className="flex items-center justify-center gap-2 w-full py-3 bg-accent hover:bg-accent-light disabled:opacity-50 text-gray-900 dark:text-white font-medium rounded-xl transition-colors"
+          >
+            {saving ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : success ? (
+              <CheckCircle2 size={16} className="text-green-500" />
+            ) : (
+              <Upload size={16} />
+            )}
+            {saving ? "Saving..." : success ? "Saved Successfully!" : "Save CV"}
+          </button>
+
+          {cvUrl && (
+            <div className="mt-4 p-4 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/[0.06]">
+              <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 text-sm text-accent hover:underline">
+                <FileText size={16} />
+                View Current CV
+              </a>
+            </div>
+          )}
+        </div>
+      </form>
     </div>
   );
 };

@@ -18,6 +18,7 @@ const guestbookRoute = require("./routes/guestbook");
 const contactRoute = require("./routes/contact");
 const projectsRoute = require("./routes/projects");
 const codingProfilesRoute = require("./routes/codingProfiles");
+const settingsRoute = require("./routes/settings");
 
 const app = express();
 app.set("trust proxy", true);
@@ -136,6 +137,7 @@ app.use("/api/coding-profiles", codingProfilesRoute);
 app.use("/api/bucketlist", bucketlistRoute);
 app.use("/api/guestbook", guestbookRoute);
 app.use("/api/contact", contactRoute);
+app.use("/api/settings", settingsRoute);
 
 app.use((err, req, res, next) => {
   if (err.message === "Not allowed by CORS") {

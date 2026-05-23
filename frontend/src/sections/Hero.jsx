@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Copy, ChevronRight, FileText, X, Download } from "lucide-react";
 import { personalInfo } from "../data/portfolio";
@@ -7,6 +7,19 @@ import kunalImg from "../assets/Kunal.png";
 
 /* ═══════════════════════ CV Modal ═══════════════════════ */
 const CVModal = ({ isOpen, onClose }) => {
+  const [cvUrl, setCvUrl] = useState("/KunalApproved5.pdf");
+
+  useEffect(() => {
+    if (isOpen) {
+      fetch(`${import.meta.env.VITE_BACKEND_URL || ""}/api/settings/cv_url`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.value) setCvUrl(data.value);
+        })
+        .catch(err => console.error("Error fetching CV URL:", err));
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
@@ -34,10 +47,12 @@ const CVModal = ({ isOpen, onClose }) => {
             </div>
             <div className="flex items-center gap-1">
               <a
-                href="/KunalApproved5.pdf"
-                download="Kunal_Dhangar_Resume.pdf"
+                href={cvUrl}
+                target="_blank"
+                rel="noreferrer"
+                download="Resume.pdf"
                 className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
-                title="Download Resume"
+                title="Download / Open Resume"
               >
                 <Download size={16} />
               </a>
@@ -53,7 +68,7 @@ const CVModal = ({ isOpen, onClose }) => {
           {/* PDF Viewer */}
           <div className="w-full h-[calc(100%-52px)] bg-gray-50 dark:bg-white/[0.03]">
             <iframe
-              src="/KunalApproved5.pdf#toolbar=1&navpanes=0&scrollbar=1"
+              src={`${cvUrl}#toolbar=1&navpanes=0&scrollbar=1`}
               className="w-full h-full"
               title="Resume PDF"
               style={{ border: "none" }}
