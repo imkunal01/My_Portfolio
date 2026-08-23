@@ -122,7 +122,7 @@ const Guestbook = () => {
             <button
               type="submit"
               disabled={!name.trim() || !message.trim() || submitting}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-accent-light text-gray-900 dark:text-white text-sm font-medium rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-accent-light text-white text-sm font-medium rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
             >
               {submitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
               {submitting ? "Signing..." : "Sign Guestbook"}

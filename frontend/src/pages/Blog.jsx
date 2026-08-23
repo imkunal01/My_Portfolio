@@ -1,16 +1,97 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, Clock, Tag, Loader2, FileText } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, Calendar, Clock, Tag, Loader2, FileText, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const API = import.meta.env.VITE_BACKEND_URL || "";
+
+/* ── Blog Post Reader Modal ── */
+const BlogPostModal = ({ post, isOpen, onClose }) => {
+  if (!isOpen || !post) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 dark:bg-black/70 backdrop-blur-sm"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 20 }}
+          transition={{ type: "spring", damping: 25 }}
+          className="relative w-full max-w-3xl max-h-[85vh] bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Modal Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-white/[0.06] bg-white/95 dark:bg-[#111]/95 backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              <FileText className="text-accent" size={18} />
+              <span className="text-gray-800 dark:text-white/90 text-sm font-medium">Article</span>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80 cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          {/* Article Body */}
+          <div className="p-6 lg:p-8 overflow-y-auto custom-scrollbar flex-1">
+            <div className="flex items-center gap-4 mb-4 text-xs text-gray-400 dark:text-white/40">
+              <span className="flex items-center gap-1.5">
+                <Calendar size={12} />
+                {new Date(post.createdAt || post.date).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </span>
+              {post.readTime && (
+                <span className="flex items-center gap-1.5">
+                  <Clock size={12} />
+                  {post.readTime}
+                </span>
+              )}
+            </div>
+
+            <h1 className="text-2xl lg:text-3xl font-bold font-display text-gray-900 dark:text-white mb-4 leading-tight">
+              {post.title}
+            </h1>
+
+            <div className="flex flex-wrap gap-2 mb-6">
+              {(post.tags || []).map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent bg-accent/10 rounded-full"
+                >
+                  <Tag size={10} />
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <div className="prose dark:prose-invert max-w-none text-gray-600 dark:text-white/70 text-sm sm:text-base leading-relaxed whitespace-pre-line border-t border-gray-100 dark:border-white/[0.04] pt-6">
+              {post.content || post.excerpt || "Full article content coming soon."}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
 
 const Blog = () => {
   const navigate = useNavigate();
   const [selectedTag, setSelectedTag] = useState(null);
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPost, setSelectedPost] = useState(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -42,7 +123,7 @@ const Blog = () => {
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors"
+            className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
           >
             <ArrowLeft size={16} />
             <span className="hidden sm:inline">Back Home</span>
@@ -79,7 +160,7 @@ const Blog = () => {
         >
           <button
             onClick={() => setSelectedTag(null)}
-            className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all cursor-pointer ${
               !selectedTag
                 ? "bg-accent/10 border-accent/30 text-accent"
                 : "bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/[0.06] text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
@@ -91,7 +172,7 @@ const Blog = () => {
             <button
               key={tag}
               onClick={() => setSelectedTag(tag)}
-              className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all ${
+              className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all cursor-pointer ${
                 selectedTag === tag
                   ? "bg-accent/10 border-accent/30 text-accent"
                   : "bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/[0.06] text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
@@ -108,60 +189,61 @@ const Blog = () => {
             <Loader2 size={24} className="animate-spin text-gray-400 dark:text-white/40" />
           </div>
         ) : (
-        <div className="space-y-6">
-          {filtered.map((post, i) => (
-            <motion.article
-              key={post._id || post.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.15 + i * 0.08 }}
-              className="group rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 transition-all duration-300 overflow-hidden cursor-pointer"
-            >
-              <div className="p-6 lg:p-8">
-                {/* Meta */}
-                <div className="flex items-center gap-4 mb-3">
-                  <span className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-white/40">
-                    <Calendar size={12} />
-                    {new Date(post.createdAt || post.date).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </span>
-                  {post.readTime && (
-                  <span className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-white/40">
-                    <Clock size={12} />
-                    {post.readTime}
-                  </span>
-                  )}
-                </div>
-
-                {/* Title */}
-                <h2 className="text-xl lg:text-2xl font-bold font-display text-gray-900 dark:text-white mb-3 group-hover:text-accent transition-colors duration-300">
-                  {post.title}
-                </h2>
-
-                {/* Excerpt */}
-                <p className="text-sm text-gray-400 dark:text-white/40 leading-relaxed mb-4">
-                  {post.excerpt}
-                </p>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2">
-                  {(post.tags || []).map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40 bg-gray-100 dark:bg-white/5 rounded-full"
-                    >
-                      <Tag size={10} />
-                      {tag}
+          <div className="space-y-6">
+            {filtered.map((post, i) => (
+              <motion.article
+                key={post._id || post.id}
+                onClick={() => setSelectedPost(post)}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.15 + i * 0.08 }}
+                className="group rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] hover:border-accent/40 transition-all duration-300 overflow-hidden cursor-pointer shadow-sm hover:shadow-md"
+              >
+                <div className="p-6 lg:p-8">
+                  {/* Meta */}
+                  <div className="flex items-center gap-4 mb-3">
+                    <span className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-white/40">
+                      <Calendar size={12} />
+                      {new Date(post.createdAt || post.date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
                     </span>
-                  ))}
+                    {post.readTime && (
+                      <span className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-white/40">
+                        <Clock size={12} />
+                        {post.readTime}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Title */}
+                  <h2 className="text-xl lg:text-2xl font-bold font-display text-gray-900 dark:text-white mb-3 group-hover:text-accent transition-colors duration-300">
+                    {post.title}
+                  </h2>
+
+                  {/* Excerpt */}
+                  <p className="text-sm text-gray-400 dark:text-white/40 leading-relaxed mb-4">
+                    {post.excerpt}
+                  </p>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2">
+                    {(post.tags || []).map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40 bg-gray-100 dark:bg-white/5 rounded-full"
+                      >
+                        <Tag size={10} />
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </motion.article>
-          ))}
-        </div>
+              </motion.article>
+            ))}
+          </div>
         )}
 
         {!loading && filtered.length === 0 && (
@@ -171,6 +253,13 @@ const Blog = () => {
           </div>
         )}
       </div>
+
+      {/* Blog Article Reader Modal */}
+      <BlogPostModal
+        post={selectedPost}
+        isOpen={!!selectedPost}
+        onClose={() => setSelectedPost(null)}
+      />
     </div>
   );
 };

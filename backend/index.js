@@ -19,6 +19,7 @@ const contactRoute = require("./routes/contact");
 const projectsRoute = require("./routes/projects");
 const codingProfilesRoute = require("./routes/codingProfiles");
 const settingsRoute = require("./routes/settings");
+const spotifyRoute = require("./routes/spotify");
 
 const app = express();
 app.set("trust proxy", true);
@@ -26,15 +27,24 @@ app.disable("x-powered-by");
 
 const allowedOrigins = [
   "http://localhost:5173",
+  "http://localhost:3000",
   "https://kunaldhangar.vercel.app",
+  "https://kunaldhangar.me",
+  "https://www.kunaldhangar.me",
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL.replace(/\/+$/, "")] : []),
+  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim().replace(/\/+$/, "")) : []),
 ];
+
 app.use(
   cors({
     origin: (origin, cb) => {
-      // allow requests with no origin (curl, server-to-server, etc.)
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+      // allow requests with no origin (curl, server-to-server, mobile app, etc.)
+      if (!origin) return cb(null, true);
+      const normalizedOrigin = origin.replace(/\/+$/, "");
+      if (allowedOrigins.includes(normalizedOrigin)) return cb(null, true);
       cb(new Error("Not allowed by CORS"));
     },
+    credentials: true,
   })
 );
 
@@ -138,6 +148,7 @@ app.use("/api/bucketlist", bucketlistRoute);
 app.use("/api/guestbook", guestbookRoute);
 app.use("/api/contact", contactRoute);
 app.use("/api/settings", settingsRoute);
+app.use("/api/spotify", spotifyRoute);
 
 app.use((err, req, res, next) => {
   if (err.message === "Not allowed by CORS") {

@@ -95,8 +95,15 @@ const getTechStack = (isDark) => [
 /* ═══════════════════════════ Hero ═══════════════════════════ */
 const Hero = () => {
   const [isCVModalOpen, setIsCVModalOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { isDark } = useTheme();
   const techStack = getTechStack(isDark);
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(personalInfo.email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <>
@@ -203,12 +210,17 @@ const Hero = () => {
 
                 {/* Email */}
                 <button
-                  onClick={() => navigator.clipboard.writeText(personalInfo.email)}
+                  onClick={handleCopyEmail}
                   className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white/70 transition-colors group cursor-pointer"
+                  title="Copy email to clipboard"
                 >
-                  <Copy size={13} />
-                  <span className="hidden sm:inline">{personalInfo.email}</span>
-                  <span className="sm:hidden">Copy Email</span>
+                  <Copy size={13} className={copied ? "text-emerald-500" : ""} />
+                  <span className="hidden sm:inline">
+                    {copied ? "Copied! ✓" : personalInfo.email}
+                  </span>
+                  <span className="sm:hidden">
+                    {copied ? "Copied! ✓" : "Copy Email"}
+                  </span>
                 </button>
               </motion.div>
 

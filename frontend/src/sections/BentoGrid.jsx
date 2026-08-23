@@ -9,11 +9,10 @@ import { useTheme } from "../components/ThemeContext";
 const Globe = ({ isDark }) => (
   <div className="relative w-40 h-40 mx-auto">
     <div className="absolute -inset-2 rounded-full border border-cyan-500/10" />
-    <div className={`w-full h-full rounded-full relative overflow-hidden ${
-      isDark
+    <div className={`w-full h-full rounded-full relative overflow-hidden ${isDark
         ? 'bg-[radial-gradient(ellipse_at_30%_20%,#1e1b4b,#1a1a2e_60%,#0f172a)]'
         : 'bg-[radial-gradient(ellipse_at_30%_20%,#dbeafe,#e0e7ff_60%,#ede9fe)]'
-    }`}>
+      }`}>
       {[20, 35, 50, 65, 80].map((top) => (
         <div
           key={`lat-${top}`}

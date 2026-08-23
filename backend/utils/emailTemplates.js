@@ -12,7 +12,7 @@
  *  text:    #ffffff
  */
 
-const SITE_URL = "https://kunaldhangar.vercel.app";
+const SITE_URL = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/\/+$/, "") : "https://kunaldhangar.me";
 const OWNER_NAME = "Kunal Dhangar";
 
 /* ─── shared wrapper ─── */

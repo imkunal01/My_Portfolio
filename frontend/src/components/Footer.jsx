@@ -1,8 +1,20 @@
+import { useNavigate, useLocation } from "react-router-dom";
 import { personalInfo, navLinks } from "../data/portfolio";
 import { Github, Linkedin, Twitter, Mail, ArrowUpRight } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavClick = (href) => {
+    if (location.pathname !== "/") {
+      navigate("/" + href);
+    } else {
+      const el = document.querySelector(href);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <footer className="relative border-t border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#111]">
@@ -10,7 +22,14 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <a href="#home" className="text-2xl font-bold font-display">
+            <a
+              href="#home"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavClick("#home");
+              }}
+              className="text-2xl font-bold font-display cursor-pointer"
+            >
               {personalInfo.firstName}
               <span className="text-accent">.</span>
             </a>
@@ -23,6 +42,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-500 dark:text-white/60 hover:text-gray-800 dark:hover:text-white/90 transition-all"
+                title="GitHub"
               >
                 <Github size={18} />
               </a>
@@ -31,6 +51,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-500 dark:text-white/60 hover:text-gray-800 dark:hover:text-white/90 transition-all"
+                title="LinkedIn"
               >
                 <Linkedin size={18} />
               </a>
@@ -39,12 +60,14 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-500 dark:text-white/60 hover:text-gray-800 dark:hover:text-white/90 transition-all"
+                title="Twitter / X"
               >
                 <Twitter size={18} />
               </a>
               <a
                 href={personalInfo.social.email}
                 className="p-2 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-500 dark:text-white/60 hover:text-gray-800 dark:hover:text-white/90 transition-all"
+                title="Email"
               >
                 <Mail size={18} />
               </a>
@@ -61,7 +84,11 @@ const Footer = () => {
                 <li key={link.name}>
                   <a
                     href={link.href}
-                    className="text-sm text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-1 group"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(link.href);
+                    }}
+                    className="text-sm text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-1 group cursor-pointer"
                   >
                     {link.name}
                     <ArrowUpRight

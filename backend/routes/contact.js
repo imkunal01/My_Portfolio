@@ -49,54 +49,66 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ error: "Message is required" });
   }
 
-  if (!brevoApiKey || !emailFrom || !emailTo) {
-    return res.status(500).json({ error: "Email service not configured" });
-  }
-
+  // ─── Step 1: Always persist to DB first ─────────────────────────────────
+  let submission;
   try {
-    // Save to database first
-    const submission = await ContactSubmission.create({
+    submission = await ContactSubmission.create({
       name: name.trim(),
       email: email.trim(),
       message: message.trim(),
+      emailSent: false,
     });
-
-    // 1. Styled notification to owner
-    const ownerMail = contactOwnerNotification({
-      name: name.trim(),
-      email: email.trim(),
-      message: message.trim(),
-    });
-
-    await brevo.transactionalEmails.sendTransacEmail({
-      sender: { name: emailFromName, email: emailFrom },
-      to: [{ email: emailTo }],
-      replyTo: { email: email.trim() },
-      subject: ownerMail.subject,
-      htmlContent: ownerMail.html,
-    });
-
-    // 2. Auto-reply thank-you email to the visitor
-    const autoReply = contactAutoReply({ name: name.trim() });
-
-    brevo.transactionalEmails.sendTransacEmail({
-      sender: { name: emailFromName, email: emailFrom },
-      to: [{ email: email.trim() }],
-      subject: autoReply.subject,
-      htmlContent: autoReply.html,
-    }).catch((err) =>
-      logger.error("Auto-reply email failed: %s", err.message)
-    );
-
-    // Mark email as sent
-    submission.emailSent = true;
-    await submission.save();
-
-    return res.json({ message: "Email sent" });
-  } catch (err) {
-    logger.error("Brevo contact email failed: %s", err.message);
-    return res.status(500).json({ error: "Failed to send email" });
+  } catch (dbErr) {
+    // Only a real DB failure should surface as an error to the user
+    logger.error("Failed to save contact submission to DB: %s", dbErr.message);
+    return res.status(500).json({ error: "Failed to save your message. Please try again." });
   }
+
+  // ─── Step 2: Respond SUCCESS immediately ─────────────────────────────────
+  // The visitor's message is safely stored. Email is a best-effort bonus.
+  res.json({ message: "received", id: submission._id });
+
+  // ─── Step 3: Fire-and-forget email (non-blocking) ────────────────────────
+  if (!brevoApiKey || !emailFrom || !emailTo) {
+    logger.warn("Contact email skipped — Brevo credentials not configured (submission saved to DB).");
+    return;
+  }
+
+  (async () => {
+    try {
+      // Notification to portfolio owner
+      const ownerMail = contactOwnerNotification({
+        name: name.trim(),
+        email: email.trim(),
+        message: message.trim(),
+      });
+
+      await brevo.transactionalEmails.sendTransacEmail({
+        sender: { name: emailFromName, email: emailFrom },
+        to: [{ email: emailTo }],
+        replyTo: { email: email.trim() },
+        subject: ownerMail.subject,
+        htmlContent: ownerMail.html,
+      });
+
+      // Auto-reply thank-you to visitor (best-effort, don't await)
+      const autoReply = contactAutoReply({ name: name.trim() });
+      brevo.transactionalEmails.sendTransacEmail({
+        sender: { name: emailFromName, email: emailFrom },
+        to: [{ email: email.trim() }],
+        subject: autoReply.subject,
+        htmlContent: autoReply.html,
+      }).catch((err) => logger.error("Auto-reply email failed: %s", err.message));
+
+      // Mark email as sent in DB
+      submission.emailSent = true;
+      await submission.save();
+      logger.info("Contact email sent for submission %s", submission._id);
+    } catch (emailErr) {
+      logger.error("Contact email failed (submission %s saved): %s", submission._id, emailErr.message);
+      // Submission is already in DB — admin can see it in the dashboard
+    }
+  })();
 });
 
 module.exports = router;

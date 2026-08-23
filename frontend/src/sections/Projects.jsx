@@ -129,7 +129,10 @@ const ProjectCard = ({ project, index, inView, isReversed, totalProjects }) => {
         </div>
 
         {/* Title */}
-        <h3 className="text-3xl lg:text-4xl font-bold font-display text-gray-900 dark:text-white mb-4 group-hover:text-accent transition-colors duration-300">
+        <h3
+          onClick={() => navigate(`/project/${project.slug}`)}
+          className="text-3xl lg:text-4xl font-bold font-display text-gray-900 dark:text-white mb-4 group-hover:text-accent transition-colors duration-300 cursor-pointer"
+        >
           {project.title}
         </h3>
 

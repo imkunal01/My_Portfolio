@@ -26,16 +26,20 @@ const Contact = () => {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        throw new Error("Contact request failed");
+      // 200-level response means the submission was saved to DB.
+      // Email delivery is best-effort on the server side.
+      if (response.ok) {
+        setStatus("sent");
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        // Real server error (DB down, validation error, etc.)
+        setStatus("error");
       }
-
-      setStatus("sent");
-      setFormData({ name: "", email: "", message: "" });
-    } catch (err) {
+    } catch {
+      // True network failure (user is offline, server unreachable)
       setStatus("error");
     } finally {
-      setTimeout(() => setStatus(""), 3000);
+      setTimeout(() => setStatus(""), 4000);
     }
   };
 
@@ -197,7 +201,7 @@ const Contact = () => {
                 ) : status === "sent" ? (
                   "Message Sent! ✓"
                 ) : status === "error" ? (
-                  "Send Failed"
+                  "Try Again"
                 ) : (
                   <>
                     Send Message
