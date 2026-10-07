@@ -1,9 +1,23 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Copy, ChevronRight, FileText, X, Download } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  FileText,
+  X,
+  Download,
+  MapPin,
+  Code2,
+  Package,
+  GraduationCap,
+  Briefcase,
+  Folder,
+  Target,
+  Mail,
+} from "lucide-react";
 import { personalInfo } from "../data/portfolio";
 import FloatingLines from "../components/FloatingLines";
-import kunalImg from "../assets/Kunal.png";
 
 /* ═══════════════════════ CV Modal ═══════════════════════ */
 const CVModal = ({ isOpen, onClose }) => {
@@ -12,11 +26,11 @@ const CVModal = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (isOpen) {
       fetch(`${import.meta.env.VITE_BACKEND_URL || ""}/api/settings/cv_url`)
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           if (data && data.value) setCvUrl(data.value);
         })
-        .catch(err => console.error("Error fetching CV URL:", err));
+        .catch((err) => console.error("Error fetching CV URL:", err));
     }
   }, [isOpen]);
 
@@ -28,37 +42,42 @@ const CVModal = ({ isOpen, onClose }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 dark:bg-black/70 backdrop-blur-sm"
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md"
         onClick={onClose}
       >
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          transition={{ type: "spring", damping: 25 }}
-          className="relative w-full max-w-5xl h-[90vh] bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-2xl"
+          initial={{ scale: 0.92, opacity: 0, y: 15 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.92, opacity: 0, y: 15 }}
+          transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          className="relative w-full max-w-5xl h-[90vh] bg-white dark:bg-[#111116] border border-gray-200 dark:border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200 dark:border-white/[0.06] bg-white/95 dark:bg-[#111]/95 backdrop-blur-sm">
+          <div className="flex items-center justify-between px-6 py-3.5 border-b border-gray-200 dark:border-white/[0.08] bg-white/95 dark:bg-[#111116]/95 backdrop-blur-sm">
             <div className="flex items-center gap-3">
-              <FileText className="text-accent" size={18} />
-              <span className="text-gray-800 dark:text-white/90 text-sm font-medium">Resume &mdash; {personalInfo.name}</span>
+              <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
+                <FileText size={17} />
+              </div>
+              <span className="text-gray-800 dark:text-white/90 text-sm font-semibold">
+                Resume &mdash; {personalInfo.name}
+              </span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <a
                 href={cvUrl}
                 target="_blank"
                 rel="noreferrer"
                 download="Resume.pdf"
-                className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
-                title="Download / Open Resume"
+                className="flex items-center gap-1.5 px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white text-xs font-medium"
+                title="Download Resume"
               >
-                <Download size={16} />
+                <Download size={14} />
+                <span className="hidden sm:inline">Download</span>
               </a>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/80"
+                className="p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-gray-700 dark:hover:text-white"
               >
                 <X size={18} />
               </button>
@@ -66,7 +85,7 @@ const CVModal = ({ isOpen, onClose }) => {
           </div>
 
           {/* PDF Viewer */}
-          <div className="w-full h-[calc(100%-52px)] bg-gray-50 dark:bg-white/[0.03]">
+          <div className="w-full h-[calc(100%-54px)] bg-gray-50 dark:bg-white/[0.02]">
             <iframe
               src={`${cvUrl}#toolbar=1&navpanes=0&scrollbar=1`}
               className="w-full h-full"
@@ -80,24 +99,38 @@ const CVModal = ({ isOpen, onClose }) => {
   );
 };
 
-import { useTheme } from "../components/ThemeContext";
-
-/* ═══════════ Tech Stack Icons ═══════════ */
-const getTechStack = (isDark) => [
-  { name: "React", icon: "https://cdn.simpleicons.org/react/61DAFB" },
-  { name: "Node.js", icon: "https://cdn.simpleicons.org/nodedotjs/339933" },
-  { name: "MongoDB", icon: "https://cdn.simpleicons.org/mongodb/47A248" },
-  { name: "TypeScript", icon: "https://cdn.simpleicons.org/typescript/3178C6" },
-  { name: "Next.js", icon: `https://cdn.simpleicons.org/nextdotjs/${isDark ? "FFFFFF" : "000000"}` },
-  { name: "Android", icon: "https://cdn.simpleicons.org/android/3DDC84" },
+/* ═══════════════════ Tech Stack ═══════════════════ */
+const heroTechStack = [
+  {
+    name: "React",
+    icon: "https://cdn.simpleicons.org/react/61DAFB",
+  },
+  {
+    name: "Node.js",
+    icon: "https://cdn.simpleicons.org/nodedotjs/339933",
+  },
+  {
+    name: "MongoDB",
+    icon: "https://cdn.simpleicons.org/mongodb/47A248",
+  },
+  {
+    name: "TypeScript",
+    icon: "https://cdn.simpleicons.org/typescript/3178C6",
+  },
+  {
+    name: "AWS",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg",
+  },
+  {
+    name: "Docker",
+    icon: "https://cdn.simpleicons.org/docker/2496ED",
+  },
 ];
 
-/* ═══════════════════════════ Hero ═══════════════════════════ */
+/* ═══════════════════════════ Hero Component ═══════════════════════════ */
 const Hero = () => {
   const [isCVModalOpen, setIsCVModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const { isDark } = useTheme();
-  const techStack = getTechStack(isDark);
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(personalInfo.email);
@@ -109,286 +142,377 @@ const Hero = () => {
     <>
       <section
         id="home"
-        className="relative min-h-screen flex items-center overflow-hidden bg-white dark:bg-[#0a0a0a]"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#07060e] text-white transition-colors duration-300"
       >
-        {/* ─── FloatingLines Background ─── */}
+        {/* ─── Ambient FloatingLines Background ─── */}
         <FloatingLines
-          linesGradient={["#6c63ff", "#8b83ff", "#a78bfa", "#c4b5fd"]}
+          linesGradient={["#4f46e5", "#7c3aed", "#9333ea", "#a855f7", "#c084fc"]}
           enabledWaves={["top", "middle", "bottom"]}
           lineCount={[4, 6, 4]}
           lineDistance={[6, 5, 4]}
-          animationSpeed={0.8}
+          animationSpeed={0.7}
           interactive={true}
           bendRadius={5}
           bendStrength={-0.5}
           mouseDamping={0.05}
           parallax={true}
           parallaxStrength={0.15}
-          mixBlendMode="normal"
+          mixBlendMode="screen"
         />
 
-        {/* Light overlay to soften lines */}
-        <div className="absolute inset-0 bg-white/70 dark:bg-[#0a0a0a]/30 pointer-events-none" style={{ zIndex: 1 }} />
+        {/* Ambient Radial Glows matching design */}
+        <div className="absolute top-1/4 left-1/10 w-[550px] h-[550px] bg-purple-600/15 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute top-1/3 right-1/10 w-[500px] h-[500px] bg-indigo-600/15 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute bottom-10 left-1/3 w-[400px] h-[400px] bg-violet-600/10 rounded-full blur-[130px] pointer-events-none" />
 
-        {/* ═══════════ Main Content ═══════════ */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 pt-28 pb-24 lg:pt-32 lg:pb-28">
-          <div className="grid lg:grid-cols-[1fr_380px] gap-12 lg:gap-16 items-center">
-            {/* ─────── Left Column: Identity ─────── */}
+        {/* Soft dark vignette overlay */}
+        <div
+          className="absolute inset-0 bg-radial from-transparent via-[#07060e]/30 to-[#07060e]/70 pointer-events-none"
+          style={{ zIndex: 1 }}
+        />
+
+        {/* ═══════════ Main Content Container ═══════════ */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-28 pb-16 lg:pt-36 lg:pb-20">
+          
+          {/* Two-Column Grid: Left editorial bio & Right floating cards */}
+          <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-14 items-center">
+            
+            {/* ─────── Left Column: Editorial Identity & CTAs ─────── */}
             <div>
-              {/* Upcoming badge */}
-              <motion.a
-                href="#projects"
+              {/* Badges Bar */}
+              <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2.5 mb-7 group cursor-pointer"
+                className="inline-flex flex-wrap items-center gap-2.5 mb-7"
               >
-                <span className="px-2 py-0.5 rounded-md bg-accent text-white text-[11px] font-semibold tracking-wide uppercase">
-                  New
+                {/* Available for hire */}
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#081e19]/90 border border-emerald-500/30 text-emerald-300 text-xs font-semibold backdrop-blur-xl shadow-sm">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                  </span>
+                  Open to Work
                 </span>
-                <span className="text-sm text-gray-500 dark:text-white/60 group-hover:text-gray-700 dark:hover:text-white/80 transition-colors">
-                  CreoLink is launching soon
-                </span>
-                <ChevronRight
-                  size={13}
-                  className="text-gray-400 dark:text-white/40 group-hover:translate-x-0.5 transition-transform"
-                />
-              </motion.a>
 
-              {/* Headline */}
+                {/* Launching project pill */}
+                <a
+                  href="#projects"
+                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#141029]/90 hover:bg-[#1c163b]/90 border border-purple-500/30 text-purple-200 text-xs font-medium backdrop-blur-xl transition-all group shadow-sm hover:border-purple-400/50"
+                >
+                  <span className="text-xs">🚀</span>
+                  <span>CreoLink launching soon</span>
+                  <ArrowRight size={12} className="text-purple-300 group-hover:translate-x-0.5 transition-transform" />
+                </a>
+              </motion.div>
+
+              {/* Large Editorial Headline */}
               <motion.h1
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.1 }}
-                className="text-4xl sm:text-5xl lg:text-[3.75rem] font-display font-semibold leading-[1.12] tracking-[-0.025em]"
+                className="text-4xl sm:text-5xl lg:text-[4.2rem] font-display font-semibold leading-[1.1] tracking-[-0.03em]"
               >
-                <span className="text-gray-900 dark:text-white">Designing the future,</span>
+                <span className="text-white">Designing the future,</span>
                 <br />
-                <span className="italic font-light text-gray-400 dark:text-white/40">
+                <span className="italic font-light bg-gradient-to-r from-[#c084fc] via-[#a855f7] to-[#818cf8] bg-clip-text text-transparent">
                   Coding the present.
                 </span>
               </motion.h1>
 
-              {/* One-liner bio */}
+              {/* Minimal Bio */}
               <motion.p
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.25 }}
-                className="mt-5 text-gray-500 dark:text-white/60 text-base md:text-[1.05rem] leading-relaxed max-w-xl"
+                className="mt-6 text-white/60 text-base md:text-[1.05rem] leading-relaxed max-w-xl font-normal"
               >
-                CS student & Full-Stack developer specializing in the MERN stack,
-                Web3, and Android — turning complex ideas into polished digital products.
+                CS student &amp; Full-Stack developer specializing in the MERN stack, Web3 ecosystems, and Android &mdash; crafting high-performance digital experiences.
               </motion.p>
 
-              {/* CTA row */}
+              {/* Action Buttons Row */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
-                className="mt-8 flex flex-wrap items-center gap-3"
+                className="mt-9 flex flex-wrap items-center gap-3.5"
               >
-                {/* Let's Connect */}
+                {/* Primary Button */}
                 <a
                   href="#contact"
-                  className="group inline-flex items-center gap-2.5 px-6 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full text-sm font-semibold hover:bg-gray-800 dark:hover:bg-white/90 transition-colors"
+                  className="group inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-950 rounded-full text-sm font-semibold hover:bg-gray-100 shadow-[0_0_25px_rgba(255,255,255,0.18)] transition-all hover:gap-2.5 active:scale-95"
                 >
-                  Let&apos;s Connect
-                  <ArrowRight
-                    size={14}
-                    className="group-hover:translate-x-0.5 transition-transform"
-                  />
+                  <span>Let&apos;s Connect</span>
+                  <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
                 </a>
 
-                {/* View CV */} 
+                {/* View CV Button */}
                 <button
                   onClick={() => setIsCVModalOpen(true)}
-                  className="group inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 rounded-full text-gray-700 dark:text-white/80 text-sm font-medium transition-all duration-200"
+                  className="group inline-flex items-center gap-2 px-5 py-3 bg-[#120f26]/85 hover:bg-[#1b1638]/90 border border-purple-500/25 rounded-full text-white/90 text-sm font-medium backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] transition-all cursor-pointer active:scale-95"
                 >
-                  <FileText size={14} className="text-accent" />
-                  View CV
+                  <FileText size={15} className="text-white/70 group-hover:text-white" />
+                  <span>View CV</span>
                 </button>
 
-                {/* Email */}
+                {/* Email / Copy Button */}
                 <button
                   onClick={handleCopyEmail}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white/70 transition-colors group cursor-pointer"
+                  className="inline-flex items-center gap-2 px-3 py-3 text-sm text-white/60 hover:text-white transition-colors cursor-pointer group"
                   title="Copy email to clipboard"
                 >
-                  <Copy size={13} className={copied ? "text-emerald-500" : ""} />
-                  <span className="hidden sm:inline">
-                    {copied ? "Copied! ✓" : personalInfo.email}
-                  </span>
-                  <span className="sm:hidden">
-                    {copied ? "Copied! ✓" : "Copy Email"}
-                  </span>
+                  {copied ? (
+                    <>
+                      <Check size={14} className="text-emerald-400" />
+                      <span className="text-emerald-400 font-medium">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Mail size={15} className="text-white/50 group-hover:text-white transition-colors" />
+                      <span className="text-xs sm:text-sm font-normal text-white/60 group-hover:text-white transition-colors">
+                        {personalInfo.email}
+                      </span>
+                    </>
+                  )}
                 </button>
               </motion.div>
 
-              {/* Social Icons */}
+              {/* Tech Stack Icons Row */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
-                className="mt-5 flex items-center gap-3"
+                className="mt-9 flex flex-wrap items-center gap-3 sm:gap-3.5"
               >
-                {[
-                  {
-                    name: "LinkedIn",
-                    href: personalInfo.social.linkedin,
-                    icon: (
-                      <svg viewBox="0 0 24 24" className="w-[18px] h-[18px]" fill="currentColor">
-                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                      </svg>
-                    ),
-                    color: "hover:text-[#0A66C2]",
-                  },
-                  {
-                    name: "GitHub",
-                    href: personalInfo.social.github,
-                    icon: (
-                      <svg viewBox="0 0 24 24" className="w-[18px] h-[18px]" fill="currentColor">
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.111.82-.261.82-.579 0-.285-.01-1.04-.015-2.04-3.338.724-4.043-1.611-4.043-1.611-.546-1.386-1.333-1.755-1.333-1.755-1.09-.744.082-.729.082-.729 1.205.084 1.839 1.239 1.839 1.239 1.07 1.835 2.807 1.305 3.492.998.108-.775.418-1.305.762-1.605-2.665-.303-5.466-1.333-5.466-5.93 0-1.31.468-2.38 1.236-3.22-.124-.303-.536-1.524.117-3.176 0 0 1.008-.322 3.302 1.23A11.52 11.52 0 0112 6.81c1.02.004 2.047.138 3.006.405 2.292-1.552 3.298-1.23 3.298-1.23.655 1.653.243 2.874.12 3.176.77.84 1.234 1.91 1.234 3.22 0 4.609-2.807 5.624-5.48 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .321.216.694.825.576C20.565 21.796 24 17.298 24 12c0-6.63-5.373-12-12-12z" />
-                      </svg>
-                    ),
-                    color: "hover:text-gray-900 dark:hover:text-white",
-                  },
-                ].map((social, i) => (
-                  <motion.a
-                    key={social.name}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: 0.6 + i * 0.1, type: "spring", stiffness: 200 }}
-                    whileHover={{ scale: 1.15, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/[0.06] text-gray-400 dark:text-white/40 ${social.color} transition-colors duration-200`}
-                    title={social.name}
+                {heroTechStack.map((tech) => (
+                  <div
+                    key={tech.name}
+                    className="flex flex-col items-center justify-center gap-1.5 w-[60px] h-[60px] sm:w-[66px] sm:h-[66px] rounded-2xl bg-[#120f26]/85 border border-purple-500/25 backdrop-blur-2xl hover:border-purple-500/50 hover:bg-[#1a1538]/90 hover:-translate-y-1 transition-all duration-300 group shadow-[0_8px_25px_-5px_rgba(0,0,0,0.5)] cursor-pointer"
+                    title={tech.name}
                   >
-                    {social.icon}
-                  </motion.a>
-                ))}
-              </motion.div>
-
-              {/* Tech stack row */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.55 }}
-                className="mt-10 flex items-center gap-4"
-              >
-                <span className="text-[11px] text-gray-400 dark:text-white/40 uppercase tracking-widest font-medium shrink-0">
-                  Stack
-                </span>
-                <div className="h-px flex-1 max-w-8 bg-gray-200 dark:bg-white/10" />
-                <div className="flex items-center gap-3">
-                  {techStack.map((t) => (
                     <img
-                      key={t.name}
-                      src={t.icon}
-                      alt={t.name}
-                      title={t.name}
-                      className="w-5 h-5 opacity-50 hover:opacity-90 transition-opacity"
+                      src={tech.icon}
+                      alt={tech.name}
+                      className="w-5 h-5 sm:w-6 sm:h-6 object-contain group-hover:scale-110 transition-transform"
                     />
-                  ))}
-                </div>
+                    <span className="text-[10px] sm:text-[11px] font-medium text-white/50 group-hover:text-white transition-colors">
+                      {tech.name}
+                    </span>
+                  </div>
+                ))}
               </motion.div>
             </div>
 
-            {/* ─────── Right Column: Profile Card ─────── */}
-            <motion.div
-              initial={{ opacity: 0, y: 24, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="mx-auto w-full max-w-[420px] lg:mx-0"
-            >
-              <div className="relative rounded-3xl border border-gray-200 dark:border-white/[0.06] bg-white/90 dark:bg-[#0a0a0a]/85 backdrop-blur-md overflow-hidden shadow-xl shadow-gray-200/60 dark:shadow-black/50">
-                <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent" />
+            {/* ─────── Right Column: 3 Floating Connected Cards ─────── */}
+            <div className="relative w-full max-w-[440px] mx-auto lg:ml-auto flex flex-col gap-4 sm:gap-5">
+              
+              {/* Glowing cybernetic connection curve and node behind cards */}
+              <div className="absolute -left-20 sm:-left-28 top-1/2 -translate-y-1/2 w-56 sm:w-72 h-56 sm:h-72 pointer-events-none hidden md:block z-0">
+                <svg viewBox="0 0 280 280" fill="none" className="w-full h-full overflow-visible">
+                  <path
+                    d="M -30 180 C 40 180, 80 120, 160 95 C 200 82, 240 70, 280 65"
+                    stroke="url(#lineNeonGradient)"
+                    strokeWidth="1.5"
+                    strokeDasharray="4 4"
+                    className="opacity-75"
+                  />
+                  <defs>
+                    <linearGradient id="lineNeonGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.1" />
+                      <stop offset="45%" stopColor="#a855f7" stopOpacity="0.9" />
+                      <stop offset="100%" stopColor="#c084fc" stopOpacity="0.3" />
+                    </linearGradient>
+                    <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                      <feMerge>
+                        <feMergeNode in="coloredBlur" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  {/* Glowing purple node */}
+                  <g filter="url(#neonGlow)">
+                    <circle cx="105" cy="138" r="4.5" fill="#c084fc" />
+                  </g>
+                  <circle cx="105" cy="138" r="9" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.6" className="animate-ping" />
+                  <circle cx="105" cy="138" r="18" fill="#a855f7" fillOpacity="0.15" />
+                </svg>
+              </div>
 
-                <div className="relative p-6 md:p-7">
-                  <div className="flex flex-col sm:flex-row sm:items-end gap-4 mb-6">
-                    <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl p-[2px] bg-gradient-to-br from-accent via-purple-500 to-pink-500 shadow-lg shadow-accent/20 shrink-0">
-                      <img
-                        src={kunalImg}
-                        alt={personalInfo.name}
-                        className="w-full h-full rounded-2xl object-cover object-top bg-gray-50 dark:bg-white/[0.03]"
-                      />
+              {/* Card 1: Currently Building (CreoLink) */}
+              <motion.div
+                initial={{ opacity: 0, x: 25, y: -10 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                whileHover={{ y: -4, scale: 1.01 }}
+                className="relative z-10 w-full max-w-[390px] lg:ml-auto rounded-[22px] p-5 sm:p-6 bg-[#120f26]/85 backdrop-blur-2xl border border-purple-500/25 shadow-[0_12px_40px_-8px_rgba(76,29,149,0.35),0_0_20px_0_rgba(147,51,234,0.12)] group hover:border-purple-500/50 hover:shadow-[0_16px_48px_-8px_rgba(76,29,149,0.5),0_0_30px_0_rgba(147,51,234,0.22)] transition-all duration-300"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-105 group-hover:bg-purple-500/20 transition-all shrink-0">
+                      <Folder size={22} className="stroke-[1.8]" />
                     </div>
-
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-gray-900 dark:text-white font-display font-bold text-xl leading-tight">
-                        {personalInfo.name}
+                    <div>
+                      <span className="text-[11px] font-medium tracking-wide text-white/50 block">
+                        Currently Building
+                      </span>
+                      <h3 className="text-lg font-bold text-white tracking-tight leading-snug mt-0.5">
+                        CreoLink
                       </h3>
-                      <p className="text-gray-500 dark:text-white/55 text-sm mt-1 leading-relaxed">
-                        Full-Stack Web & Android Developer
-                      </p>
-                      {personalInfo.available && (
-                        <span className="inline-flex mt-3 items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-400/20">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          <span className="text-emerald-600 dark:text-emerald-300 text-[11px] font-semibold uppercase tracking-wide">
-                            Open to Work
-                          </span>
-                        </span>
-                      )}
+                      <span className="text-xs text-white/50 block mt-0.5">
+                        E-commerce Platform
+                      </span>
                     </div>
                   </div>
+                  <a
+                    href="#projects"
+                    className="w-9 h-9 rounded-full bg-white/[0.06] hover:bg-white/[0.14] border border-white/10 hover:border-purple-500/40 flex items-center justify-center text-white/70 hover:text-white transition-all shadow-sm shrink-0"
+                    title="View CreoLink"
+                  >
+                    <ArrowUpRight size={16} />
+                  </a>
+                </div>
+              </motion.div>
 
-                  <div className="grid grid-cols-2 gap-3 mb-6">
-                    {[
-                      { label: "Focus", value: "Full-Stack" },
-                      { label: "Stack", value: "MERN" },
-                      { label: "Also Into", value: "Web3 · Android" },
-                      { label: "Location", value: "India 🇮🇳" },
-                    ].map((item) => (
-                      <div
-                        key={item.label}
-                        className="rounded-xl border border-gray-200 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.03] p-3"
-                      >
-                        <div className="text-[10px] text-gray-400 dark:text-white/40 uppercase tracking-wider font-medium">
-                          {item.label}
-                        </div>
-                        <div className="text-[13px] text-gray-800 dark:text-white/85 font-semibold mt-1">
-                          {item.value}
-                        </div>
-                      </div>
-                    ))}
+              {/* Card 2: Focus (MERN • Next.js) */}
+              <motion.div
+                initial={{ opacity: 0, x: 35 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                whileHover={{ y: -4, scale: 1.01 }}
+                className="relative z-10 w-full max-w-[360px] lg:ml-auto rounded-[20px] p-4 sm:p-5 bg-[#120f26]/85 backdrop-blur-2xl border border-purple-500/25 shadow-[0_12px_40px_-8px_rgba(76,29,149,0.35),0_0_20px_0_rgba(147,51,234,0.12)] group hover:border-purple-500/50 hover:shadow-[0_16px_48px_-8px_rgba(76,29,149,0.5),0_0_30px_0_rgba(147,51,234,0.22)] transition-all duration-300"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-11 h-11 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-105 group-hover:bg-purple-500/20 transition-all shrink-0">
+                      <Target size={20} className="stroke-[1.8]" />
+                    </div>
+                    <div>
+                      <span className="text-[11px] font-medium tracking-wide text-white/50 block">
+                        Focus
+                      </span>
+                      <h4 className="text-[15px] font-bold text-white tracking-tight mt-0.5">
+                        MERN &bull; Next.js
+                      </h4>
+                    </div>
                   </div>
+                  <a
+                    href="#skills"
+                    className="text-white/40 hover:text-white p-2 transition-all group-hover:translate-x-1 shrink-0"
+                  >
+                    <ArrowRight size={16} />
+                  </a>
+                </div>
+              </motion.div>
 
-                  <div>
-                    <div className="text-[10px] text-gray-400 dark:text-white/40 uppercase tracking-wider font-medium mb-3">
-                      Highlights
+              {/* Card 3: Location (India) */}
+              <motion.div
+                initial={{ opacity: 0, x: 45, y: 10 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                whileHover={{ y: -4, scale: 1.01 }}
+                className="relative z-10 w-full max-w-[340px] lg:ml-auto rounded-[20px] p-4 sm:p-5 bg-[#120f26]/85 backdrop-blur-2xl border border-purple-500/25 shadow-[0_12px_40px_-8px_rgba(76,29,149,0.35),0_0_20px_0_rgba(147,51,234,0.12)] group hover:border-purple-500/50 hover:shadow-[0_16px_48px_-8px_rgba(76,29,149,0.5),0_0_30px_0_rgba(147,51,234,0.22)] transition-all duration-300"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-11 h-11 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-105 group-hover:bg-purple-500/20 transition-all shrink-0">
+                      <MapPin size={20} className="stroke-[1.8]" />
                     </div>
-                    <div className="space-y-2.5">
-                      {[
-                        "Production e-commerce platforms (KripaConnect)",
-                        "Real-time apps with Socket.io & WebRTC",
-                        "Payment integrations (Razorpay, Stripe)",
-                        "Docker, AWS & CI/CD pipelines",
-                      ].map((item) => (
-                        <div
-                          key={item}
-                          className="flex items-start gap-2.5 rounded-lg px-2.5 py-2 bg-gray-50 dark:bg-white/[0.03]"
-                        >
-                          <ChevronRight
-                            size={13}
-                            className="text-accent mt-0.5 shrink-0"
-                          />
-                          <span className="text-[13px] text-gray-600 dark:text-white/65 leading-snug">
-                            {item}
-                          </span>
-                        </div>
-                      ))}
+                    <div>
+                      <span className="text-[11px] font-medium tracking-wide text-white/50 block">
+                        Location
+                      </span>
+                      <h4 className="text-[15px] font-bold text-white tracking-tight mt-0.5">
+                        India
+                      </h4>
                     </div>
+                  </div>
+                  <div className="text-white/40 hover:text-white p-2 transition-all group-hover:translate-x-1 shrink-0">
+                    <ArrowRight size={16} />
+                  </div>
+                </div>
+              </motion.div>
+
+            </div>
+          </div>
+
+          {/* ═══════════ Bottom Stats Glass Banner ═══════════ */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="mt-14 lg:mt-16 w-full rounded-[22px] bg-[#120f26]/85 backdrop-blur-2xl border border-purple-500/25 shadow-[0_12px_40px_-8px_rgba(76,29,149,0.35),0_0_20px_0_rgba(147,51,234,0.12)] p-5 sm:p-6 lg:p-7"
+          >
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-4 items-center">
+              {/* Stat 1: 500+ DSA Solved */}
+              <div className="flex items-center gap-4 sm:px-4">
+                <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
+                  <Code2 size={22} className="stroke-[1.8]" />
+                </div>
+                <div>
+                  <div className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                    500+
+                  </div>
+                  <div className="text-xs text-white/50 font-medium mt-0.5">
+                    DSA Solved
                   </div>
                 </div>
               </div>
-            </motion.div>
-          </div>
+
+              {/* Stat 2: 3+ Projects */}
+              <div className="flex items-center gap-4 sm:px-4">
+                <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
+                  <Package size={22} className="stroke-[1.8]" />
+                </div>
+                <div>
+                  <div className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                    3+
+                  </div>
+                  <div className="text-xs text-white/50 font-medium mt-0.5">
+                    Projects
+                  </div>
+                </div>
+              </div>
+
+              {/* Stat 3: 3rd Year B.Tech CSE */}
+              <div className="flex items-center gap-4 sm:px-4">
+                <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
+                  <GraduationCap size={22} className="stroke-[1.8]" />
+                </div>
+                <div>
+                  <div className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                    3rd Year
+                  </div>
+                  <div className="text-xs text-white/50 font-medium mt-0.5">
+                    B.Tech CSE (LPU)
+                  </div>
+                </div>
+              </div>
+
+              {/* Stat 4: Open To Opportunities */}
+              <div className="flex items-center gap-4 sm:px-4">
+                <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
+                  <Briefcase size={22} className="stroke-[1.8]" />
+                </div>
+                <div>
+                  <div className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                    Open
+                  </div>
+                  <div className="text-xs text-white/50 font-medium mt-0.5">
+                    To Opportunities
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
         </div>
 
-        {/* Bottom fade to blend into next section */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-[#fafafa] dark:to-[#0a0a0a] pointer-events-none" style={{ zIndex: 2 }} />
+        {/* Bottom soft gradient blend */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-[#07060e] pointer-events-none"
+          style={{ zIndex: 2 }}
+        />
       </section>
 
       {/* CV Modal */}

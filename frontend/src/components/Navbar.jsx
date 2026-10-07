@@ -132,11 +132,10 @@ const Navbar = () => {
                     e.preventDefault();
                     handleNavClick(link.href);
                   }}
-                  className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-xl ${
-                    isActive(link.href)
+                  className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-xl ${isActive(link.href)
                       ? "text-gray-900 dark:text-white"
                       : "text-gray-500 dark:text-white/60 hover:text-gray-800 dark:hover:text-white/90"
-                  }`}
+                    }`}
                 >
                   {isActive(link.href) && (
                     <motion.div
@@ -156,11 +155,10 @@ const Navbar = () => {
               {/* Blog link */}
               <button
                 onClick={() => handleRouteClick("/blog")}
-                className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-xl ${
-                  location.pathname === "/blog"
+                className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-xl ${location.pathname === "/blog"
                     ? "text-gray-900 dark:text-white bg-white dark:bg-white/10 shadow-sm dark:shadow-none"
                     : "text-gray-500 dark:text-white/60 hover:text-gray-800 dark:hover:text-white/90"
-                }`}
+                  }`}
               >
                 Blog
               </button>
@@ -169,18 +167,16 @@ const Navbar = () => {
               <div ref={moreRef} className="relative">
                 <button
                   onClick={() => setMoreOpen((v) => !v)}
-                  className={`flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-xl transition-colors duration-200 ${
-                    moreOpen
+                  className={`flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-xl transition-colors duration-200 ${moreOpen
                       ? "text-gray-900 dark:text-white bg-white dark:bg-white/10 shadow-sm dark:shadow-none"
                       : "text-gray-500 dark:text-white/60 hover:text-gray-800 dark:hover:text-white/90"
-                  }`}
+                    }`}
                 >
                   More
                   <ChevronDown
                     size={14}
-                    className={`transition-transform duration-300 ${
-                      moreOpen ? "rotate-180" : ""
-                    }`}
+                    className={`transition-transform duration-300 ${moreOpen ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
 
