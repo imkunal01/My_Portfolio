@@ -171,7 +171,7 @@ router.post("/cv", adminAuth, handleUpload, async (req, res) => {
 
       const setting = await Settings.findOneAndUpdate(
         { key: "cv_url" },
-        { value: viewUrl },
+        { value: "/api/settings/cv/view" },
         { upsert: true, new: true }
       );
 
@@ -226,7 +226,12 @@ router.get("/:key", async (req, res) => {
         setting.value.includes("/raw/upload/") &&
         !setting.value.toLowerCase().endsWith(".pdf");
 
-      if (!setting || isBrokenCloudinaryRaw || (cvFile && !setting.value)) {
+      if (
+        !setting ||
+        isBrokenCloudinaryRaw ||
+        (cvFile && !setting.value) ||
+        (typeof setting.value === "string" && setting.value.includes("/api/settings/cv/view"))
+      ) {
         return res.json({
           key: "cv_url",
           value: defaultViewUrl,
