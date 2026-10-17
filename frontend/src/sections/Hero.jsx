@@ -15,6 +15,7 @@ import {
   Folder,
   Target,
   Mail,
+  ExternalLink,
 } from "lucide-react";
 import { personalInfo } from "../data/portfolio";
 import FloatingLines from "../components/FloatingLines";
@@ -22,15 +23,32 @@ import FloatingLines from "../components/FloatingLines";
 /* ═══════════════════════ CV Modal ═══════════════════════ */
 const CVModal = ({ isOpen, onClose }) => {
   const [cvUrl, setCvUrl] = useState("/KunalApproved5.pdf");
+  const [downloadUrl, setDownloadUrl] = useState("/KunalApproved5.pdf");
 
   useEffect(() => {
     if (isOpen) {
-      fetch(`${import.meta.env.VITE_BACKEND_URL || ""}/api/settings/cv_url`)
+      const backendUrl = (import.meta.env.VITE_BACKEND_URL || "").replace(/\/+$/, "");
+      fetch(`${backendUrl || ""}/api/settings/cv_url`)
         .then((res) => res.json())
         .then((data) => {
-          if (data && data.value) setCvUrl(data.value);
+          if (data && data.value) {
+            let view = data.value;
+            if (view.startsWith("/api/")) {
+              view = backendUrl ? `${backendUrl}${view}` : view;
+            }
+            setCvUrl(view);
+            if (view.includes("/api/settings/cv/view")) {
+              setDownloadUrl(view.replace("/api/settings/cv/view", "/api/settings/cv/download"));
+            } else {
+              setDownloadUrl(view);
+            }
+          }
         })
-        .catch((err) => console.error("Error fetching CV URL:", err));
+        .catch((err) => {
+          console.error("Error fetching CV URL:", err);
+          setCvUrl("/KunalApproved5.pdf");
+          setDownloadUrl("/KunalApproved5.pdf");
+        });
     }
   }, [isOpen]);
 
@@ -50,11 +68,11 @@ const CVModal = ({ isOpen, onClose }) => {
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.92, opacity: 0, y: 15 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-5xl h-[90vh] bg-white dark:bg-[#111116] border border-gray-200 dark:border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl"
+          className="relative w-full max-w-5xl h-[90vh] bg-white dark:bg-[#111116] border border-gray-200 dark:border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-3.5 border-b border-gray-200 dark:border-white/[0.08] bg-white/95 dark:bg-[#111116]/95 backdrop-blur-sm">
+          <div className="flex items-center justify-between px-6 py-3.5 border-b border-gray-200 dark:border-white/[0.08] bg-white/95 dark:bg-[#111116]/95 backdrop-blur-sm shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
                 <FileText size={17} />
@@ -63,21 +81,31 @@ const CVModal = ({ isOpen, onClose }) => {
                 Resume &mdash; {personalInfo.name}
               </span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <a
                 href={cvUrl}
                 target="_blank"
                 rel="noreferrer"
-                download="Resume.pdf"
                 className="flex items-center gap-1.5 px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white text-xs font-medium"
+                title="Open Resume in new tab"
+              >
+                <ExternalLink size={14} />
+                <span className="hidden sm:inline">Open in Tab</span>
+              </a>
+              <a
+                href={downloadUrl}
+                target="_blank"
+                rel="noreferrer"
+                download="Kunal_Resume.pdf"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-xs font-medium shadow-sm"
                 title="Download Resume"
               >
                 <Download size={14} />
-                <span className="hidden sm:inline">Download</span>
+                <span>Download</span>
               </a>
               <button
                 onClick={onClose}
-                className="p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                className="p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-gray-700 dark:hover:text-white ml-1"
               >
                 <X size={18} />
               </button>
@@ -85,7 +113,7 @@ const CVModal = ({ isOpen, onClose }) => {
           </div>
 
           {/* PDF Viewer */}
-          <div className="w-full h-[calc(100%-54px)] bg-gray-50 dark:bg-white/[0.02]">
+          <div className="relative w-full flex-1 bg-gray-50 dark:bg-white/[0.02]">
             <iframe
               src={`${cvUrl}#toolbar=1&navpanes=0&scrollbar=1`}
               className="w-full h-full"

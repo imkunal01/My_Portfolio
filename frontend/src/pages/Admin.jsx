@@ -43,6 +43,8 @@ import {
   Link as LinkIcon,
   Upload,
   Mail,
+  Download,
+  ExternalLink,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -2679,6 +2681,8 @@ const CVAdmin = ({ token }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const fetchCV = async () => {
@@ -2693,36 +2697,59 @@ const CVAdmin = ({ token }) => {
     fetchCV();
   }, []);
 
+  const resolveCvUrl = (url) => {
+    if (!url) return "";
+    if (url.startsWith("/api/")) {
+      return `${API}${url}`;
+    }
+    return url;
+  };
+
+  const getDownloadUrl = (url) => {
+    const resolved = resolveCvUrl(url);
+    if (resolved.includes("/api/settings/cv/view")) {
+      return resolved.replace("/api/settings/cv/view", "/api/settings/cv/download");
+    }
+    return resolved;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
     setSuccess(false);
+    setErrorMessage("");
 
     try {
       const formData = new FormData();
       if (file) {
         formData.append("file", file);
-      } else if (cvUrl) {
-        formData.append("url", cvUrl);
+      } else if (cvUrl.trim()) {
+        formData.append("url", cvUrl.trim());
       } else {
-        alert("Please provide a URL or a file");
+        setErrorMessage("Please select a PDF file or enter a valid URL");
         setSaving(false);
         return;
       }
 
+      // Do NOT set "Content-Type" manually when sending FormData with axios.
+      // Axios and the browser will automatically compute the multipart boundary.
       const { data } = await axios.post(`${API}/api/settings/cv`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
         },
       });
 
-      setCvUrl(data.value);
+      setCvUrl(data.value || (data.setting && data.setting.value) || "");
       setFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
       setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+      setTimeout(() => setSuccess(false), 4000);
     } catch (err) {
-      alert(err.response?.data?.error || "Save failed");
+      console.error("CV update error:", err);
+      const msg = err.response?.data?.error || err.message || "Save failed";
+      setErrorMessage(msg);
     }
     setSaving(false);
   };
@@ -2735,6 +2762,9 @@ const CVAdmin = ({ token }) => {
     );
   }
 
+  const resolvedViewUrl = resolveCvUrl(cvUrl);
+  const resolvedDownloadUrl = getDownloadUrl(cvUrl);
+
   return (
     <div>
       <div className="mb-6">
@@ -2742,23 +2772,58 @@ const CVAdmin = ({ token }) => {
           Manage CV / Resume
         </h2>
         <p className="text-sm text-gray-400 dark:text-white/40 mt-1">
-          Upload a new PDF or set a direct link to your CV.
+          Upload a new PDF resume or configure a direct link to your CV.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6 rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] max-w-xl">
+      <form
+        onSubmit={handleSubmit}
+        className="p-6 rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/[0.06] max-w-xl shadow-sm"
+      >
         <div className="space-y-6">
+          {errorMessage && (
+            <div className="p-3 text-xs bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl">
+              {errorMessage}
+            </div>
+          )}
+
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-white/80 mb-2">
-              Current CV URL
+              Upload New PDF
             </label>
-            <input
-              type="url"
-              value={cvUrl}
-              onChange={(e) => setCvUrl(e.target.value)}
-              placeholder="https://..."
-              className="w-full px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
-            />
+            <div className="flex flex-col gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/pdf"
+                onChange={(e) => {
+                  const selected = e.target.files[0];
+                  setFile(selected || null);
+                  setErrorMessage("");
+                }}
+                className="w-full px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20 cursor-pointer focus:outline-none transition-colors"
+              />
+              {file && (
+                <div className="flex items-center justify-between px-3 py-2 bg-accent/5 border border-accent/20 rounded-lg text-xs">
+                  <span className="font-medium text-accent truncate">
+                    Selected: {file.name} ({(file.size / 1024).toFixed(1)} KB)
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFile(null);
+                      if (fileInputRef.current) fileInputRef.current.value = "";
+                    }}
+                    className="text-gray-400 hover:text-red-500 ml-2"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-gray-400 dark:text-white/40 mt-1.5">
+              Uploads are securely stored in the database and served directly to visitors without download prompts.
+            </p>
           </div>
 
           <div className="relative">
@@ -2772,21 +2837,24 @@ const CVAdmin = ({ token }) => {
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-white/80 mb-2">
-              Upload New PDF
+              Direct CV URL (Optional)
             </label>
             <input
-              type="file"
-              accept="application/pdf"
-              onChange={(e) => setFile(e.target.files[0])}
-              className="w-full px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20 cursor-pointer focus:outline-none transition-colors"
+              type="url"
+              value={cvUrl}
+              onChange={(e) => {
+                setCvUrl(e.target.value);
+                setErrorMessage("");
+              }}
+              placeholder="https://..."
+              className="w-full px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-accent/40 transition-colors"
             />
-            {file && <p className="text-xs mt-2 text-accent">Selected: {file.name}</p>}
           </div>
 
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center justify-center gap-2 w-full py-3 bg-accent hover:bg-accent-light disabled:opacity-50 text-gray-900 dark:text-white font-medium rounded-xl transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-3 bg-accent hover:bg-accent-light disabled:opacity-50 text-gray-900 dark:text-white font-medium rounded-xl transition-colors cursor-pointer"
           >
             {saving ? (
               <Loader2 size={16} className="animate-spin" />
@@ -2799,10 +2867,29 @@ const CVAdmin = ({ token }) => {
           </button>
 
           {cvUrl && (
-            <div className="mt-4 p-4 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/[0.06]">
-              <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 text-sm text-accent hover:underline">
-                <FileText size={16} />
-                View Current CV
+            <div className="mt-4 p-4 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/[0.06] flex items-center justify-between gap-3">
+              <a
+                href={resolvedViewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-accent hover:underline font-medium truncate"
+                title="View Resume in new tab"
+              >
+                <FileText size={16} className="shrink-0" />
+                <span className="truncate">View Current CV</span>
+                <ExternalLink size={13} className="shrink-0 opacity-70" />
+              </a>
+
+              <a
+                href={resolvedDownloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                download="Resume.pdf"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-200 dark:bg-white/10 hover:bg-gray-300 dark:hover:bg-white/15 rounded-lg text-xs font-medium text-gray-700 dark:text-white transition-colors shrink-0"
+                title="Download current CV"
+              >
+                <Download size={13} />
+                <span>Download</span>
               </a>
             </div>
           )}
